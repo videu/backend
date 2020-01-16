@@ -1,0 +1,27 @@
+{
+    "env": {
+        "node": true
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "rules": {
+        "brace-style": ["error", "1tbs"],
+        "comma-dangle": ["error", "never"],
+        "comma-spacing": "error",
+        "curly": ["error", "all"],
+        "default-case": "off",
+        "indent": ["error", 4],
+        "keyword-spacing": ["error", {"before": true, "after": true}],
+        "no-eq-null": "error",
+        "no-irregular-whitespace": "error",
+        "no-this-before-super": "error",
+        "no-unreachable": "error",
+        "prefer-const": "warn",
+        "quotes": ["error", "single"],
+        "semi": "error",
+        "space-before-blocks": "error"
+    }
+}

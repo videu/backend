@@ -1,0 +1,5 @@
+build/
+node_modules/
+doc/api/
+.vscode/settings.json
+.env
