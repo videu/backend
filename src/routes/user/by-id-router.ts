@@ -22,22 +22,22 @@
 import { ObjectId } from 'bson';
 import { RequestHandler, Router } from 'express';
 
-import { UserRepository } from '../../data/repository/user-repository';
-import { IUserRepository } from '../../types/data/repository/user';
+import { userRepo } from '../../data/repository/user-repository';
+import { HttpError } from '../../error/http-error';
 import { IUser } from '../../types/db/user';
 import { ILogger } from '../../types/logger';
 import { RouteLogger } from '../../util/logger';
+import { objectIdRegex } from '../../util/regex';
 
 const log: ILogger = new RouteLogger('/user/byId');
-const userRepo: IUserRepository = new UserRepository();
 
 export const byIdRouter: Router = Router();
 
 /**
- * GET /user/byId/:id
+ * GET `/user/byId/:id`
  */
 export const byIdGetHandler: RequestHandler = async (req, res, next) => {
-    if (typeof req.params.id !== 'string') {
+    if (typeof req.params.id !== 'string' || !objectIdRegex.test(req.params.id)) {
         res.status(400).json({
             msg: 'Invalid user id',
         });
@@ -53,7 +53,6 @@ export const byIdGetHandler: RequestHandler = async (req, res, next) => {
             res.status(404).json({
                 msg: 'Not found',
             });
-
             return;
         }
 
@@ -61,10 +60,7 @@ export const byIdGetHandler: RequestHandler = async (req, res, next) => {
         return;
     } catch (err) {
         log.e(`GET: Database error while retrieving id ${id}`, err);
-        res.status(500).json({
-            msg: 'Internal server error',
-        });
-
+        next(new HttpError(err.message, 500));
         return;
     }
 };
