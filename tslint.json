@@ -2,6 +2,7 @@
     "extends": "tslint:recommended",
     "rules": {
         "arrow-parens": false,
+        "import-spacing": true,
         "max-classes-per-file": [true, 3],
         "max-line-length": {
             "options": [100]
@@ -13,6 +14,7 @@
             }
         ],
         "no-bitwise": false,
+        "no-default-export": true,
         "object-literal-shorthand": false,
         "object-literal-sort-keys": false,
         "only-arrow-functions": false,
