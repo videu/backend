@@ -68,4 +68,4 @@ export const byIdGetHandler: RequestHandler = async (req, res, next) => {
         return;
     }
 };
-byIdRouter.get('/', byIdGetHandler);
+byIdRouter.get('/:id', byIdGetHandler);
