@@ -52,6 +52,7 @@ export const videoSchema: Schema<IVideo> = new Schema<IVideo>({
     time: {
         type: Date,
         default: Date.now,
+        index: true,
     },
     title: String,
     views: Number,
@@ -65,6 +66,7 @@ videoSchema.methods.toClientJSON =
             category_id: this.category_id,
             description: this.description,
             rating: this.rating.toClientJSON(),
+            time: this.time.getTime(),
         };
     };
 
