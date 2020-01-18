@@ -35,11 +35,11 @@ import { IUser } from '../types/db/user';
 import { objectIdRegex } from './regex';
 
 /**
- * The DSA used for signing JWTs.
+ * The ECDSA used for signing JWTs.
  *
  * TODO: Use an environment variable for this
  */
-const SIGN_ALGO: string = 'ES512';
+const SIGN_ALGO: 'ES256' | 'ES384' | 'ES512' = 'ES512';
 
 /** The options passed to `{@link jwtSignInternal}`. */
 const SIGN_OPTS: SignOptions = {

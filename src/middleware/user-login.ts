@@ -20,64 +20,37 @@
  */
 
 import { RequestHandler } from 'express';
-import { verify as jwtVerify } from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
 
-import { userRepo } from '../data/repository/user-repository';
+import { AuthError } from '../error/auth-error';
 import { HttpError } from '../error/http-error';
 import { IUser } from '../types/db/user';
-import { objectIdRegex } from '../util/regex';
+import { ILogger } from '../types/logger';
+import { jwtVerify } from '../util/jwt';
+import { Logger } from '../util/logger';
+
+const log: ILogger = new Logger('UserLoginMiddleware');
 
 /**
- * Validate the `Authorization` HTTP header and, if it was valid, fetch the user
- * data corresponding to the user id that is encoded in the JWT from the
- * repository.
+ * Validate the `Authorization` HTTP header and, if it was valid, return the
+ * user it was issued to.
  *
  * @param header The value of the `Authorization` HTTP header.
- * @returns The validated user, or `null` if either the authorization header
- * itself or the JWT it carries is invalid.
- * @throws Any error that can occur while obtaining data from the user
- * repository.
+ * @returns The validated user.
+ * @throws Either an `AuthError` if the authentication header was invalid, or
+ * another error if we had an internal problem.
  */
-function validateAuthHeader(header: any): Promise<IUser | null> {
-    return new Promise(async (resolve, reject) => {
-        if (typeof header !== 'string') {
-            resolve(null);
-            return;
-        }
+async function validateAuthHeader(header: any): Promise<IUser> {
+    if (typeof header !== 'string') {
+        throw new AuthError('Invalid authorization header');
+    }
 
-        const headerParts: string[] = header.split(' ', 3);
-        if (headerParts[0] !== 'Bearer' || headerParts.length !== 2) {
-            resolve(null);
-            return;
-        }
+    /* Can be limited to the first 3 because anything above 2 is invalid anyway */
+    const headerParts: string[] = header.split(' ', 3);
+    if (headerParts[0] !== 'Bearer' || headerParts.length !== 2) {
+        throw new AuthError('Invalid authorization header');
+    }
 
-        if (!objectIdRegex.test(headerParts[1])) {
-            resolve(null);
-            return;
-        }
-
-        let userIdStr: string;
-        try {
-            const tmp: string | object = jwtVerify(headerParts[1], global.videu.jwtSecret);
-            if (typeof tmp !== 'string') {
-                resolve(null);
-                return;
-            }
-            userIdStr = tmp;
-        } catch (err) {
-            return null;
-        }
-
-        if (!objectIdRegex.test(userIdStr)) {
-            return null;
-        }
-
-        const userId: ObjectId = new ObjectId(headerParts[1]);
-        const user: IUser | null = await userRepo.getById(new ObjectId(headerParts[1]));
-
-        return user;
-    });
+    return await jwtVerify(headerParts[1]);
 }
 
 /**
@@ -88,19 +61,20 @@ function validateAuthHeader(header: any): Promise<IUser | null> {
  * HTTP 401 code.
  */
 export const userLoginMiddleware: RequestHandler = async (req, res, next) => {
-    let user: IUser | null;
+    let user: IUser;
+
     try {
         user = await validateAuthHeader(req.headers.authorization);
     } catch (err) {
-        next(new HttpError(err.msg, 500));
-        return;
-    }
-
-    if (user === null) {
-        res.set('WWW-Authenticate', 'Bearer realm="This endpoint requires authentication"');
-        res.status(401).json({
-            msg: 'Invalid session',
-        });
+        if (err instanceof AuthError) {
+            res.set('WWW-Authenticate', 'Bearer realm="This endpoint requires authentication"');
+            res.status(401).json({
+                msg: 'Invalid session',
+            });
+        } else {
+            log.e(err);
+            next(new HttpError(err.msg, 500));
+        }
         return;
     }
 
@@ -109,22 +83,23 @@ export const userLoginMiddleware: RequestHandler = async (req, res, next) => {
 };
 
 /**
- * Like {@link userLoginMiddleware}, but does not reject the request if the
+ * Like `{@link userLoginMiddleware}`, but does not reject the request if the
  * authentication check failed (the `videu.user` property in the `req` object
  * just stays `undefined` in that case).
  */
 export const softUserLoginMiddleware: RequestHandler = async (req, res, next) => {
-    let user: IUser | null;
+    let user: IUser;
+
     try {
         user = await validateAuthHeader(req.headers.authorization);
     } catch (err) {
-        next(new HttpError(err.msg, 500));
+        if (!(err instanceof AuthError)) {
+            log.e(err);
+            next(new HttpError(err.msg, 500));
+        }
         return;
     }
 
-    if (user !== null) {
-        req.videu.user = user;
-    }
-
+    req.videu.user = user;
     next();
 };
