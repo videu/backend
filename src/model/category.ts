@@ -34,6 +34,23 @@ export const categorySchema: Schema<ICategory> = new Schema<ICategory>({
     tags: [String],
 });
 
+categorySchema.methods.toClientJSON =
+    function(this: ICategory) {
+        const ret: any = {
+            id: this.id,
+            name: this.name,
+            desc: this.desc,
+            tags: this.tags,
+            children: this.children,
+        };
+
+        if (this.parent_id) {
+            ret.parent_id = this.parent_id.toHexString();
+        }
+
+        return ret;
+    };
+
 /** Mongoose model for the `categories` table. */
 export const Category: Model<ICategory> =
     mongooseModel('Category', categorySchema);
