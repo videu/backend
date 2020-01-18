@@ -21,12 +21,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Router } from 'express';
+import { RequestHandler, Router } from 'express';
 
 export const infoRouter: Router = Router();
 
-// GET /info
-infoRouter.get('/', (req, res, next) => {
+/**
+ * GET `/info`
+ */
+export const infoGetHandler: RequestHandler = (req, res, next) => {
     res.set('Access-Control-Allow-Origin', '*');
     res.status(200).json({
         clientIp: req.videu.clientIp,
@@ -34,4 +36,5 @@ infoRouter.get('/', (req, res, next) => {
         time: Date.now(),
         version: global.videu.version,
     });
-});
+};
+infoRouter.get('/', infoGetHandler);
