@@ -109,7 +109,7 @@ export const userSchema: Schema<IUser> = new Schema<IUser>({
 userSchema.methods.toClientJSON =
     function(this: IUser, showPrivates?: boolean) {
         const json: any = {
-            _id: this._id.toHexString(),
+            id: this.id,
             displayName: this.dName,
             userName: this.uName,
             joined: this.joined.getTime(),
