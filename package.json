@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "test": "mocha -r ts-node/register test/**/*.ts",
-    "tsc": "tsc",
+    "build": "rm -rf build/; tsc",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/bootstrap.ts",
     "doc": "rm -rf doc/api/; typedoc --includeDeclarations --out doc/api/ src/",
     "start": "tsc && ./index.js"
