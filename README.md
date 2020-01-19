@@ -1,11 +1,14 @@
 # The videu Backend Server
 
+![build status](https://jenkins.sandtler.club/job/videu/job/backend/badge/icon)
+
 This is the source tree of the videu backend server, the RESTful HTTP API that
 powers the [FreeTube](https://freetube.eu) platform.
 
-## **IMPORTANT**: This is Pre-Alpha Software!
+## **WARNING**: This Is Pre-Alpha Software!
 
-
+This application should not be exposed to the internet because it is not
+stable yet.
 
 ## License
 
