@@ -87,6 +87,7 @@ export function toBoolSafe(val: any): boolean | undefined {
  *
  * | `typeof val` | `val`               | return value                |
  * | ------------ | ------------------- | --------------------------- |
+ * | `'number'`   | `NaN`, `Infinity`   | `undefined`                 |
  * | `'number'`   | (any)               | `Math.floor(val)`           |
  * | `'boolean'`  | `false`             | `0`                         |
  * | `'boolean'`  | `true`              | `1`                         |
@@ -102,7 +103,10 @@ export function toBoolSafe(val: any): boolean | undefined {
 export function toIntSafe(val: any): number | undefined {
     switch (typeof val) {
         case 'number':
-            return Math.floor(val);
+            if (isFinite(val)) {
+                return Math.floor(val);
+            }
+            break;
 
         case 'string':
             if (decNumberRegex.test(val)) {
@@ -115,7 +119,9 @@ export function toIntSafe(val: any): number | undefined {
 
         case 'object':
             if (val instanceof Number) {
-                return Math.floor(val.valueOf());
+                if (isFinite(val.valueOf())) {
+                    return Math.floor(val.valueOf());
+                }
             } else if (val instanceof Boolean) {
                 return val.valueOf() ? 1 : 0;
             }
