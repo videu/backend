@@ -1,5 +1,8 @@
 build/
+coverage/
 node_modules/
 doc/api/
 .vscode/settings.json
+.nyc_output/
+**/*.pem
 .env

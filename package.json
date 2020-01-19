@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "test": "mocha -r ts-node/register test/**/*.ts",
+    "coverage": "nyc npm run test",
     "build": "rm -rf build/; tsc",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/bootstrap.ts",
     "doc": "rm -rf doc/api/; typedoc --includeDeclarations --out doc/api/ src/",
@@ -44,6 +45,7 @@
     "typescript": "^3.7.5"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@microsoft/tsdoc": "^0.12.16",
     "@types/chai": "^4.2.7",
     "@types/chai-as-promised": "^7.1.2",
@@ -58,6 +60,7 @@
     "eslint-plugin-tsdoc": "^0.2.0",
     "mocha": "^7.0.0",
     "nodemon": "^1.19.4",
+    "nyc": "^15.0.0",
     "ts-node": "^8.6.1",
     "ts-node-dev": "^1.0.0-pre.44",
     "tslint": "^5.20.1",
