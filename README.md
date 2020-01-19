@@ -1,6 +1,6 @@
 # The videu Backend Server
 
-[![Build Status](https://jenkins.sandtler.club/buildStatus/icon?job=videu%2Fbackend&build=8)](https://jenkins.sandtler.club/job/videu/job/backend/8/)
+[![Build Status](https://jenkins.sandtler.club/buildStatus/icon?job=videu%2Fbackend)](https://jenkins.sandtler.club/job/videu/job/backend/)
 [![Code Coverage](https://img.shields.io/jenkins/coverage/api?jobUrl=https%3A%2F%2Fjenkins.sandtler.club%2Fjob%2Fvideu%2Fjob%2Fbackend)](https://jenkins.sandtler.club/job/videu/job/backend/coverage/)
 
 This is the source tree of the videu backend server, the RESTful HTTP API that
@@ -21,7 +21,7 @@ This software is licensed under the AGPLv3, see the LICENSE file for details.
 
 You will need:
 
-- NodeJS >= 10
+- NodeJS >= 12.4
 - a MongoDB server
 - a UNIX system (Linux, *BSD and MacOS should all work)
 - a decent IDE with TypeScript support
