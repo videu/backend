@@ -1,6 +1,7 @@
 # The videu Backend Server
 
-![build status](https://jenkins.sandtler.club/job/videu/job/backend/badge/icon)
+[![Build Status](https://jenkins.sandtler.club/buildStatus/icon?job=videu%2Fbackend&build=8)](https://jenkins.sandtler.club/job/videu/job/backend/8/)
+[![Code Coverage](https://img.shields.io/jenkins/coverage/api?jobUrl=https%3A%2F%2Fjenkins.sandtler.club%2Fjob%2Fvideu%2Fjob%2Fbackend)](https://jenkins.sandtler.club/job/videu/job/backend/coverage/)
 
 This is the source tree of the videu backend server, the RESTful HTTP API that
 powers the [FreeTube](https://freetube.eu) platform.
