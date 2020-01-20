@@ -21,7 +21,8 @@
 
 import { ObjectId } from 'mongodb';
 import { Model, model as mongooseModel, Schema } from 'mongoose';
-import { IVideo, IVideoRating } from '../types/db/video';
+
+import { IVideo, IVideoRating } from '../../types/db/video';
 
 /** Mongoose schema for the `rating` field in the `videos` table. */
 export const videoRatingSchema: Schema<IVideoRating> = new Schema<IVideoRating>({

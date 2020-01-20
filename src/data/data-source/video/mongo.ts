@@ -21,9 +21,9 @@
 
 import { ObjectId } from 'mongodb';
 
+import { IMinimalVideoData, IVideoDataSource } from '../../../../types/data/data-source/video';
+import { IVideo } from '../../../../types/db/video';
 import { Video } from '../../../model/video';
-import { IMinimalVideoData, IVideoDataSource } from '../../../types/data/data-source/video';
-import { IVideo } from '../../../types/db/video';
 
 /**
  * Video data source for MongoDB.

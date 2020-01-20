@@ -22,7 +22,7 @@
 import { ObjectId } from 'bson';
 import { Model, model as mongooseModel, Schema } from 'mongoose';
 
-import { IUser, IUserSettings } from '../types/db/user';
+import { IUser, IUserSettings } from '../../types/db/user';
 import { emailRegex, userNameRegex } from '../util/regex';
 
 /** Mongoose schema for the `settings` field in the `users` table. */

@@ -21,10 +21,10 @@
 
 import { RequestHandler } from 'express';
 
+import { IUser } from '../../types/db/user';
+import { ILogger } from '../../types/logger';
 import { AuthError } from '../error/auth-error';
 import { HttpError } from '../error/http-error';
-import { IUser } from '../types/db/user';
-import { ILogger } from '../types/logger';
 import { jwtVerify } from '../util/jwt';
 import { Logger } from '../util/logger';
 

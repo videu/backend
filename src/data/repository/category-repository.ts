@@ -21,12 +21,15 @@
 
 import { ObjectId } from 'mongodb';
 
+import { IDataSource } from '../../../types/data/data-source';
+import {
+    ICategoryDataSource,
+    IMinimalCategoryData
+} from '../../../types/data/data-source/category';
+import { ICategoryRepository } from '../../../types/data/repository/category';
+import { ICategory } from '../../../types/db/category';
+import { IVideo } from '../../../types/db/video';
 import { ConflictError } from '../../error/conflict-error';
-import { IDataSource } from '../../types/data/data-source';
-import { ICategoryDataSource, IMinimalCategoryData } from '../../types/data/data-source/category';
-import { ICategoryRepository } from '../../types/data/repository/category';
-import { ICategory } from '../../types/db/category';
-import { IVideo } from '../../types/db/video';
 import { MongoCategoryDataSource } from '../data-source/category/mongo';
 
 /**

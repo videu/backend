@@ -21,14 +21,14 @@
 
 import { ObjectId } from 'mongodb';
 
-import { Category } from '../../../model/category';
-import { Video } from '../../../model/video';
 import {
     ICategoryDataSource,
     IMinimalCategoryData
-} from '../../../types/data/data-source/category';
-import { ICategory } from '../../../types/db/category';
-import { IVideo } from '../../../types/db/video';
+} from '../../../../types/data/data-source/category';
+import { ICategory } from '../../../../types/db/category';
+import { IVideo } from '../../../../types/db/video';
+import { Category } from '../../../model/category';
+import { Video } from '../../../model/video';
 
 /**
  * User data source for MongoDB.

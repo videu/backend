@@ -21,11 +21,11 @@
 
 import { ObjectId } from 'mongodb';
 
+import { IDataSource } from '../../../types/data/data-source';
+import { IMinimalVideoData, IVideoDataSource } from '../../../types/data/data-source/video';
+import { IVideoRepository } from '../../../types/data/repository/video';
+import { IVideo } from '../../../types/db/video';
 import { ConflictError } from '../../error/conflict-error';
-import { IDataSource } from '../../types/data/data-source';
-import { IMinimalVideoData, IVideoDataSource } from '../../types/data/data-source/video';
-import { IVideoRepository } from '../../types/data/repository/video';
-import { IVideo } from '../../types/db/video';
 import { MongoVideoDataSource } from '../data-source/video/mongo';
 
 /**

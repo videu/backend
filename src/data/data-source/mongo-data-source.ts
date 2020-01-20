@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { IBaseDocument } from '../../types/data/base-document';
-import { IDataSource } from '../../types/data/data-source';
+import { IBaseDocument } from '../../../types/data/base-document';
+import { IDataSource } from '../../../types/data/data-source';
 
 /**
  * Abstract base class for any data source that uses the mongoose API.

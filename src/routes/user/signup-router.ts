@@ -23,10 +23,10 @@ import { RequestHandler, Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { generate as randomString } from 'randomstring';
 
+import { IUser } from '../../../types/db/user';
+import { ILogger } from '../../../types/logger';
 import { userRepo } from '../../data/repository/user-repository';
 import { ConflictError } from '../../error/conflict-error';
-import { IUser } from '../../types/db/user';
-import { ILogger } from '../../types/logger';
 import { RouteLogger } from '../../util/logger';
 import { passwdHash } from '../../util/passwd-hasher';
 import { emailRegex, userNameRegex } from '../../util/regex';

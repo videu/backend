@@ -22,7 +22,7 @@
 import { ObjectId } from 'mongodb';
 import { Model, model as mongooseModel, Schema } from 'mongoose';
 
-import { IVideoClick } from '../types/db/video-click';
+import { IVideoClick } from '../../types/db/video-click';
 
 /** Mongoose schema for the `video_clicks` table. */
 export const videoClickSchema: Schema<IVideoClick> = new Schema<IVideoClick>({

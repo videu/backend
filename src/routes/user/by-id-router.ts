@@ -22,10 +22,10 @@
 import { ObjectId } from 'bson';
 import { RequestHandler, Router } from 'express';
 
+import { IUser } from '../../../types/db/user';
+import { ILogger } from '../../../types/logger';
 import { userRepo } from '../../data/repository/user-repository';
 import { HttpError } from '../../error/http-error';
-import { IUser } from '../../types/db/user';
-import { ILogger } from '../../types/logger';
 import { RouteLogger } from '../../util/logger';
 import { objectIdRegex } from '../../util/regex';
 

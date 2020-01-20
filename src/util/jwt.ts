@@ -29,9 +29,9 @@ import {
 } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 
+import { IUser } from '../../types/db/user';
 import { userRepo } from '../data/repository/user-repository';
 import { AuthError } from '../error/auth-error';
-import { IUser } from '../types/db/user';
 import { objectIdRegex } from './regex';
 
 /**

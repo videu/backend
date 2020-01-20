@@ -39,7 +39,7 @@ if (typeof global.videu === 'undefined') {
 import fs from 'fs';
 import http, { Server } from 'http';
 
-import { ILogger } from './types/logger';
+import { ILogger } from '../types/logger';
 import { Logger, parseLogLevel } from './util/logger';
 
 const log: ILogger = new Logger('Core');

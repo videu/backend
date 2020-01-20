@@ -21,9 +21,9 @@
 
 import { RequestHandler, Router } from 'express';
 
+import { IUser } from '../../../types/db/user';
+import { ILogger } from '../../../types/logger';
 import { userRepo } from '../../data/repository/user-repository';
-import { IUser } from '../../types/db/user';
-import { ILogger } from '../../types/logger';
 import { RouteLogger } from '../../util/logger';
 import { userNameRegex } from '../../util/regex';
 

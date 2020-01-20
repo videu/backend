@@ -24,7 +24,7 @@
 import { generateKeyPairSync, KeyPairSyncResult } from 'crypto';
 import { readFileSync, stat } from 'fs';
 
-import { ILogger } from '../types/logger';
+import { ILogger } from '../../types/logger';
 import { Logger } from '../util/logger';
 
 const log: ILogger = new Logger('JWT');

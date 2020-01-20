@@ -22,7 +22,7 @@
 import { ObjectId } from 'mongodb';
 import { Model, model as mongooseModel, Schema } from 'mongoose';
 
-import { IVideoVote } from '../types/db/video-vote';
+import { IVideoVote } from '../../types/db/video-vote';
 
 /** Mongoose schema for the `video_votes` table. */
 export const videoVoteSchema: Schema<IVideoVote> = new Schema<IVideoVote>({

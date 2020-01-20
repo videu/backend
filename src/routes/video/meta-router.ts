@@ -22,9 +22,9 @@
 import { RequestHandler, Router } from 'express';
 import { ObjectId } from 'mongodb';
 
+import { IVideo } from '../../../types/db/video';
+import { ILogger } from '../../../types/logger';
 import { videoRepo } from '../../data/repository/video-repository';
-import { IVideo } from '../../types/db/video';
-import { ILogger } from '../../types/logger';
 import { RouteLogger } from '../../util/logger';
 import { objectIdRegex } from '../../util/regex';
 

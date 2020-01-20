@@ -21,11 +21,11 @@
 
 import { ObjectId } from 'mongodb';
 
+import { IDataSource } from '../../../types/data/data-source';
+import { IMinimalUserData, IUserDataSource } from '../../../types/data/data-source/user';
+import { IUserRepository } from '../../../types/data/repository/user';
+import { IUser } from '../../../types/db/user';
 import { ConflictError } from '../../error/conflict-error';
-import { IDataSource } from '../../types/data/data-source';
-import { IMinimalUserData, IUserDataSource } from '../../types/data/data-source/user';
-import { IUserRepository } from '../../types/data/repository/user';
-import { IUser } from '../../types/db/user';
 import { MongoUserDataSource } from '../data-source/user/mongo';
 
 /**

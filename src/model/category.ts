@@ -22,7 +22,7 @@
 import { ObjectId } from 'mongodb';
 import { Model, model as mongooseModel, Schema } from 'mongoose';
 
-import { ICategory } from '../types/db/category';
+import { ICategory } from '../../types/db/category';
 
 /** Mongoose schema for the `categories` table. */
 export const categorySchema: Schema<ICategory> = new Schema<ICategory>({
