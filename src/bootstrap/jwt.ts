@@ -32,7 +32,7 @@ let certPath: string | undefined = process.env.VIDEU_JWT_SECRET;
 
 function generateCert() {
     const result: KeyPairSyncResult<string, string> = generateKeyPairSync('ec', {
-        namedCurve: 'secp521r1',
+        namedCurve: 'secp256k1',
         publicKeyEncoding: {
             format: 'pem',
             type: 'pkcs1',

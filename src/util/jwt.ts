@@ -20,6 +20,7 @@
  */
 
 import {
+    Algorithm,
     sign as jwtSignInternal,
     SignCallback,
     SignOptions,
@@ -39,7 +40,7 @@ import { objectIdRegex } from './regex';
  *
  * TODO: Use an environment variable for this
  */
-const SIGN_ALGO: 'ES256' | 'ES384' | 'ES512' = 'ES512';
+const SIGN_ALGO: Algorithm = 'ES256';
 
 /** The options passed to `{@link jwtSignInternal}`. */
 const SIGN_OPTS: SignOptions = {
