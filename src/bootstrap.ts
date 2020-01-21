@@ -20,6 +20,7 @@
  */
 
 import '../types/global';
+import { banner } from './util/banner';
 
 // TODO: Design a unified bootstrap system
 
@@ -70,6 +71,10 @@ import './bootstrap/jwt';
 import './bootstrap/mongo';
 
 import { app } from './app';
+
+if (banner !== null) {
+    log.i(banner);
+}
 
 // end preparation section
 
