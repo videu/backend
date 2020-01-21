@@ -19,6 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import '../../types/global';
+
 import { ILogger } from '../../types/logger';
 import { Logger } from './logger';
 

@@ -21,6 +21,8 @@
 
 import { RequestHandler } from 'express';
 
+import '../../types/express';
+
 import { IUser } from '../../types/db/user';
 import { ILogger } from '../../types/logger';
 import { AuthError } from '../error/auth-error';

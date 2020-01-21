@@ -21,6 +21,8 @@
 
 import { RequestHandler } from 'express';
 
+import '../../types/express';
+
 const realIpHeader: string = process.env.VIDEU_REAL_IP_HEADER || '';
 export let ipHeaderMiddleware: RequestHandler;
 

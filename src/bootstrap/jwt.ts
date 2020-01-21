@@ -24,6 +24,8 @@
 import { generateKeyPairSync, KeyPairSyncResult } from 'crypto';
 import { readFileSync, stat } from 'fs';
 
+import '../../types/global';
+
 import { ILogger } from '../../types/logger';
 import { Logger } from '../util/logger';
 

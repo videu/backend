@@ -19,13 +19,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { unsafeTestKeyPair } from './jwt-key';
-
 global.videu = {
     appName: 'videu test',
     logLevel: 0x3f,
     instanceId: 'unit-test',
-    jwtSecret: unsafeTestKeyPair,
+    jwtSecret: require('./jwt-key'),
     port: 4201,
     socket: null,
     mongo: {

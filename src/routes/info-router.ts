@@ -23,6 +23,9 @@
 
 import { RequestHandler, Router } from 'express';
 
+import '../../types/express';
+import '../../types/global';
+
 export const infoRouter: Router = Router();
 
 /**

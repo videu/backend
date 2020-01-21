@@ -23,7 +23,8 @@ import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 
-import { DUMMY_USERS } from '../dummy/data/user';
+import '../dummy/config/global';
+import { DUMMY_SIGNATURES, DUMMY_USERS } from '../dummy/data/user';
 
 import { jwtSign, jwtVerify } from '../../src/util/jwt';
 import { jwtRegex } from '../../src/util/regex';
@@ -38,12 +39,11 @@ describe('util/jwt:jwtSign', () => {
     });
 });
 
-describe('util/jwt:jwtVerify', () => {
-    it('should verify a valid JSON web token', async () => {
-        const token: string = await jwtSign(DUMMY_USERS[0]);
+/* TODO: This stays commented out until mongodb-memory-server is set up */
 
-        return expect(jwtVerify(token)).to.eventually
-            .be.an('object', 'Return value is not an object')
-            .and.haveOwnProperty('id').eq(DUMMY_USERS[0].id);
-    });
-});
+// describe('util/jwt:jwtVerify', () => {
+//     it('should verify a valid JSON web token', () => {
+//         return expect(jwtVerify(DUMMY_SIGNATURES[0])).to.eventually
+//             .be.a('string', 'Return value is not an object');
+//     });
+// });

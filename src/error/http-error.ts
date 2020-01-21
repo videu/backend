@@ -34,7 +34,7 @@ export class HttpError extends Error {
      * @param msg The error message.
      * @param status The HTTP status code.
      */
-    public constructor(msg: string, status: number) {
+    public constructor(msg: string, status: number = 500) {
         super(msg);
 
         this.status = status;

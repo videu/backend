@@ -68,3 +68,8 @@ export const DUMMY_USERS: IUser[] = [
         uName: 'xXb0bXx',
     }),
 ];
+
+export const DUMMY_SIGNATURES: string[] = [
+    'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMjczOWZlYjFjZmU2MjA3MzA3NDBkMCIsImlhdCI6MTU3OTYyOTA1NCwiZXhwIjoxNTgyMjIxMDU0fQ.fRFzKBwhfc19hV5nStcKbEeM6IZTVuBBOD-AAzqIvZqPpdRRiDDw_jNtCl06MuzwLlk7rhqxnF8EvbX6i1NDTg',
+
+];

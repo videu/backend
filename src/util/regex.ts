@@ -24,9 +24,9 @@ export const emailRegex: RegExp =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /** Regular expression for testing if a string is a decimal number. */
-export const decNumberRegex: RegExp = /^-?\d+(\.\d+)?$/;
+export const decNumberRegex: RegExp = /^(0|(-?(([1-9]\d*(\.\d+)?)|(0\.\d*[1-9]\d*))))(e[+-]?\d+)?$/;
 
-export const hexNumberRegex: RegExp = /^0x[0-9a-f]+$/i;
+export const hexNumberRegex: RegExp = /^0x[0-9a-fA-F]+$/;
 
 export const octNumberRegex: RegExp = /^0[0-7]+$/;
 
@@ -43,3 +43,7 @@ export const userNameRegex: RegExp = /^[a-zA-Z0-9_]{2,16}$/;
  * letters in IDs.
  */
 export const objectIdRegex: RegExp = /^[a-f0-9]{24}$/;
+
+/** A regualr expression validating JSON web tokens w/ signature. */
+export const jwtRegex: RegExp =
+    /^[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+$/;

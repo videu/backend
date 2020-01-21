@@ -21,6 +21,8 @@
 
 import mongoose from 'mongoose';
 
+import '../../types/global';
+
 import { ILogger } from '../../types/logger';
 import { Logger } from '../util/logger';
 import { validateMongoConfig } from '../util/validate-config';

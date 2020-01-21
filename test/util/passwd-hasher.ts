@@ -31,6 +31,9 @@ const HASH_ROUNDS: number = 8;
 
 const regularPasswd: string = 'aRegularPassword123';
 const tooShortPasswd: string = '<8chars';
+/* 70 chars, 74 bytes */
+const tooLongPasswd: string =
+    'ThisIsAReallyLongPasswordThatShouldGetRejectedBecauseItIsNotUnique😂😂';
 const nullCharPasswd: string = 'pass\0word123';
 const unicodePasswd: string = 'hipsterPassword😂';
 
@@ -68,6 +71,11 @@ describe('util/passwd-hasher:passwdHash', () => {
     it('should not hash a password containing NUL characters', () => {
         return expect(passwdHash(nullCharPasswd, HASH_ROUNDS)).to.eventually
             .be.rejectedWith('Password must not contain NUL characters')
+            .and.be.an.instanceOf(RangeError);
+    });
+    it('should not hash a password exceeding 72 bytes', () => {
+        return expect(passwdHash(tooLongPasswd, HASH_ROUNDS)).to.eventually
+            .be.rejectedWith('Password must be at most 72 bytes in size')
             .and.be.an.instanceOf(RangeError);
     });
 });

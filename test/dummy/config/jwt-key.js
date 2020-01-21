@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== 'development') {
  * We need to always use the same key because that is the only practical way we
  * can reliably tell if JWTs have been issued correctly in automated tests.
  */
-export const unsafeTestKeyPair: string =
+module.exports =
 `-----BEGIN EC PRIVATE KEY-----
 MHQCAQEEIMWgaggFW35j+zO0SYKkDM5iCMAN2mZBhZFYWBHIIzMdoAcGBSuBBAAK
 oUQDQgAEzqPxdN94x8heL3LjgoDOqYIOsqhSAUY9o7ZAIQIE6IdeTaViLn6F+9TD

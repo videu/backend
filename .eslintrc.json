@@ -9,7 +9,7 @@
     },
     "rules": {
         "brace-style": ["error", "1tbs"],
-        "comma-dangle": ["error", "never"],
+        "comma-dangle": ["warning", "always-multiline"],
         "comma-spacing": "error",
         "curly": ["error", "all"],
         "default-case": "off",

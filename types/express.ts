@@ -23,6 +23,7 @@ import { IUser } from './db/user';
 
 declare global {
     namespace Express {
+        /* tslint:disable-next-line:interface-name */
         interface Request {
             /**
              * Additional request data supplied from videu's master pre-hooks

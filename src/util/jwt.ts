@@ -30,6 +30,8 @@ import {
 } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 
+import '../../types/global';
+
 import { IUser } from '../../types/db/user';
 import { userRepo } from '../data/repository/user-repository';
 import { AuthError } from '../error/auth-error';
