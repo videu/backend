@@ -22,8 +22,6 @@
 import '../types/global';
 import { banner } from './util/banner';
 
-// TODO: Design a unified bootstrap system
-
 // begin preparation section
 
 const timeOnStart = Date.now();
@@ -67,14 +65,16 @@ if (Logger.shouldLog(Logger.LEVEL_DEBUG)) {
     console.info('\nConfiguration:\n%o\n', global.videu);
 }
 
-import './bootstrap/jwt';
-import './bootstrap/mongo';
+import { jwtBootstrap } from './bootstrap/jwt';
+import { mongoBootstrap } from './bootstrap/mongo';
 
 import { app } from './app';
 
 if (banner !== null) {
     log.i(banner);
 }
+
+Promise.all([jwtBootstrap(), mongoBootstrap()]);
 
 // end preparation section
 

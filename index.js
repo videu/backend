@@ -71,7 +71,7 @@ global.videu = {
     instanceId: process.env.VIDEU_INSTANCE_ID || 'default',
     socket: process.env.VIDEU_SOCKET || null,
     port: Number.parseInt(process.env.VIDEU_PORT, 10) || 4201,
-    jwtSecret: process.env.VIDEU_JWT_SECRET,
+    jwt: {},
     mongo: {
         host: process.env.VIDEU_MONGO_HOST || '127.0.0.1',
         port: Number.parseInt(process.env.VIDEU_MONGO_PORT, 10) || 27017,
@@ -97,11 +97,6 @@ try {
     global.videu.version = _parseVersion(require('./package.json').version);
 } catch (err) {
     console.error(err);
-    process.exit(1);
-}
-
-if (typeof global.videu.jwtSecret !== 'string' || global.videu.jwtSecret.length === 0) {
-    console.error('Missing VIDEU_JWT_SECRET environment variable! Aborting.');
     process.exit(1);
 }
 

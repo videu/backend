@@ -74,7 +74,7 @@ export function jwtSign(user: IUser): Promise<string> {
 
         jwtSignInternal(
             {id: user.id},
-            global.videu.jwtSecret,
+            global.videu.jwt.privKey,
             SIGN_OPTS,
             cb
         );
@@ -125,6 +125,6 @@ export function jwtVerify(jwt: string): Promise<IUser> {
             }
         };
 
-        jwtVerifyInternal(jwt, global.videu.jwtSecret, VERIFY_OPTS, cb);
+        jwtVerifyInternal(jwt, global.videu.jwt.pubKey, VERIFY_OPTS, cb);
     });
 }

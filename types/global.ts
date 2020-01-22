@@ -21,6 +21,17 @@
 
 /* tslint:disable:interface-name */
 
+/**
+ * A DER (preferred) or PEM encoded EC secp256k1 key pair used for signing and
+ * validating JSON Web Tokens.
+ */
+export interface JWTKeyPair {
+    /** The public key (DER or PEM encoded). */
+    pubKey: Buffer | string;
+    /** The private key (DER or PEM encoded). */
+    privKey: Buffer | string;
+}
+
 export interface MongoConfig {
     /** The MongoDB server host name or IP address. */
     readonly host: string;
@@ -126,8 +137,8 @@ export interface MasterConfig {
     /** The unique name of this backend instance. */
     readonly instanceId: string;
 
-    /** The secret or RSA certificate filename used for signing JWTs. */
-    jwtSecret: string;
+    /** The key pair for signing JWTs. */
+    jwt: JWTKeyPair;
 
     /** The port this server is listening on. */
     readonly port: number | null;

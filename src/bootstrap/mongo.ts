@@ -23,35 +23,39 @@ import mongoose from 'mongoose';
 
 import '../../types/global';
 
+import { FBootstrapper } from '../../types/bootstrapper';
 import { ILogger } from '../../types/logger';
 import { Logger } from '../util/logger';
 import { validateMongoConfig } from '../util/validate-config';
 
 const log: ILogger = new Logger('Mongo');
 
-if (!validateMongoConfig()) {
-    log.i('Exiting due to fatal error');
-    process.exitCode = 1;
-    process.exit();
-}
+export const mongoBootstrap: FBootstrapper = async () => {
+    if (!validateMongoConfig()) {
+        log.i('Exiting due to fatal error');
+        process.exitCode = 1;
+        process.exit();
+    }
 
-const mongooseOpts: any = {
-    dbName: global.videu.mongo.db,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    ssl: global.videu.mongo.ssl,
-};
-
-if (typeof global.videu.mongo.authSource === 'string') {
-    mongooseOpts.authSource = global.videu.mongo.authSource;
-    mongooseOpts.auth = {
-        user: global.videu.mongo.user,
-        password: global.videu.mongo.passwd,
+    const mongooseOpts: any = {
+        dbName: global.videu.mongo.db,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        ssl: global.videu.mongo.ssl,
     };
-}
 
-mongoose.set('useCreateIndex', true);
-mongoose.connect(
-    `mongodb://${global.videu.mongo.host}:${global.videu.mongo.port}`,
-    mongooseOpts
-);
+    if (typeof global.videu.mongo.authSource === 'string') {
+        mongooseOpts.authSource = global.videu.mongo.authSource;
+        mongooseOpts.auth = {
+            user: global.videu.mongo.user,
+            password: global.videu.mongo.passwd,
+        };
+    }
+
+    mongoose.set('useCreateIndex', true);
+    await mongoose.connect(
+        `mongodb://${global.videu.mongo.host}:${global.videu.mongo.port}`,
+        mongooseOpts
+    );
+    log.i(`Connected to MongoDB on ${global.videu.mongo.host}:${global.videu.mongo.port}`);
+};

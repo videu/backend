@@ -1,5 +1,6 @@
 /**
- * @file Load the ECDSA key specified in the `VIDEU_JWT_SECRET' environment variable.
+ * @file Load the ECDSA key specified in the `VIDEU_JWT_PRIVKEY` and
+ * `VIDEU_JWT_PUBKEY` environment variable.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,54 +20,116 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// TODO: Clean up this horrible mess
+import { ECKeyPairOptions, generateKeyPair } from 'crypto';
 
-import { generateKeyPairSync, KeyPairSyncResult } from 'crypto';
-import { readFileSync, stat } from 'fs';
+import { JWTKeyPair } from '../../types/global';
 
-import '../../types/global';
-
+import { FBootstrapper } from '../../types/bootstrapper';
 import { ILogger } from '../../types/logger';
+import { readFile, readFileStr, stat, writeFile } from '../util/fs';
 import { Logger } from '../util/logger';
 
 const log: ILogger = new Logger('JWT');
-let certPath: string | undefined = process.env.VIDEU_JWT_SECRET;
+let pubKeyPath: string | undefined = process.env.VIDEU_JWT_PUBKEY;
+let privKeyPath: string | undefined = process.env.VIDEU_JWT_PRIVKEY;
 
-function generateCert() {
-    const result: KeyPairSyncResult<string, string> = generateKeyPairSync('ec', {
-        namedCurve: 'secp256k1',
-        publicKeyEncoding: {
-            format: 'pem',
-            type: 'pkcs1',
-        },
-        privateKeyEncoding: {
-            format: 'pem',
-            type: 'pkcs8',
-        },
+/**
+ * Generate a new secp256k1 EC key pair w/ SHA256.
+ */
+function generateCert(): Promise<JWTKeyPair> {
+    return new Promise((resolve, reject) => {
+        const opts: ECKeyPairOptions<'der', 'der'> = {
+            namedCurve: 'secp256k1',
+            publicKeyEncoding: {
+                format: 'der',
+                type: 'spki',
+            },
+            privateKeyEncoding: {
+                format: 'der',
+                type: 'pkcs8',
+            },
+        };
+
+        generateKeyPair('ec', opts, (err, pubKey, privKey) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve({
+                    pubKey: pubKey,
+                    privKey: privKey,
+                });
+            }
+        });
     });
-    global.videu.jwtSecret = result.privateKey + '\n' + result.publicKey;
 }
 
-if (certPath === undefined) {
+/**
+ * Read a public or private key from a file.
+ * If the file extension is `.pem`, the file contents are decoded as a string.
+ * In all other cases, the return value is a `Buffer`.
+ *
+ * @param path The path to the key.
+ * @return the public or private key.
+ */
+async function readKey(path: string): Promise<Buffer | string> {
+    const pathParts: string[] = path.split('.');
+    const extension = pathParts[pathParts.length - 1];
+
+    if (extension.toLowerCase() === 'pem') {
+        return await readFileStr(path);
+    } else {
+        return await readFile(path);
+    }
+}
+
+/** Bootstrapper for loading the JWT key. */
+export const jwtBootstrap: FBootstrapper = async () => {
+    /* TODO: Clean this mess up, chapter 2 */
     if (process.env.NODE_ENV === 'development') {
-        certPath = 'jwt.pem';
-    } else {
-        log.s('Not in development mode and no JWT signing certificate specified');
-        // TODO: gracefully shut down
-        process.exit(1);
-    }
-}
-
-stat(certPath, err => {
-    if (err) {
-        if (process.env.NODE_ENV === 'development') {
-            log.d('Generating an ECDSA certificate for JWT');
-            generateCert();
-        } else {
-            log.s(`Certificate file ${certPath} not found`);
-            process.exit(1);
+        if (pubKeyPath === undefined) {
+            pubKeyPath = 'jwt.pub.der';
         }
-    } else {
-        global.videu.jwtSecret = new TextDecoder().decode(readFileSync(certPath || ''));
+        if (privKeyPath === undefined) {
+            privKeyPath = 'jwt.der';
+        }
+    } else if (pubKeyPath === undefined || privKeyPath === undefined) {
+        throw new Error('Development is disabled and no JWT certificate was specified');
     }
-});
+
+    try {
+        /* TODO: Check certificate parts individually */
+        await stat(pubKeyPath);
+        await stat(privKeyPath);
+    } catch (statErr) {
+        if (process.env.NODE_ENV !== 'development') {
+            throw new Error(
+                'Development is disabled and JWT certificate file "'
+                + pubKeyPath
+                + '" does not exist'
+            );
+        }
+
+        log.i('Generating an ECDSA certificate for JWT');
+
+        try {
+            global.videu.jwt = await generateCert();
+
+            if (
+                typeof global.videu.jwt.privKey === 'string'
+                || typeof global.videu.jwt.pubKey === 'string'
+            ) {
+                throw new Error('generateCert() returned PEM format, I am too lazy to handle this');
+            }
+
+            await writeFile(pubKeyPath, global.videu.jwt.pubKey);
+            await writeFile(privKeyPath, global.videu.jwt.privKey);
+        } catch (genErr) {
+            log.s('Generating the key pair failed', genErr);
+            throw new Error('Cannot continue without a JWT certificate');
+        }
+    } finally {
+        global.videu.jwt.pubKey = await readKey(pubKeyPath);
+        global.videu.jwt.privKey = await readKey(privKeyPath);
+        log.i('Certificate loaded');
+    }
+};
