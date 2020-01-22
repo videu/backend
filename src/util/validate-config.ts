@@ -28,8 +28,18 @@ export function validateJwTConfig(): boolean {
     const log: ILogger = new Logger('JWT');
     let valid: boolean = true;
 
-    if (typeof global.videu.jwtSecret !== 'string') {
-        log.s('No certificate path specified');
+    if (typeof global.videu.jwt !== 'object') {
+        log.s('JWT public and private keys are not present');
+        valid = false;
+    }
+
+    if (typeof global.videu.jwt.pubKey === 'undefined') {
+        log.s('JWT public key is not present');
+        valid = false;
+    }
+
+    if (typeof global.videu.jwt.privKey === 'undefined') {
+        log.s('JWT private key is not present');
         valid = false;
     }
 
