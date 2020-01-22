@@ -26,21 +26,14 @@ if (process.env.NODE_ENV !== 'development') {
     );
 }
 
-/**
- * **NEVER USE THIS KEY FOR ANYTHING ELSE THAN RUNNING UNIT TESTS.**
- * **ITS PRIVATE KEY IS PUBLICLY AVAILABLE ON THE GIT REPOSITORY.**
- *
- * A dummy `secp256k1` key pair for unit testing.  **ONLY** for unit testing.
- * We need to always use the same key because that is the only practical way we
- * can reliably tell if JWTs have been issued correctly in automated tests.
- */
-module.exports =
+const privKey =
 `-----BEGIN EC PRIVATE KEY-----
 MHQCAQEEIMWgaggFW35j+zO0SYKkDM5iCMAN2mZBhZFYWBHIIzMdoAcGBSuBBAAK
 oUQDQgAEzqPxdN94x8heL3LjgoDOqYIOsqhSAUY9o7ZAIQIE6IdeTaViLn6F+9TD
 uUEuPIm7cW5AxLiCQR3pfp3dKUSSNg==
------END EC PRIVATE KEY-----
------BEGIN CERTIFICATE-----
+-----END EC PRIVATE KEY-----`;
+const pubKey =
+`-----BEGIN CERTIFICATE-----
 MIIBuzCCAWOgAwIBAgIICJKqF5o1kZ4wCgYIKoZIzj0EAwIwHTEbMBkGA1UEAxMS
 dmlkZXUgSldUIHRlc3Qga2V5MB4XDTIwMDExOTEzMTEwMFoXDTIxMDExODEzMTEw
 MFowHTEbMBkGA1UEAxMSdmlkZXUgSldUIHRlc3Qga2V5MFYwEAYHKoZIzj0CAQYF
@@ -53,3 +46,16 @@ hkgBhvhCAQ0EERYPeGNhIGNlcnRpZmljYXRlMAoGCCqGSM49BAMCA0YAMEMCH2rW
 GGnz57n2XdstL9f3UsWY
 -----END CERTIFICATE-----
 `;
+
+/**
+ * **NEVER USE THIS KEY FOR ANYTHING ELSE THAN RUNNING UNIT TESTS.**
+ * **ITS PRIVATE KEY IS PUBLICLY AVAILABLE ON THE GIT REPOSITORY.**
+ *
+ * A dummy `secp256k1` key pair for unit testing.  **ONLY** for unit testing.
+ * We need to always use the same key because that is the only practical way we
+ * can reliably tell if JWTs have been issued correctly in automated tests.
+ */
+module.exports = {
+    pubKey: pubKey,
+    privKey: privKey,
+};

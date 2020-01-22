@@ -23,7 +23,7 @@ global.videu = {
     appName: 'videu test',
     logLevel: 0x3f,
     instanceId: 'unit-test',
-    jwtSecret: require('./jwt-key'),
+    jwt: require('./jwt-key'),
     port: 4201,
     socket: null,
     mongo: {
