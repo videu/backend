@@ -20,7 +20,7 @@
  */
 
 import { ObjectId } from 'mongodb';
-import { Model, model as mongooseModel, Schema } from 'mongoose';
+import { Model, model as createModel, Schema } from 'mongoose';
 
 import { ICategory } from '../../types/db/category';
 
@@ -53,4 +53,4 @@ categorySchema.methods.toClientJSON =
 
 /** Mongoose model for the `categories` table. */
 export const Category: Model<ICategory> =
-    mongooseModel('Category', categorySchema);
+    createModel('Category', categorySchema);

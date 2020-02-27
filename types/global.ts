@@ -54,11 +54,8 @@ export interface MongoConfig {
      */
     readonly passwd: string | null;
 
-    /**
-     * The MongoDB database to authenticate against.
-     * Defaults to `admin`.
-     */
-    readonly authSource: string;
+    /** The MongoDB database to authenticate against. */
+    readonly authSource: string | null;
 
     /** Whether SSL should be used. */
     readonly ssl: boolean;
@@ -116,7 +113,7 @@ export interface VersionConfig {
     /** The patch number. */
     readonly patch: number;
 
-    /** Pptional tags like 'dev' or 'rc1'. */
+    /** Optional tags like 'dev' or 'rc1'. */
     readonly tags: string[];
 }
 
@@ -161,22 +158,23 @@ declare global {
         interface Global {
 
             /*
-            * NOTE:
-            * Even though TypeScript's (in this case debatable) choice of keywords
-            * and syntax suggests otherwise, this definition does not *override*
-            * but merely *extend* the original one as found in `@types/node`.
-            */
+             * NOTE:
+             * Even though TypeScript's (in this case debatable) choice of
+             * keywords and syntax suggests otherwise, this definition does not
+             * *override* but merely *extend* the original one as found in
+             * `@types/node`.
+             */
 
             /*
-            * AND ANOTHER NOTE:
-            * The reason why most configuration values are declared readonly is
-            * basically security and reliability: values like the database
-            * connection info are not intended to be changed during runtime, and
-            * setting these fields readonly prevents any stupid decisions I might
-            * happen to make at 3 am in the morning.  The only place where
-            * configuration values should be set is the plain JavaScript
-            * bootstrapping code found in `/bootstrap` and `/index.js`.
-            */
+             * AND ANOTHER NOTE:
+             * The reason why most configuration values are declared readonly is
+             * basically security and reliability: values like the database
+             * connection info are not intended to be changed during runtime,
+             * and setting these fields readonly prevents any stupid decisions
+             * I might happen to make at 3 am in the morning.  The only place
+             * where configuration values should be set is the plain JavaScript
+             * bootstrapping code found in `/bootstrap` and `/index.js`.
+             */
 
             /** Global root configuration object for the videu platform. */
             readonly videu: MasterConfig;

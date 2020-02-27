@@ -20,7 +20,7 @@
  */
 
 import { ObjectId } from 'mongodb';
-import { Model, model as mongooseModel, Schema } from 'mongoose';
+import { Model, model as createModel, Schema } from 'mongoose';
 
 import { IVideoClick } from '../../types/db/video-click';
 
@@ -42,4 +42,4 @@ export const videoClickSchema: Schema<IVideoClick> = new Schema<IVideoClick>({
 
 /** Mongoose model for the `video_clicks` table. */
 export const VideoClick: Model<IVideoClick> =
-    mongooseModel('VideoClick', videoClickSchema);
+    createModel('VideoClick', videoClickSchema);

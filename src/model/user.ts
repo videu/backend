@@ -20,7 +20,7 @@
  */
 
 import { ObjectId } from 'bson';
-import { Model, model as mongooseModel, Schema } from 'mongoose';
+import { Model, model as createModel, Schema } from 'mongoose';
 
 import { IUser, IUserSettings } from '../../types/db/user';
 import { emailRegex, userNameRegex } from '../util/regex';
@@ -125,4 +125,4 @@ userSchema.methods.toClientJSON =
     };
 
 /** Mongoose model for the `users` database. */
-export const User: Model<IUser> = mongooseModel<IUser>('User', userSchema);
+export const User: Model<IUser> = createModel<IUser>('User', userSchema);

@@ -20,7 +20,7 @@
  */
 
 import { ObjectId } from 'mongodb';
-import { Model, model as mongooseModel, Schema } from 'mongoose';
+import { Model, model as createModel, Schema } from 'mongoose';
 
 import { IVideo, IVideoRating } from '../../types/db/video';
 
@@ -73,4 +73,4 @@ videoSchema.methods.toClientJSON =
 
 /** Mongoose model for the `videos` table. */
 export const Video: Model<IVideo> =
-    mongooseModel<IVideo>('Video', videoSchema);
+    createModel<IVideo>('Video', videoSchema);
