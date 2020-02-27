@@ -19,11 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ObjectId } from 'mongodb';
-import { Document } from 'mongoose';
-
 import { IBaseDocument } from '../data/base-document';
-import IRepository from '../data/repository';
 
 export interface IUserSettings extends IBaseDocument<IUserSettings> {
     /** Whether this user is subscribed to the newsletter. */

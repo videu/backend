@@ -29,7 +29,6 @@ import {
 import { ICategoryRepository } from '../../../types/data/repository/category';
 import { ICategory } from '../../../types/db/category';
 import { IVideo } from '../../../types/db/video';
-import { ConflictError } from '../../error/conflict-error';
 import { MongoCategoryDataSource } from '../data-source/category/mongo';
 
 /**

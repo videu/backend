@@ -19,8 +19,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { IBaseDocument, FToClientJSON } from '../data/base-document';
 import { ObjectId } from 'bson';
+
+import { IBaseDocument } from '../data/base-document';
 
 /**
  * Represents the rating cache for a video.
@@ -49,7 +50,7 @@ export interface IVideo extends IBaseDocument<IVideo> {
     /** The rating this video has. */
     rating: IVideoRating;
     /** The video tags. */
-    tags: Array<string>;
+    tags: string[];
     /** The time this video was uploaded. */
     time: Date;
     /** The video title. */

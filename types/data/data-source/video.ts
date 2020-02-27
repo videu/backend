@@ -19,10 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Binary, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
-import { IDataSource } from '../data-source';
 import { IVideo } from '../../db/video';
+import { IDataSource } from '../data-source';
 
 export interface IMinimalVideoData {
     _id?: ObjectId;

@@ -21,9 +21,9 @@
 
 import { ObjectId } from 'mongodb';
 
-import { User } from '../../../model/user';
 import { IMinimalUserData, IUserDataSource } from '../../../../types/data/data-source/user';
 import { IUser } from '../../../../types/db/user';
+import { User } from '../../../model/user';
 
 /**
  * User data source for Redis.

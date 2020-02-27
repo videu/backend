@@ -20,10 +20,8 @@
  */
 
 import { ObjectId } from 'mongodb';
-import { Document } from 'mongoose';
 
 import { IBaseDocument } from '../data/base-document';
-import IRepository from '../data/repository';
 
 /**
  * Interface definition for categories.

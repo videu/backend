@@ -21,10 +21,9 @@
 
 import { ObjectId } from 'mongodb';
 
-import { IRepository } from '../repository';
 import { IVideo } from '../../db/video';
 import { IMinimalVideoData } from '../data-source/video';
-import { ConflictError } from '../../../src/error/conflict-error';
+import { IRepository } from '../repository';
 
 /**
  * Interface for the video repository.

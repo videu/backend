@@ -21,9 +21,9 @@
 
 import { ObjectId } from 'mongodb';
 
-import { IRepository } from '../repository';
 import { IUser } from '../../db/user';
 import { IMinimalUserData } from '../data-source/user';
+import { IRepository } from '../repository';
 
 export interface IUserRepository extends IRepository<IUser> {
     delete(id: ObjectId): Promise<void>;

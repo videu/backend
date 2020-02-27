@@ -21,10 +21,9 @@
 
 import { ObjectId } from 'mongodb';
 
-import { IRepository } from '../repository';
 import { ICategory } from '../../db/category';
 import { IVideo } from '../../db/video';
-import { IMinimalCategoryData } from '../data-source/category';
+import { IRepository } from '../repository';
 
 export interface ICategoryRepository extends IRepository<ICategory> {
     delete(id: ObjectId): Promise<void>;

@@ -44,6 +44,6 @@ export interface IRepository<T extends IBaseDocument<T>> {
      *
      * @returns All data sources.
      */
-    getDataSources(): IDataSource<T>[];
+    getDataSources(): Array<IDataSource<T>>;
 
 }

@@ -19,6 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* TODO: Actually implement this shit */
+
 import redis from 'redis';
 
 /** Redis database id for users. */

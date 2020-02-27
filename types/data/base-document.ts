@@ -21,7 +21,6 @@
 
 import { Document } from 'mongoose';
 
-
 /**
  * Transform this {@link Document} into a JSON object that is safe to send
  * to clients; i.e. does not contain anything users should not see.
@@ -33,9 +32,8 @@ import { Document } from 'mongoose';
  *                        sensitive data like email addresses.
  * @returns This document as a JSON object for clients.
  */
-export interface FToClientJSON<T extends IBaseDocument<T>> {
-    (this: T, includePrivates?: boolean): object;
-}
+export type FToClientJSON<T extends IBaseDocument<T>> =
+    (this: T, includePrivates?: boolean) => object;
 
 /**
  * Base interface for any database type.

@@ -21,9 +21,9 @@
 
 import { Binary, ObjectId } from 'mongodb';
 
-import { IDataSource } from '../data-source';
 import { ICategory } from '../../db/category';
 import { IVideo } from '../../db/video';
+import { IDataSource } from '../data-source';
 
 export interface IMinimalCategoryData {
     _id?: ObjectId;
