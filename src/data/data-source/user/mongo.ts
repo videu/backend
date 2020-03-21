@@ -66,7 +66,7 @@ export class MongoUserDataSource implements IUserDataSource {
 
     /** @inheritdoc */
     public async update(user: IUser): Promise<void> {
-        await User.update(null, user).exec();
+        await user.save();
     }
 
     /**

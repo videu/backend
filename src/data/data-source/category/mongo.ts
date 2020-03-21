@@ -68,7 +68,7 @@ export class MongoCategoryDataSource implements ICategoryDataSource {
 
     /** @inheritdoc */
     public async update(category: ICategory): Promise<void> {
-        await Category.update(null, category).exec();
+        await category.save();
     }
 
 }

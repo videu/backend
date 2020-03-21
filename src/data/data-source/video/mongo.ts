@@ -87,7 +87,7 @@ export class MongoVideoDataSource implements IVideoDataSource {
 
     /** @inheritdoc */
     public async update(video: IVideo): Promise<void> {
-        await Video.update(null, video).exec();
+        await video.save();
     }
 
 }
