@@ -28,6 +28,7 @@ import { IVote } from './vote';
  * Represents a single vote on a video or comment from an individual user.
  */
 export interface IVideoVote extends IBaseDocument<IVideoVote>, IVote {
+    id: undefined;
     /** The video id. */
     video_id: ObjectId;
 }

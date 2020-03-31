@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { IBaseDocument } from './base-document';
+import { Document } from 'mongoose';
 
 /**
  * Base interface for all data sources.
@@ -27,8 +27,13 @@ import { IBaseDocument } from './base-document';
  * A data source is responsible for obtaining data from a single source, like a
  * cache or database server.  Respositories are the only element interacting
  * with data sources directly.
+ *
+ * @param T The mongoose document type this DataSource manages.  This is
+ *     required to ensure type safety when adding or removing data sources
+ *     to/from a repository.  Methods from implementing classes may ONLY have
+ *     return values of this type (or rather Promises for it).
  */
-export interface IDataSource<T extends IBaseDocument<T>> {
+export interface IDataSource<T extends Document> {
 
     /**
      * If `true`, this data source stores all data on the local machine and not

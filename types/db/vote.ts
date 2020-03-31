@@ -22,6 +22,7 @@
 import { ObjectId } from 'mongodb';
 
 export interface IVote {
+    id: undefined;
     /** The user id. */
     user_id: ObjectId;
     /** `true` for upvote, `false` for downvote. */

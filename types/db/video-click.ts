@@ -27,6 +27,7 @@ import { IBaseDocument } from '../data/base-document';
  * Represents a single video view.
  */
 export interface IVideoClick extends IBaseDocument<IVideoClick> {
+    id: undefined;
     video_id: ObjectId;
     user_id: ObjectId;
     ts: Date;

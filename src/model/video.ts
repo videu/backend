@@ -38,7 +38,6 @@ export const videoRatingSchema: Schema<IVideoRating> = new Schema<IVideoRating>(
 
 /** Mongoose schema for the `videos` table. */
 export const videoSchema: Schema<IVideo> = new Schema<IVideo>({
-    _id: ObjectId,
     category_id: {
         type: ObjectId,
         index: true,
@@ -59,17 +58,22 @@ export const videoSchema: Schema<IVideo> = new Schema<IVideo>({
     views: Number,
 });
 
-videoSchema.methods.toClientJSON =
-    function(this: IVideo, showPrivates?: boolean): object {
-        return {
-            id: this.id,
-            user_id: this.user_id,
-            category_id: this.category_id,
-            description: this.description,
-            rating: this.rating.toClientJSON(),
-            time: this.time.getTime(),
-        };
+videoSchema.methods.toPublicJSON = function() {
+    return {
+        id: this.id,
+        userId: this.user_id.toHexString(),
+        categoryId: this.category_id.toHexString(),
+        description: this.description,
+        rating: {
+            upvotes: this.rating.u,
+            downvotes: this.rating.d,
+        },
+        tags: this.tags,
+        time: this.time.getTime(),
+        title: this.title,
+        views: this.views,
     };
+};
 
 /** Mongoose model for the `videos` table. */
 export const Video: Model<IVideo> =

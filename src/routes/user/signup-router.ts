@@ -122,7 +122,7 @@ export const signupPostHandler: RequestHandler = async (req, res, next) => {
 
     res.status(201).json({
         msg: 'success',
-        user: user.toClientJSON(true),
+        user: user.toPrivateJSON(),
     });
 };
 signupRouter.post('/', signupPostHandler);

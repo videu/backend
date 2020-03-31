@@ -20,6 +20,7 @@
  */
 
 import { IBaseDocument } from '../data/base-document';
+import { IPrivateUserJSON, IUserJSON } from '../json/user';
 
 export interface IUserSettings extends IBaseDocument<IUserSettings> {
     /** Whether this user is subscribed to the newsletter. */
@@ -28,7 +29,12 @@ export interface IUserSettings extends IBaseDocument<IUserSettings> {
     showPP: boolean;
 }
 
-export interface IUser extends IBaseDocument<IUser> {
+/**
+ * Represents a single MongoDB database document with user data.
+ */
+export interface IUser extends IBaseDocument<IUser, IUserJSON, IPrivateUserJSON> {
+    /** Convenience getter for the `_id` field. */
+    id: string;
     /** The activation token. */
     activationToken?: string;
     /** The display name. */

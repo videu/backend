@@ -1,5 +1,5 @@
 /**
- * @file Mongoose schema and model definition for the `video_votes` table.
+ * @file JSON format specs for category data.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,24 +19,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ObjectId } from 'mongodb';
-import { Model, model as createModel, Schema } from 'mongoose';
-
-import { IVideoVote } from '../../types/db/video-vote';
-
-/** Mongoose schema for the `video_votes` table. */
-export const videoVoteSchema: Schema<IVideoVote> = new Schema<IVideoVote>({
-    video_id: {
-        type: ObjectId,
-        index: true,
-    },
-    user_id: {
-        type: ObjectId,
-        index: true,
-    },
-    val: Boolean,
-}, { _id: false });
-
-/** Mongoose model for the `video_votes` table. */
-export const VideoVote: Model<IVideoVote> =
-    createModel('VideoVote', videoVoteSchema);
+/**
+ * A JSON object carrying information on a single category.
+ */
+export interface ICategoryJSON {
+    /** The parent category id, or `undefined` if this is a top-level category. */
+    parentId?: string;
+    /** All child categories. */
+    childIds: string[];
+    /** The category name. */
+    name: string;
+    /** The category description. */
+    desc: string;
+    /** Some keywords for searching. */
+    tags: string[];
+}

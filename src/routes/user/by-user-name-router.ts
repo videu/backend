@@ -62,7 +62,7 @@ const byUserNameGetHandler: RequestHandler = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(user.toClientJSON());
+        res.status(200).json(user.toPublicJSON());
         return;
     } catch (err) {
         log.e(`GET: Error retrieving user id ${userName}`, err);

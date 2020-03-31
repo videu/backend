@@ -37,13 +37,6 @@ export const userSettingsSchema: Schema<IUserSettings> = new Schema<IUserSetting
     },
 }, { _id: false });
 
-userSettingsSchema.methods.toClientJSON = function() {
-    return {
-        newsletter: this.newsletter,
-        showPP: this.showPP,
-    };
-};
-
 /** Mongoose schema for the `users` table. */
 export const userSchema: Schema<IUser> = new Schema<IUser>({
     _id: ObjectId,
@@ -100,29 +93,31 @@ export const userSchema: Schema<IUser> = new Schema<IUser>({
     },
 });
 
-/**
- * Return a JSON object that only contains data safe to send to clients.
- *
- * @param showPrivates Whether to include private information like the email
- *                     address in the JSON object.
- */
-userSchema.methods.toClientJSON =
-    function(this: IUser, showPrivates?: boolean) {
-        const json: any = {
-            id: this.id,
-            displayName: this.dName,
-            userName: this.uName,
-            joined: this.joined.getTime(),
-            subCount: this.subCount,
-        };
-
-        if (showPrivates === true) {
-            json.email = this.email;
-            json.settings = this.settings.toClientJSON();
-        }
-
-        return json;
+userSchema.methods.toPublicJSON = function() {
+    return {
+        id: this.id,
+        displayName: this.dName,
+        userName: this.uName,
+        joined: this.joined.getTime(),
+        subCount: this.subCount,
     };
+};
+
+userSchema.methods.toPrivateJSON = function() {
+    return {
+        id: this.id,
+        displayName: this.dName,
+        userName: this.uName,
+        joined: this.joined.getTime(),
+        subCount: this.subCount,
+
+        email: this.email,
+        settings: {
+            newsletter: this.settings.newsletter,
+            showPP: this.settings.showPP,
+        },
+    };
+};
 
 /** Mongoose model for the `users` database. */
 export const User: Model<IUser> = createModel<IUser>('User', userSchema);

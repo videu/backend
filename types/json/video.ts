@@ -1,5 +1,5 @@
 /**
- * @file Type definitions for the `categories` table.
+ * @file JSON format specs for video data.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,25 +19,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ObjectId } from 'mongodb';
-
-import { IBaseDocument } from '../data/base-document';
-import { ICategoryJSON } from '../json/category';
-
 /**
- * Interface definition for categories.
+ * A JSON object carrying video data either received from or sent to clients.
  */
-export interface ICategory extends IBaseDocument<ICategory, ICategoryJSON> {
-    /** Convenience getter for the `_id` field. */
+export interface IVideoJSON {
+    /** The video id. */
     id: string;
-    /** The parent category id, or `undefined` if this is a top-level category. */
-    parent_id?: ObjectId;
-    /** All child categories. */
-    children: ObjectId[];
-    /** The category name. */
-    name: string;
-    /** The category description. */
-    desc: string;
-    /** Some keywords for searching. */
+    /** The category id this video belongs to. */
+    categoryId: string;
+    /** The user id who uploaded this video. */
+    userId: string;
+    /** The video description. */
+    description: string;
+    /** The rating this video has. */
+    rating: {
+        /** The total amount of upvotes. */
+        upvotes: number;
+        /** The total amount of downvotes. */
+        downvotes: number;
+    };
+    /** The video tags. */
     tags: string[];
+    /** The time this video was uploaded as a UNIX timestamp in milliseconds. */
+    time: number;
+    /** The video title. */
+    title: string;
+    /** The amount of views this video has. */
+    views: number;
 }

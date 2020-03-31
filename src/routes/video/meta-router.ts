@@ -56,7 +56,7 @@ export const metaGetHandler: RequestHandler = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(video.toClientJSON());
+        res.status(200).json(video.toPublicJSON());
         return;
     } catch (err) {
         log.e(`GET: Database error while retrieving id ${id}`, err);

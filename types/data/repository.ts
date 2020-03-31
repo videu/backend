@@ -19,7 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { IBaseDocument } from './base-document';
+import { Document } from 'mongoose';
+
 import { IDataSource } from './data-source';
 
 /**
@@ -29,8 +30,10 @@ import { IDataSource } from './data-source';
  * interface that routers interact with in order to get their data, and its sole
  * responsibility is to select an appropriate data source for obtaining said
  * data.
+ *
+ * @param T The Document type this repository takes care of.
  */
-export interface IRepository<T extends IBaseDocument<T>> {
+export interface IRepository<T extends Document> {
 
     /**
      * Add a data source to this repository.

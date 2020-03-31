@@ -22,6 +22,7 @@
 import { ObjectId } from 'bson';
 
 import { IBaseDocument } from '../data/base-document';
+import { IVideoJSON } from '../json/video';
 
 /**
  * Represents the rating cache for a video.
@@ -29,6 +30,7 @@ import { IBaseDocument } from '../data/base-document';
  * table contains the official rating data.
  */
 export interface IVideoRating extends IBaseDocument<IVideoRating> {
+    id: undefined;
     /** The amount of upvotes. */
     u: number;
     /** The amount of downvotes. */
@@ -38,9 +40,9 @@ export interface IVideoRating extends IBaseDocument<IVideoRating> {
 /**
  * Represents a single document in the `videos` table.
  */
-export interface IVideo extends IBaseDocument<IVideo> {
-    /** The video id. */
-    _id: ObjectId;
+export interface IVideo extends IBaseDocument<IVideo, IVideoJSON> {
+    /** Convenience getter for the `_id` field. */
+    id: string;
     /** The category id this video belongs to. */
     category_id: ObjectId;
     /** The user id who uploaded this video. */

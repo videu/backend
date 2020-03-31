@@ -74,7 +74,7 @@ export const authGetHandler: RequestHandler = async (req, res, next) => {
 
     res.status(200).json({
         msg: 'success',
-        user: user.toClientJSON(true),
+        user: user.toPrivateJSON(),
     });
 };
 authRouter.get('/', authGetHandler);
@@ -133,7 +133,7 @@ export const authPostHandler: RequestHandler = async (req, res, next) => {
             res.status(200).json({
                 msg: 'success',
                 token: token,
-                user: user.toClientJSON(true),
+                user: user.toPrivateJSON(),
             });
             return;
         } else {

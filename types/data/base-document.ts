@@ -1,5 +1,5 @@
 /**
- * @file Type definitions for `video` objects.
+ * @file Base interface definition for all documents.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -28,27 +28,40 @@ import { Document } from 'mongoose';
  * **Never** send anything other than the return value of this function to
  * clients, or you will literally combust into thousands of pieces.
  *
- * @param includePrivates If `true`, the returned JSON object may contain
- *                        sensitive data like email addresses.
+ * @param showPrivates If `true`, the returned JSON
+ * @param ShowPrivates The value of the regular `showPrivates` parameter; this
+ *     is an auto-generated copy for typesafe return values.
  * @returns This document as a JSON object for clients.
  */
-export type FToClientJSON<T extends IBaseDocument<T>> =
-    (this: T, includePrivates?: boolean) => object;
+export type FToJSON<TIn extends Document, TOut> = (this: TIn) => TOut;
 
 /**
- * Base interface for any database type.
+ * Base interface for any database document type.
+ *
+ * @param T The type of the document, i.e. the interface extending this one.
+ * @param TPubJSON The structure of JSON objects containing public data.
+ * @param TPrivJSON The structure of JSON objects containing private data.
  */
-export interface IBaseDocument<T extends IBaseDocument<T>> extends Document {
+export interface IBaseDocument<T extends Document, TPubJSON = void, TPrivJSON = void>
+extends Document {
+
     /**
-     * Transform this {@link Document} into a JSON object that is safe to send
-     * to clients; i.e. does not contain anything users should not see.
+     * Return a JSON object containing all publicly-available data of this
+     * document that can safely be sent to clients.  This is only available
+     * if the `TPubJSON` type parameter is specified.
      *
-     * **Never** send anything other than the return value of this function to
-     * clients, or you will literally combust into thousands of pieces.
-     *
-     * @param includePrivates If `true`, the returned JSON object may contain
-     *                        sensitive data like email addresses.
-     * @returns This document as a JSON object for clients.
+     * @return This document as a JSON object.
      */
-    toClientJSON: FToClientJSON<T>;
+    toPublicJSON: TPubJSON extends void ? undefined : FToJSON<T, TPubJSON>;
+
+    /**
+     * Return a JSON object containing anything that {@link #toPublicJSON} does,
+     * as well as additional sensitive data. The return value of this function
+     * may only be sent to authenticated clients requesting their own data.
+     * This is only available if the `TPrivJSON` parameter is not `void`.
+     *
+     * @return This document as a JSON object containing private details.
+     */
+    toPrivateJSON: TPrivJSON extends void ? undefined : FToJSON<T, TPrivJSON>;
+
 }
