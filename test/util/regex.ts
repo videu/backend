@@ -141,7 +141,7 @@ describe('util/regex:emailRegex', () => {
         });
     }
     for (const str of EMAIL_REGEX_DATA.negatives) {
-        it(`should notmatch the string "${str}"`, () => {
+        it(`should not match the string "${str}"`, () => {
             return expect(emailRegex.test(str)).to.eq(false);
         });
     }
