@@ -24,11 +24,11 @@ import { describe } from 'mocha';
 
 import { Videu } from '../../src/core/videu';
 
-import { DummySubsys } from '../dummy/core/subsys';
+import { StubSubsys } from '../dummy/core/subsys';
 
 interface IVideuTestCase {
     testDesc: string;
-    subsystems: DummySubsys[];
+    subsystems: StubSubsys[];
 }
 
 /* mute error output */
@@ -47,35 +47,35 @@ const GOOD_CASES: IVideuTestCase[] = [
     },
     {
         testDesc: 'should initialize with 1 subsystem',
-        subsystems: [new DummySubsys('normal', [], false, false)],
+        subsystems: [new StubSubsys('normal', [], false, false)],
     },
     {
         testDesc: 'should initialize with 2 subsystems',
         subsystems: [
-            new DummySubsys('normal1', [], false, false),
-            new DummySubsys('normal2', [], false, false),
+            new StubSubsys('normal1', [], false, false),
+            new StubSubsys('normal2', [], false, false),
         ],
     },
     {
         testDesc: 'should initialize with one subsystem dependency',
         subsystems: [
-            new DummySubsys('requester', ['dependant'], false, false),
-            new DummySubsys('dependant', [], false, false),
+            new StubSubsys('requester', ['dependant'], false, false),
+            new StubSubsys('dependant', [], false, false),
         ],
     },
     {
         testDesc: 'should initialize with multiple subsystem dependencies',
         subsystems: [
-            new DummySubsys('dep-a', ['dep-b'], false, false),
-            new DummySubsys('requester', ['dep-a', 'dep-b'], false, false),
-            new DummySubsys('dep-b', [], false, false),
+            new StubSubsys('dep-a', ['dep-b'], false, false),
+            new StubSubsys('requester', ['dep-a', 'dep-b'], false, false),
+            new StubSubsys('dep-b', [], false, false),
         ],
     },
     {
         testDesc: 'should still de-initialize dependants if requester fails',
         subsystems: [
-            new DummySubsys('good', [], false, false),
-            new DummySubsys('fail-exit', ['good'], false, true),
+            new StubSubsys('good', [], false, false),
+            new StubSubsys('fail-exit', ['good'], false, true),
         ],
     },
 ];
@@ -84,36 +84,36 @@ const BAD_CASES: IVideuTestCase[] = [
     {
         testDesc: 'should not initialize with dependency cycle',
         subsystems: [
-            new DummySubsys('a', ['b'], false, false),
-            new DummySubsys('b', ['a'], false, false),
+            new StubSubsys('a', ['b'], false, false),
+            new StubSubsys('b', ['a'], false, false),
         ],
     },
     {
         testDesc: 'should not initialize with complex dependency cycle',
         subsystems: [
-            new DummySubsys('a', ['b'], false, false),
-            new DummySubsys('b', ['c'], false, false),
-            new DummySubsys('c', ['a'], false, false),
+            new StubSubsys('a', ['b'], false, false),
+            new StubSubsys('b', ['c'], false, false),
+            new StubSubsys('c', ['a'], false, false),
         ],
     },
     {
         testDesc: 'should not initialize with one failing subsystem',
         subsystems: [
-            new DummySubsys('failing', [], true, false),
-            new DummySubsys('not failing', ['failing'], false, false),
+            new StubSubsys('failing', [], true, false),
+            new StubSubsys('not failing', ['failing'], false, false),
         ],
     },
     {
         testDesc: 'should not initialize with two subsystems having the same id',
         subsystems: [
-            new DummySubsys('same-id', [], false, false),
-            new DummySubsys('same-id', [], false, false),
+            new StubSubsys('same-id', [], false, false),
+            new StubSubsys('same-id', [], false, false),
         ],
     },
     {
         testDesc: 'should not initialize with unknown dependency',
         subsystems: [
-            new DummySubsys('test', ['unknown'], false, false),
+            new StubSubsys('test', ['unknown'], false, false),
         ],
     },
 ];
