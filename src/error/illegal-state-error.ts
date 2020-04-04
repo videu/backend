@@ -1,5 +1,5 @@
 /**
- * @file The video repository.
+ * @file Error class for illegal states.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -20,7 +20,8 @@
  */
 
 /**
- * TODO: What is the purpose of this class?  I can't remember.
+ * Error condition when something was attempted to be accessed while in an
+ * illegal state, e.g. a subsystem being used before initialization.
  */
 export class IllegalStateError extends Error {
 

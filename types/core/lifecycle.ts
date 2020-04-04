@@ -36,6 +36,6 @@ export interface ILifecycle<InitArgs extends any[] = []> {
     init(...args: InitArgs): Promise<void>;
 
     /** De-initialize this instance. */
-    exit(): void;
+    exit(): Promise<void>;
 
 }

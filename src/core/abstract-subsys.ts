@@ -82,7 +82,7 @@ implements ISubsys<InitParams> {
     }
 
     /** @inheritdoc */
-    public exit() {
+    public async exit() {
         this._isInitialized = false;
     }
 
@@ -124,7 +124,7 @@ export abstract class AbstractSubsysConfigurable<
     }
 
     /** @inheritdoc */
-    public async init(): Promise<void> {
+    public async init(...initParams: InitParams): Promise<void> {
         await super.init();
 
         if (this._config === null) {

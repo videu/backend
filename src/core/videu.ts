@@ -19,22 +19,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ISubsys } from '../../types/core/subsys';
+import { IHTTPSubsys } from '../../types/core/http-subsys';
+import { IMongoSubsys } from '../../types/core/mongo-subsys';
 import { IVideu } from '../../types/core/videu';
 import { ILogger } from '../../types/logger';
 
 import { Logger } from '../util/logger';
+import { HTTPSubsys } from './http-subsys';
+import { MongoSubsys } from './mongo-subsys';
 
 /**
  * The main application class controlling all subsystems.
  */
 export class Videu implements IVideu {
 
-    /** A map of all subsystems by their id for faster access. */
-    private subsysMap: {[key: string]: ISubsys} = {};
+    /** The application name. */
+    public readonly appName: string = process.env.VIDEU_APP_NAME || 'videu';
 
-    /** A list of all subsystems in the order they must be initialized. */
-    private subsystems: ISubsys[] = [];
+    /** The subsystem for managing express. */
+    private httpSubsys: IHTTPSubsys;
+
+    /** The subsystem managing the MongoDB connection. */
+    private mongoSubsys: IMongoSubsys;
 
     /** The logger for this class. */
     private logger: ILogger = new Logger('core');
@@ -48,31 +54,10 @@ export class Videu implements IVideu {
     /**
      * Create a new application instance.
      * There should be at most one instance of this class per server.
-     *
-     * @param subsystems An array of all subsystems.
      */
-    constructor(subsystems: ISubsys[]) {
-        for (const subsys of subsystems) {
-            if (typeof this.subsysMap[subsys.id] !== 'undefined') {
-                throw new Error(
-                    `Multiple subsystems with name "${subsys.id}" present`
-                );
-            }
-
-            this.subsysMap[subsys.id] = subsys;
-            this.subsystems.push(subsys);
-        }
-
-        for (const subsys of this.subsystems) {
-            try {
-                this.validateDependencies([subsys]);
-            } catch (err) {
-                this.logger.s('Cannot satisfy subsystem dependencies', err);
-                throw err;
-            }
-        }
-
-        this.arrangeSubsystems();
+    constructor() {
+        this.httpSubsys = new HTTPSubsys();
+        this.mongoSubsys = new MongoSubsys();
     }
 
     /** @inheritdoc */
@@ -81,97 +66,44 @@ export class Videu implements IVideu {
     }
 
     /** @inheritdoc */
-    public getSubsys(id: string): ISubsys | null {
-        const subsys: ISubsys | undefined = this.subsysMap[id];
-
-        if (typeof subsys === 'undefined') {
-            return null;
-        } else {
-            return subsys;
-        }
-    }
-
-    /** @inheritdoc */
     public async init() {
-        for (const subsys of this.subsystems) {
-            this.logger.i(`Initializing subsystem "${subsys.id}"`);
-            try {
-                await subsys.init(this);
-            } catch (err) {
-                this.logger.s(
-                    `Initialization of subsystem "${subsys.id}" failed`,
-                    err
-                );
-                this.logger.s('Exiting due to fatal error');
-                this.exit();
-                throw err;
-            }
+        try {
+            await this.httpSubsys.init();
+        } catch (err) {
+            this.logger.e('Unable to initialize the http subsystem', err);
+            await this.exit();
+            return;
+        }
+        try {
+            await this.mongoSubsys.init();
+        } catch (err) {
+            this.logger.e('Unable to initialize the mongo subsystem', err);
+            await this.exit();
+            return;
         }
 
         this._isInitialized = true;
     }
 
     /** @inheritdoc */
-    public exit() {
-        /* reverse order to ensure dependencies are fulfilled */
-        for (const subsys of this.subsystems.reverse()) {
-            this.logger.i('Shutting down');
-
-            if (!subsys.isInitialized) {
-                continue;
+    public async exit() {
+        try {
+            if (this.httpSubsys.isInitialized) {
+                await this.httpSubsys.exit();
             }
-
-            try {
-                subsys.exit();
-            } catch (err) {
-                this.logger.s(
-                    `Unable to de-initialize subsystem "${subsys.id}"`,
-                    err
-                );
+        } catch (err) {
+            this.logger.e('Unable to de-initialize the http subsystem', err);
+        }
+        try {
+            if (this.mongoSubsys.isInitialized) {
+                await this.mongoSubsys.exit();
             }
+        } catch (err) {
+            this.logger.e('Unable to de-initialize the mongo subsystem', err);
         }
 
         this._isInitialized = false;
         this.logger.i('Thank you and goodbye');
-    }
-
-    /**
-     * Order the {@link #subsystems} array to match the order they should be
-     * initialized in.
-     */
-    private arrangeSubsystems(): void {
-        this.subsystems.sort((a, b) => {
-            if (b.wants.indexOf(a.id) !== -1) {
-                return -1; /* initialize a before b */
-            } else if (a.wants.indexOf(b.id) !== -1) {
-                return 1; /* initialize b before a */
-            } else {
-                return 0; /* don't give a fuck */
-            }
-        });
-    }
-
-    private validateDependencies(chain: ISubsys[]): void {
-        if (chain[0] === undefined) {
-            return;
-        }
-
-        for (const id of chain[0].wants) {
-            const dependency: ISubsys | undefined = this.subsysMap[id];
-            if (typeof dependency === 'undefined') {
-                throw new Error(
-                    `Subsystem "${chain[0].id}" depends on unknown subsystem "${id}"`
-                );
-            }
-
-            if (chain.indexOf(dependency) !== -1) {
-                throw new Error(
-                    `Circular dependency on subsystem "${id}" detected`
-                );
-            }
-
-            this.validateDependencies([dependency, ...chain]);
-        }
     }
 
 }

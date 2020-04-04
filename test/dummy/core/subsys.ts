@@ -69,8 +69,8 @@ extends AbstractSubsys<InitParams> {
         });
     }
 
-    public exit() {
-        super.exit();
+    public async exit() {
+        await super.exit();
 
         if (this.shouldExitFail) {
             throw new Error('Dummy exit failed :(');
@@ -143,7 +143,7 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
     public init(...params: InitParams): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await super.init();
+                await super.init(...params);
             } catch (err) {
                 reject(err);
             }
@@ -160,8 +160,8 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
         });
     }
 
-    public exit(): void {
-        super.exit();
+    public async exit(): Promise<void> {
+        await super.exit();
 
         if (this.shouldExitFail) {
             throw new Error('Dummy exit failed :(');

@@ -104,7 +104,7 @@ describe('core/abstract-subsys:AbstractSubsys', () => {
         const fn: FStubSubsysTester<[]> = async () => {
             const dummy = new StubSubsys<[]>('stub', false, false);
             await dummy.init();
-            dummy.exit();
+            await dummy.exit();
             return {
                 id: dummy.id,
                 initParams: dummy.initParams,
