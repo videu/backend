@@ -21,17 +21,16 @@
 
 import { ObjectId } from 'mongodb';
 
-import { IMinimalVideoData, IVideoDataSource } from '../../../../types/data/data-source/video';
+import { IMinimalVideoData, IVideoDataAuthority } from '../../../../types/data/data-source/video';
 import { IVideo } from '../../../../types/db/video';
+
 import { Video } from '../../../model/video';
 
 /**
  * Video data source for MongoDB.
  */
-export class MongoVideoDataSource implements IVideoDataSource {
+export class MongoVideoDataSource implements IVideoDataAuthority {
 
-    /** @inheritdoc */
-    public readonly isLocal: boolean = false;
     /** @inheritdoc */
     public readonly isPersistent: boolean = true;
 
@@ -41,8 +40,8 @@ export class MongoVideoDataSource implements IVideoDataSource {
     }
 
     /** @inheritdoc */
-    public async delete(id: ObjectId): Promise<void> {
-        await Video.deleteOne({ _id: id });
+    public async delete(doc: IVideo): Promise<void> {
+        await Video.deleteOne({ _id: doc.id });
     }
 
     /** @inheritdoc */

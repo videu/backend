@@ -21,40 +21,54 @@
 
 import { ObjectId } from 'mongodb';
 
-import { IDataSource } from '../../../types/data/data-source';
 import {
-    ICategoryDataSource,
-    IMinimalCategoryData
+    ICategoryDataAuthority,
+    ICategoryDataCache,
+    IMinimalCategoryData,
 } from '../../../types/data/data-source/category';
 import { ICategoryRepository } from '../../../types/data/repository/category';
 import { ICategory } from '../../../types/db/category';
 import { IVideo } from '../../../types/db/video';
+import { ILogger } from '../../../types/logger';
+
+import { Logger } from '../../util/logger';
 import { MongoCategoryDataSource } from '../data-source/category/mongo';
+import { AbstractRepository } from './abstract-repository';
 
 /**
  * The category repository.
  */
-export class CategoryRepository implements ICategoryRepository {
+export class CategoryRepository extends AbstractRepository<
+    ICategory,
+    IMinimalCategoryData,
+    ICategoryDataAuthority,
+    ICategoryDataCache
+> implements ICategoryRepository {
 
-    private mongoSource: MongoCategoryDataSource;
+    public readonly authority: ICategoryDataAuthority;
 
-    public constructor() {
-        this.mongoSource = new MongoCategoryDataSource();
-    }
+    protected caches: ICategoryDataCache[] = [];
 
-    /** @inheritdoc */
-    public async create(category: IMinimalCategoryData): Promise<ICategory> {
-        return await this.mongoSource.create(category);
-    }
+    constructor(logger: ILogger, authority: ICategoryDataAuthority) {
+        super(logger);
 
-    /** @inheritdoc */
-    public async delete(id: ObjectId): Promise<void> {
-        await this.mongoSource.delete(id);
+        this.authority = authority;
     }
 
     /** @inheritdoc */
     public async getById(id: ObjectId): Promise<ICategory | null> {
-        return await this.mongoSource.getById(id);
+        for (const cache of this.caches) {
+            try {
+                const hit: ICategory | null = await cache.getById(id);
+                if (hit !== null) {
+                    return hit;
+                }
+            } catch (err) {
+                this.logger.e(`Cache error in retrieving category id ${id.toHexString()}`, err);
+            }
+        }
+
+        return await this.authority.getById(id);
     }
 
     /** @inheritdoc */
@@ -62,7 +76,7 @@ export class CategoryRepository implements ICategoryRepository {
         const chain: ICategory[] = [];
         let currentId: ObjectId | undefined = id;
         while (currentId) {
-            const currentCategory: ICategory | null = await this.mongoSource.getById(currentId);
+            const currentCategory: ICategory | null = await this.getById(currentId);
             if (currentCategory === null) {
                 break;
             }
@@ -85,21 +99,10 @@ export class CategoryRepository implements ICategoryRepository {
         return null;
     }
 
-    /** @inheritdoc */
-    public async update(user: ICategory): Promise<void> {
-        return await this.mongoSource.update(user);
-    }
-
-    /** @inheritdoc */
-    public addDataSource(dataSource: IDataSource<ICategory>): void {
-        throw new Error('Method not implemented.');
-    }
-
-    /** @inheritdoc */
-    public getDataSources(): ICategoryDataSource[] {
-        return [this.mongoSource];
-    }
-
 }
 
-export const categoryRepo = new CategoryRepository();
+/* TODO: Just implement the route subsystem so this gets obsolete ffs */
+export const categoryRepo = new CategoryRepository(
+    new Logger('deprecated'),
+    new MongoCategoryDataSource()
+);

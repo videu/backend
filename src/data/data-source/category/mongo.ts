@@ -22,21 +22,20 @@
 import { ObjectId } from 'mongodb';
 
 import {
-    ICategoryDataSource,
+    ICategoryDataAuthority,
     IMinimalCategoryData
 } from '../../../../types/data/data-source/category';
 import { ICategory } from '../../../../types/db/category';
 import { IVideo } from '../../../../types/db/video';
+
 import { Category } from '../../../model/category';
 import { Video } from '../../../model/video';
 
 /**
- * User data source for MongoDB.
+ * The authoritative data source for categories.
  */
-export class MongoCategoryDataSource implements ICategoryDataSource {
+export class MongoCategoryDataSource implements ICategoryDataAuthority {
 
-    /** @inheritdoc */
-    public readonly isLocal: boolean = false;
     /** @inheritdoc */
     public readonly isPersistent: boolean = true;
 
@@ -46,8 +45,8 @@ export class MongoCategoryDataSource implements ICategoryDataSource {
     }
 
     /** @inheritdoc */
-    public async delete(id: ObjectId): Promise<void> {
-        await Category.deleteOne({ _id: id });
+    public async delete(doc: ICategory): Promise<void> {
+        await Category.deleteOne({ _id: doc.id });
     }
 
     /** @inheritdoc */

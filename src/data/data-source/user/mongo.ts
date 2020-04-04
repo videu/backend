@@ -21,27 +21,27 @@
 
 import { ObjectId } from 'mongodb';
 
-import { IMinimalUserData, IUserDataSource } from '../../../../types/data/data-source/user';
+import { IMinimalUserData, IUserDataAuthority } from '../../../../types/data/data-source/user';
 import { IUser } from '../../../../types/db/user';
+
 import { User } from '../../../model/user';
 
 /**
  * User data source for MongoDB.
  */
-export class MongoUserDataSource implements IUserDataSource {
+export class MongoUserDataSource implements IUserDataAuthority {
 
-    /** @inheritdoc */
-    public readonly isLocal: boolean = false;
     /** @inheritdoc */
     public readonly isPersistent: boolean = true;
 
+    /** @inheritdoc */
     public async create(user: IMinimalUserData): Promise<IUser> {
         return await User.create(user);
     }
 
     /** @inheritdoc */
-    public async delete(id: ObjectId): Promise<void> {
-        await User.deleteOne({ _id: id });
+    public async delete(doc: IUser): Promise<void> {
+        await User.deleteOne({ _id: doc.id });
     }
 
     /** @inheritdoc */
@@ -60,19 +60,16 @@ export class MongoUserDataSource implements IUserDataSource {
     }
 
     /** @inheritdoc */
-    public store(user: IUser): Promise<void> {
-        return new Promise((resolve, reject) => reject(new Error('Unimplemented')));
-    }
-
-    /** @inheritdoc */
     public async update(user: IUser): Promise<void> {
         await user.save();
     }
 
     /**
+     * Find a user with the specified email or user name.
      *
      * @param userName The user name.
      * @param email The mail address.
+     * @return The colliding user, or `null` if there is none.
      */
     public async findCollidingUser(userName: string, email: string): Promise<IUser | null> {
         return await User.findOne({

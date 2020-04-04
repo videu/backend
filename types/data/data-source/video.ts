@@ -22,8 +22,11 @@
 import { ObjectId } from 'mongodb';
 
 import { IVideo } from '../../db/video';
-import { IDataSource } from '../data-source';
+import { IDataAuthority, IDataCache, IDataSource } from '../data-source';
 
+/**
+ * The minimal data required to create a new video document.
+ */
 export interface IMinimalVideoData {
     _id?: ObjectId;
     category_id: ObjectId;
@@ -33,23 +36,9 @@ export interface IMinimalVideoData {
 }
 
 /**
- * Base interface for all data sources suppling user information.
+ * Base interface for video data sources.
  */
 export interface IVideoDataSource extends IDataSource<IVideo> {
-
-    /**
-     * Create a new video.
-     *
-     * @param data The video data.
-     */
-    create(data: IMinimalVideoData): Promise<IVideo>;
-
-    /**
-     * Delete a video from the database.
-     *
-     * @param id The user id.
-     */
-    delete(id: ObjectId): Promise<void>;
 
     /**
      * Get a video by its id.
@@ -78,11 +67,10 @@ export interface IVideoDataSource extends IDataSource<IVideo> {
     getRecentsByCategory(categoryId: ObjectId, limit: number,
                          page: number): Promise<IVideo[] | null>;
 
-    /**
-     * Update a video in the database.
-     *
-     * @param video The user.
-     */
-    update(video: IVideo): Promise<void>;
-
 }
+
+export interface IVideoDataAuthority
+extends IVideoDataSource, IDataAuthority<IVideo, IMinimalVideoData> {}
+
+export interface IVideoDataCache
+extends IVideoDataSource, IDataCache<IVideo> {}

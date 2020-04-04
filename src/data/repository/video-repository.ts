@@ -21,44 +21,58 @@
 
 import { ObjectId } from 'mongodb';
 
-import { IDataSource } from '../../../types/data/data-source';
-import { IMinimalVideoData, IVideoDataSource } from '../../../types/data/data-source/video';
+import {
+    IMinimalVideoData,
+    IVideoDataAuthority,
+    IVideoDataCache
+} from '../../../types/data/data-source/video';
 import { IVideoRepository } from '../../../types/data/repository/video';
 import { IVideo } from '../../../types/db/video';
-import { MongoVideoDataSource } from '../data-source/video/mongo';
+import { ILogger } from '../../../types/logger';
+
+import { MongoVideoDataSource } from '../../data/data-source/video/mongo';
+import { Logger } from '../../util/logger';
+import { AbstractRepository } from './abstract-repository';
 
 /**
  * The video repository.
  */
-export class VideoRepository implements IVideoRepository {
-
-    private mongoSource: MongoVideoDataSource;
-
-    public constructor() {
-        this.mongoSource = new MongoVideoDataSource();
-    }
+export class VideoRepository
+extends AbstractRepository<IVideo, IMinimalVideoData, IVideoDataAuthority, IVideoDataCache>
+implements IVideoRepository {
 
     /** @inheritdoc */
-    public async create(data: IMinimalVideoData): Promise<IVideo> {
-        return await this.mongoSource.create(data);
-    }
+    public readonly authority: IVideoDataAuthority;
 
     /** @inheritdoc */
-    public async delete(id: ObjectId): Promise<void> {
-        await this.mongoSource.delete(id);
+    protected caches: IVideoDataCache[] = [];
+
+    public constructor(logger: ILogger, authority: IVideoDataAuthority) {
+        super(logger);
+
+        this.authority = authority;
     }
 
     /** @inheritdoc */
     public async getById(id: ObjectId): Promise<IVideo | null> {
-        return await this.mongoSource.getById(id);
+        for (const cache of this.caches) {
+            try {
+                const hit = await cache.getById(id);
+                if (hit !== null) {
+                    return hit;
+                }
+            } catch (err) {
+                this.logger.e(`Cache access error for video id ${id.toHexString()}`, err);
+            }
+        }
+
+        return await this.authority.getById(id);
     }
 
     /** @inheritdoc */
-    public async getAllByUser(userId: ObjectId, limit?: number,
-                              page?: number): Promise<IVideo[] | null> {
-        const _limit: number = typeof limit === 'number' ? limit : 1000;
-        const _page: number = typeof page === 'number' ? page : 0;
-        return await this.mongoSource.getAllByUser(userId, _limit, _page);
+    public async getAllByUser(userId: ObjectId, limit: number = 1000,
+                              page: number = 0): Promise<IVideo[] | null> {
+        return await this.authority.getAllByUser(userId, limit, page);
     }
 
     /** @inheritdoc */
@@ -68,21 +82,7 @@ export class VideoRepository implements IVideoRepository {
         return null;
     }
 
-    /** @inheritdoc */
-    public async update(video: IVideo): Promise<void> {
-        return await this.mongoSource.update(video);
-    }
-
-    /** @inheritdoc */
-    public addDataSource(dataSource: IDataSource<IVideo>): void {
-        throw new Error('Method not implemented.');
-    }
-
-    /** @inheritdoc */
-    public getDataSources(): IVideoDataSource[] {
-        return [this.mongoSource];
-    }
-
 }
 
-export const videoRepo = new VideoRepository();
+/* TODO: Just implement the route subsystem so this gets obsolete ffs */
+export const videoRepo = new VideoRepository(new Logger('deprecated'), new MongoVideoDataSource());

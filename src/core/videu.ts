@@ -21,12 +21,14 @@
 
 import { IHTTPSubsys } from '../../types/core/http-subsys';
 import { IMongoSubsys } from '../../types/core/mongo-subsys';
+import { IStorageSubsys } from '../../types/core/storage-subsys';
 import { IVideu } from '../../types/core/videu';
 import { ILogger } from '../../types/logger';
 
 import { Logger } from '../util/logger';
 import { HTTPSubsys } from './http-subsys';
 import { MongoSubsys } from './mongo-subsys';
+import { StorageSubsys } from './storage-subsys';
 
 /**
  * The main application class controlling all subsystems.
@@ -41,6 +43,9 @@ export class Videu implements IVideu {
 
     /** The subsystem managing the MongoDB connection. */
     private mongoSubsys: IMongoSubsys;
+
+    /** The subsystem for repository management. */
+    private storageSubsys: IStorageSubsys;
 
     /** The logger for this class. */
     private logger: ILogger = new Logger('core');
@@ -58,6 +63,7 @@ export class Videu implements IVideu {
     constructor() {
         this.httpSubsys = new HTTPSubsys();
         this.mongoSubsys = new MongoSubsys();
+        this.storageSubsys = new StorageSubsys();
     }
 
     /** @inheritdoc */
@@ -67,17 +73,18 @@ export class Videu implements IVideu {
 
     /** @inheritdoc */
     public async init() {
+        let currentId: string = '';
         try {
+            currentId = this.httpSubsys.id;
             await this.httpSubsys.init();
-        } catch (err) {
-            this.logger.e('Unable to initialize the http subsystem', err);
-            await this.exit();
-            return;
-        }
-        try {
+
+            currentId = this.mongoSubsys.id;
             await this.mongoSubsys.init();
+
+            currentId = this.storageSubsys.id;
+            await this.storageSubsys.init(this.mongoSubsys);
         } catch (err) {
-            this.logger.e('Unable to initialize the mongo subsystem', err);
+            this.logger.e(`Error while initializing the ${currentId} subsystem`, err);
             await this.exit();
             return;
         }
@@ -88,12 +95,21 @@ export class Videu implements IVideu {
     /** @inheritdoc */
     public async exit() {
         try {
+            if (this.storageSubsys.isInitialized) {
+                await this.storageSubsys.exit();
+            }
+        } catch (err) {
+            this.logger.e('Unable to de-initialize the storage subsystem', err);
+        }
+
+        try {
             if (this.httpSubsys.isInitialized) {
                 await this.httpSubsys.exit();
             }
         } catch (err) {
             this.logger.e('Unable to de-initialize the http subsystem', err);
         }
+
         try {
             if (this.mongoSubsys.isInitialized) {
                 await this.mongoSubsys.exit();

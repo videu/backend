@@ -23,15 +23,17 @@ import { ObjectId } from 'mongodb';
 
 import { ICategory } from '../../db/category';
 import { IVideo } from '../../db/video';
+import {
+    ICategoryDataAuthority,
+    ICategoryDataCache,
+    IMinimalCategoryData
+} from '../data-source/category';
 import { IRepository } from '../repository';
 
-export interface ICategoryRepository extends IRepository<ICategory> {
-    delete(id: ObjectId): Promise<void>;
-
+export interface ICategoryRepository
+extends IRepository<ICategory, IMinimalCategoryData, ICategoryDataAuthority, ICategoryDataCache> {
     getById(id: ObjectId): Promise<ICategory | null>;
     getChain(id: ObjectId): Promise<ICategory[] | null>;
 
     getRecentVideos(id: ObjectId, limit?: number, page?: number): Promise<IVideo[] | null>;
-
-    update(user: ICategory): Promise<void>;
 }

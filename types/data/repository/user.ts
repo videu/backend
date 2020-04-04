@@ -22,17 +22,42 @@
 import { ObjectId } from 'mongodb';
 
 import { IUser } from '../../db/user';
-import { IMinimalUserData } from '../data-source/user';
+import { IMinimalUserData, IUserDataAuthority, IUserDataCache } from '../data-source/user';
 import { IRepository } from '../repository';
 
-export interface IUserRepository extends IRepository<IUser> {
-    delete(id: ObjectId): Promise<void>;
+export interface IUserRepository
+extends IRepository<IUser, IMinimalUserData, IUserDataAuthority, IUserDataCache> {
 
+    /**
+     * Get a user by their email address.
+     *
+     * @param email The email address.
+     * @return The user, or `null` if they were not found.
+     */
     getByEmail(email: string): Promise<IUser | null>;
+
+    /**
+     * Get a user by their unique id.
+     *
+     * @param id The user id.
+     * @return The user, or `null` if they were not found.
+     */
     getById(id: ObjectId): Promise<IUser | null>;
+
+    /**
+     * Get a user by their user (@) name.
+     *
+     * @param userName The user name.
+     * @return The user, or `null` if they were not found.
+     */
     getByUserName(userName: string): Promise<IUser | null>;
 
+    /**
+     * The same as create, but also checks for email and user name collisions.
+     *
+     * @param userData The user data.
+     * @return The new user.
+     */
     register(userData: IMinimalUserData): Promise<IUser>;
 
-    update(user: IUser): Promise<void>;
 }

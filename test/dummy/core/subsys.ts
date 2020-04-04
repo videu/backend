@@ -52,7 +52,7 @@ extends AbstractSubsys<InitParams> {
          */
         return new Promise(async (resolve, reject) => {
             try {
-                await super.init();
+                await super.init(...params);
             } catch (err) {
                 reject(err);
             }

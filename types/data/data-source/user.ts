@@ -22,8 +22,11 @@
 import { ObjectId } from 'mongodb';
 
 import { IUser } from '../../db/user';
-import { IDataSource } from '../data-source';
+import { IDataAuthority, IDataCache, IDataSource } from '../data-source';
 
+/**
+ * The minimal data required to create a new user document.
+ */
 export interface IMinimalUserData {
     _id?: ObjectId;
     activationToken?: string;
@@ -40,22 +43,6 @@ export interface IMinimalUserData {
  * Base interface for all data sources suppling user information.
  */
 export interface IUserDataSource extends IDataSource<IUser> {
-
-    /**
-     * Store a user in this data source.
-     * If there is an existing entry violating unique index constraints,
-     * the Promise gets rejected.
-     *
-     * @param data The user data.
-     */
-    create(data: IMinimalUserData): Promise<IUser>;
-
-    /**
-     * Delete a user from the data source.
-     *
-     * @param id The user id.
-     */
-    delete(id: ObjectId): Promise<void>;
 
     /**
      * Get a user by their email address.
@@ -86,16 +73,6 @@ export interface IUserDataSource extends IDataSource<IUser> {
     getByUserName(userName: string): Promise<IUser | null>;
 
     /**
-     * Store a user in this data source.
-     * This should only be used with caching data sources where all fields
-     * required by the {@link IUser} are already known.  Persistent data sources
-     * should always reject the returned Promise.
-     *
-     * @param user The user.
-     */
-    store(user: IUser): Promise<void>;
-
-    /**
      * Update a user in the data source.
      * If the user did not exist before, the Promise gets rejected.
      *
@@ -104,3 +81,13 @@ export interface IUserDataSource extends IDataSource<IUser> {
     update(user: IUser): Promise<void>;
 
 }
+
+export interface IUserDataAuthority
+extends IUserDataSource, IDataAuthority<IUser, IMinimalUserData> {
+
+    findCollidingUser(userName: string, email: string): Promise<IUser | null>;
+
+}
+
+export interface IUserDataCache
+extends IUserDataSource, IDataCache<IUser> {}

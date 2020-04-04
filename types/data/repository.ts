@@ -21,7 +21,7 @@
 
 import { Document } from 'mongoose';
 
-import { IDataSource } from './data-source';
+import { IDataAuthority, IDataCache } from './data-source';
 
 /**
  * Base interface for all repositories.
@@ -32,21 +32,62 @@ import { IDataSource } from './data-source';
  * data.
  *
  * @param T The Document type this repository takes care of.
+ * @param M The minimal data required to create new documents.
+ * @param A The data authority for this repository.
+ * @param C The interface for caches for this repository.
  */
-export interface IRepository<T extends Document> {
+export interface IRepository<
+    T extends Document,
+    M extends object,
+    A extends IDataAuthority<T, M>,
+    C extends IDataCache<T>
+> {
 
     /**
-     * Add a data source to this repository.
-     *
-     * @param dataSource The data source.
+     * The authoritative data source for this repository.
+     * If there are any conflicts in the caches, the entry in this data source
+     * always wins.  This also has to be the first data source that is modified
+     * on any operation.
      */
-    addDataSource(dataSource: IDataSource<T>): void;
+    readonly authority: A;
 
     /**
-     * Return an array of all data sources this repository can consult.
+     * Create a new document and store it at least in the authoritative data
+     * source.  A {@link ConflictError} may be thrown if there are conflicting
+     * documents in the authoritative data source.
      *
-     * @returns All data sources.
+     * @param data The data for the new document.
+     * @return The new document.
      */
-    getDataSources(): Array<IDataSource<T>>;
+    create(data: M): Promise<T>;
+
+    /**
+     * Delete a document from all data sources.
+     *
+     * @param doc The document to delete.
+     */
+    delete(doc: T): Promise<void>;
+
+    /**
+     * Update a document in all data sources.
+     *
+     * @param doc The document.
+     * @return The updated document.
+     */
+    update(doc: T): Promise<T>;
+
+    /**
+     * Add a cache to this repository.
+     *
+     * @param cache The data source.
+     */
+    addCache(cache: C): void;
+
+    /**
+     * Return an array of all caches this repository has.
+     *
+     * @returns All caches.
+     */
+    getCaches(): C[];
 
 }

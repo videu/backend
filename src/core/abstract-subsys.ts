@@ -76,9 +76,9 @@ implements ISubsys<InitParams> {
     }
 
     /** @inheritdoc */
-    public async init() {
+    public async init(...initParams: InitParams) {
         this._isInitialized = true;
-        this.logger.i('Initializing');
+        this.logger.v('Initializing');
     }
 
     /** @inheritdoc */
@@ -125,7 +125,7 @@ export abstract class AbstractSubsysConfigurable<
 
     /** @inheritdoc */
     public async init(...initParams: InitParams): Promise<void> {
-        await super.init();
+        await super.init(...initParams);
 
         if (this._config === null) {
             const configFromEnv = this.readConfigFromEnv();

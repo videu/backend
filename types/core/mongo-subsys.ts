@@ -20,9 +20,9 @@
  */
 
 import { IConfigurable } from '../configurable';
-import { ICategoryDataSource } from '../data/data-source/category';
-import { IUserDataSource } from '../data/data-source/user';
-import { IVideoDataSource } from '../data/data-source/video';
+import { ICategoryDataAuthority } from '../data/data-source/category';
+import { IUserDataAuthority } from '../data/data-source/user';
+import { IVideoDataAuthority } from '../data/data-source/video';
 import { IObjectSchema } from '../util/object-schema';
 import { ISubsys } from './subsys';
 
@@ -80,7 +80,7 @@ export const MONGO_SUBSYS_CONFIG_SCHEMA: IObjectSchema = {
     db: {
         type: 'string',
         default: 'videu',
-        regex: /^[a-z]*(_[a-z])*$/,
+        regex: /^[a-z0-9]*([_\-][a-z0-9]+)*$/,
     },
     ssl: {
         type: 'boolean',
@@ -106,12 +106,12 @@ export const MONGO_SUBSYS_CONFIG_SCHEMA: IObjectSchema = {
 export interface IMongoSubsys extends ISubsys, IConfigurable<IMongoConfig> {
 
     /** The MongoDB data source for categories. */
-    readonly categoryDataSource: ICategoryDataSource;
+    readonly categoryDataAuthority: ICategoryDataAuthority;
 
     /** The MongoDB data source for users. */
-    readonly userDataSource: IUserDataSource;
+    readonly userDataAuthority: IUserDataAuthority;
 
     /** The MongoDB data source for videos. */
-    readonly videoDataSource: IVideoDataSource;
+    readonly videoDataAuthority: IVideoDataAuthority;
 
 }

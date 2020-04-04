@@ -21,48 +21,92 @@
 
 import { ObjectId } from 'mongodb';
 
-import { IDataSource } from '../../../types/data/data-source';
-import { IMinimalUserData, IUserDataSource } from '../../../types/data/data-source/user';
+import {
+    IMinimalUserData,
+    IUserDataAuthority,
+    IUserDataCache,
+} from '../../../types/data/data-source/user';
 import { IUserRepository } from '../../../types/data/repository/user';
 import { IUser } from '../../../types/db/user';
+import { ILogger } from '../../../types/logger';
+
+import { MongoUserDataSource } from '../../data/data-source/user/mongo';
 import { ConflictError } from '../../error/conflict-error';
-import { MongoUserDataSource } from '../data-source/user/mongo';
+import { Logger } from '../../util/logger';
+import { AbstractRepository } from './abstract-repository';
 
 /**
  * The user repository.
  */
-export class UserRepository implements IUserRepository {
-
-    private mongoSource: MongoUserDataSource;
-
-    public constructor() {
-        this.mongoSource = new MongoUserDataSource();
-    }
+export class UserRepository
+extends AbstractRepository<IUser, IMinimalUserData, IUserDataAuthority, IUserDataCache>
+implements IUserRepository {
 
     /** @inheritdoc */
-    public async delete(id: ObjectId): Promise<void> {
-        await this.mongoSource.delete(id);
+    public readonly authority: IUserDataAuthority;
+
+    /** @inheritdoc */
+    protected caches: IUserDataCache[] = [];
+
+    constructor(logger: ILogger, authority: IUserDataAuthority) {
+        super(logger);
+
+        this.authority = authority;
+    }
+
+    /**
+     * DO NOT CALL THIS METHOD.
+     * This method does not check if there already is a user with the email or
+     * user name of the new user, and will just throw some mongoose-internal
+     * if there is.
+     *
+     * @inheritdoc
+     * @override
+     */
+    public async create(data: IMinimalUserData): Promise<IUser> {
+        throw new Error('Don\'t use create() on the user repository, call register() instead');
     }
 
     /** @inheritdoc */
     public async getByEmail(email: string): Promise<IUser | null> {
-        return await this.mongoSource.getByEmail(email);
+        for (const ds of this.caches) {
+            const hit = await ds.getByEmail(email);
+            if (hit !== null) {
+                return hit;
+            }
+        }
+
+        return await this.authority.getByEmail(email);
     }
 
     /** @inheritdoc */
     public async getById(id: ObjectId): Promise<IUser | null> {
-        return await this.mongoSource.getById(id);
+        for (const ds of this.caches) {
+            const hit = await ds.getById(id);
+            if (hit !== null) {
+                return hit;
+            }
+        }
+
+        return await this.authority.getById(id);
     }
 
     /** @inheritdoc */
     public async getByUserName(userName: string): Promise<IUser | null> {
-        return await this.mongoSource.getByUserName(userName);
+        for (const ds of this.caches) {
+            const hit = await ds.getByUserName(userName);
+            if (hit !== null) {
+                return hit;
+            }
+        }
+
+        return await this.authority.getByUserName(userName);
     }
 
     /** @inheritdoc */
     public async register(userData: IMinimalUserData): Promise<IUser> {
         const collidingUser =
-            await this.mongoSource.findCollidingUser(userData.uName, userData.email);
+            await this.authority.findCollidingUser(userData.uName, userData.email);
 
         if (collidingUser !== null) {
             if (userData.email === collidingUser.email) {
@@ -72,24 +116,22 @@ export class UserRepository implements IUserRepository {
             }
         }
 
-        return await this.mongoSource.create(userData);
-    }
+        const user = await this.authority.create(userData);
 
-    /** @inheritdoc */
-    public async update(user: IUser): Promise<void> {
-        return await this.mongoSource.update(user);
-    }
+        const promises: Array<Promise<void>> = [];
+        for (const cache of this.caches) {
+            promises.push(cache.put(user));
+        }
+        try {
+            await Promise.all(promises);
+        } catch (err) {
+            this.logger.e('Cache store error', err);
+        }
 
-    /** @inheritdoc */
-    public addDataSource(dataSource: IDataSource<IUser>): void {
-        throw new Error('Method not implemented.');
-    }
-
-    /** @inheritdoc */
-    public getDataSources(): IUserDataSource[] {
-        return [ this.mongoSource ];
+        return user;
     }
 
 }
 
-export const userRepo = new UserRepository();
+/* TODO: Just implement the route subsystem so this gets obsolete ffs */
+export const userRepo = new UserRepository(new Logger('deprecated'), new MongoUserDataSource());

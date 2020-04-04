@@ -19,12 +19,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Binary, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 import { ICategory } from '../../db/category';
 import { IVideo } from '../../db/video';
-import { IDataSource } from '../data-source';
+import { IDataAuthority, IDataCache, IDataSource } from '../data-source';
 
+/**
+ * The minimal data required to create a new category document.
+ */
 export interface IMinimalCategoryData {
     _id?: ObjectId;
     name: string;
@@ -36,20 +39,6 @@ export interface IMinimalCategoryData {
  * Base interface for all data sources suppling category information.
  */
 export interface ICategoryDataSource extends IDataSource<ICategory> {
-
-    /**
-     * Create a new category and save it to the database.
-     *
-     * @param data The category data.
-     */
-    create(data: IMinimalCategoryData): Promise<ICategory>;
-
-    /**
-     * Delete a category from the database.
-     *
-     * @param id The category id.
-     */
-    delete(id: ObjectId): Promise<void>;
 
     /**
      * Get a category by its id.
@@ -77,3 +66,15 @@ export interface ICategoryDataSource extends IDataSource<ICategory> {
     update(category: ICategory): Promise<void>;
 
 }
+
+/**
+ * The authoritative data source for categories.
+ */
+export interface ICategoryDataAuthority
+extends ICategoryDataSource, IDataAuthority<ICategory, IMinimalCategoryData> {}
+
+/**
+ * A cache for category data.
+ */
+export interface ICategoryDataCache
+extends ICategoryDataSource, IDataCache<ICategory> {}

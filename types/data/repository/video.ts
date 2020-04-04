@@ -22,27 +22,32 @@
 import { ObjectId } from 'mongodb';
 
 import { IVideo } from '../../db/video';
-import { IMinimalVideoData } from '../data-source/video';
+import { IMinimalVideoData, IVideoDataAuthority, IVideoDataCache } from '../data-source/video';
 import { IRepository } from '../repository';
 
 /**
  * Interface for the video repository.
  */
-export interface IVideoRepository extends IRepository<IVideo> {
+export interface IVideoRepository
+extends IRepository<IVideo, IMinimalVideoData, IVideoDataAuthority, IVideoDataCache> {
+
     /**
-     * Create a new video.
+     * Get a video by its id.
      *
-     * @param videoData The video data.
-     * @returns The newly created video.
-     * @throws A {@link ConflictError}
-     *         if there are any fields conflicting with existing entries.
+     * @param id The video id.
+     * @return The video, or `null` if it does not exist.
      */
-    create(videoData: IMinimalVideoData): Promise<IVideo>;
-
-    delete(id: ObjectId): Promise<void>;
-
     getById(id: ObjectId): Promise<IVideo | null>;
+
+    /**
+     * Get all videos of the specified user with pagination.
+     *
+     * @param userId The user id.
+     * @param limit The maximum amount of results per page.
+     * @param page The page.
+     * @return An array of videos created by the specified user, or `null` if
+     *     there aren't any.
+     */
     getAllByUser(userId: ObjectId, limit?: number, page?: number): Promise<IVideo[] | null>;
 
-    update(video: IVideo): Promise<void>;
 }

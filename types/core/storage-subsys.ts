@@ -1,5 +1,5 @@
 /**
- * @file Abstract base class for data sources using mongoose.
+ * @file Storage subsystem interface definition.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,19 +19,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { IBaseDocument } from '../../../types/data/base-document';
-import { IDataSource } from '../../../types/data/data-source';
+import { ICategoryRepository } from '../data/repository/category';
+import { IUserRepository } from '../data/repository/user';
+import { IVideoRepository } from '../data/repository/video';
+import { IMongoSubsys } from './mongo-subsys';
+import { ISubsys } from './subsys';
 
 /**
- * Abstract base class for any data source that uses the mongoose API.
+ * Base interface for the storage subsystem.
+ * This subsystem is responsible for instantiating all repositories and adding
+ * data sources to them.
  */
-export abstract class MongoDataSource<T extends IBaseDocument<T>>
-implements IDataSource<T> {
+export interface IStorageSubsys extends ISubsys<[IMongoSubsys]> {
 
-    /** @inheritdoc */
-    public readonly isLocal: boolean = false;
+    /** The repository for categories. */
+    readonly categoryRepo: ICategoryRepository;
 
-    /** @inheritdoc */
-    public readonly isPersistent: boolean = true;
+    /** The repository for users. */
+    readonly userRepo: IUserRepository;
+
+    /** The repository for videos. */
+    readonly videoRepo: IVideoRepository;
 
 }

@@ -26,9 +26,9 @@ import {
     IMongoSubsys,
     MONGO_SUBSYS_CONFIG_SCHEMA,
 } from '../../types/core/mongo-subsys';
-import { ICategoryDataSource } from '../../types/data/data-source/category';
-import { IUserDataSource } from '../../types/data/data-source/user';
-import { IVideoDataSource } from '../../types/data/data-source/video';
+import { ICategoryDataAuthority } from '../../types/data/data-source/category';
+import { IUserDataAuthority } from '../../types/data/data-source/user';
+import { IVideoDataAuthority } from '../../types/data/data-source/video';
 
 import { MongoCategoryDataSource } from '../data/data-source/category/mongo';
 import { MongoUserDataSource } from '../data/data-source/user/mongo';
@@ -45,13 +45,13 @@ extends AbstractSubsysConfigurable<IMongoConfig>
 implements IMongoSubsys {
 
     /** @inheritdoc */
-    public readonly categoryDataSource: ICategoryDataSource;
+    public readonly categoryDataAuthority: ICategoryDataAuthority;
 
     /** @inheritdoc */
-    public readonly userDataSource: IUserDataSource;
+    public readonly userDataAuthority: IUserDataAuthority;
 
     /** @inheritdoc */
-    public readonly videoDataSource: IVideoDataSource;
+    public readonly videoDataAuthority: IVideoDataAuthority;
 
     /** The mongoose connection instance. */
     protected mongooseInstance: Mongoose | null = null;
@@ -66,9 +66,9 @@ implements IMongoSubsys {
     constructor(config: IMongoConfig | null = null) {
         super('mongo', config, MONGO_SUBSYS_CONFIG_SCHEMA);
 
-        this.categoryDataSource = new MongoCategoryDataSource();
-        this.userDataSource = new MongoUserDataSource();
-        this.videoDataSource = new MongoVideoDataSource();
+        this.categoryDataAuthority = new MongoCategoryDataSource();
+        this.userDataAuthority = new MongoUserDataSource();
+        this.videoDataAuthority = new MongoVideoDataSource();
     }
 
     /**
