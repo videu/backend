@@ -19,6 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { HTTPStatusCode } from '../../types/json/response';
+
 /**
  * Represents an HTTP error message that gets caught by the master error handler
  * in `./default-error-handler`, where it is sent to the client.
@@ -26,7 +28,7 @@
 export class HttpError extends Error {
 
     /** The HTTP status code to reply with. */
-    public readonly status: number;
+    public readonly status: HTTPStatusCode;
 
     /**
      * Create a new HTTP error.
@@ -34,7 +36,7 @@ export class HttpError extends Error {
      * @param msg The error message.
      * @param status The HTTP status code.
      */
-    public constructor(msg: string, status: number = 500) {
+    public constructor(msg: string, status: HTTPStatusCode = HTTPStatusCode.INTERNAL_SERVER_ERROR) {
         super(msg);
 
         this.status = status;

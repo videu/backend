@@ -21,10 +21,10 @@
 
 import { IConfigurable } from '../../types/configurable';
 import { ISubsys } from '../../types/core/subsys';
-import { IVideu } from '../../types/core/videu';
 import { ILogger } from '../../types/logger';
 import { IObjectSchema } from '../../types/util/object-schema';
 
+import { IllegalAccessError } from '../error/illegal-access-error';
 import { InvalidConfigError } from '../error/invalid-config-error';
 import { Logger } from '../util/logger';
 import { validateConfig } from '../util/validate';
@@ -37,22 +37,11 @@ const subsysIdRegex: RegExp = /^[a-z]([a-z0-9\-]*[a-z0-9])?$/;
  *
  * @param T The type of the configuration object.
  */
-export abstract class AbstractSubsys<T extends object>
-implements ISubsys, IConfigurable<T> {
+export abstract class AbstractSubsys<InitParams extends any[] = []>
+implements ISubsys<InitParams> {
 
     /** @inheritdoc */
     public readonly id: string;
-
-    /** @inheritdoc */
-    public readonly config: T;
-
-    /** @inheritdoc */
-    public abstract readonly wants: string[];
-
-    /** The main app instance. */
-    protected get app(): IVideu | null {
-        return this._app;
-    }
 
     /** The logging utility for this subsystem. */
     protected readonly logger: ILogger;
@@ -64,25 +53,13 @@ implements ISubsys, IConfigurable<T> {
     private _isInitialized: boolean = false;
 
     /**
-     * Internal value for {@link #app} with write access.
-     */
-    private _app: IVideu | null = null;
-
-    /**
      * Create a new subsystem.
      *
-     * @param id This subsystem's unique id.  This must be an all-lowercase
+     * @param id This subsystem's unique id.  This should be an all-lowercase
      *     alphanumeric string starting with a letter and may contain dashes
      *     within.
-     * @param config The configuration object.  If `null`, the
-     *     {@link #readConfigFromEnv} is invoked to obtain it.  If that returns
-     *     `null` as well, an {@link InvalidConfigError} is thrown.
-     * @param configSchema A schema describing the exact structure of the
-     *     configuration object.
-     * @throws An {@link InvalidConfigurationError} if the configuration
-     *     had illegal or missing values.
      */
-    constructor(id: string, config: T | null, configSchema: IObjectSchema) {
+    constructor(id: string) {
         if (!subsysIdRegex.test(id)) {
             throw new Error(
                 `Subsystem id "${id}" does not match ${subsysIdRegex.toString()}`
@@ -91,20 +68,6 @@ implements ISubsys, IConfigurable<T> {
 
         this.id = id;
         this.logger = new Logger(id);
-
-        if (config === null) {
-            const configFromEnv = this.readConfigFromEnv();
-
-            if (configFromEnv === null) {
-                throw new InvalidConfigError(
-                    'Unable to obtain the configuration object'
-                );
-            }
-
-            this.config = validateConfig(configFromEnv, configSchema);
-        } else {
-            this.config = validateConfig(config, configSchema);
-        }
     }
 
     /** @inheritdoc */
@@ -113,14 +76,79 @@ implements ISubsys, IConfigurable<T> {
     }
 
     /** @inheritdoc */
-    public async init(app: IVideu) {
-        this._app = app;
+    public async init() {
         this._isInitialized = true;
+        this.logger.i('Initializing');
     }
 
     /** @inheritdoc */
     public exit() {
         this._isInitialized = false;
+    }
+
+}
+
+/**
+ * Abstract base class for all subsystems that are configurable.
+ */
+export abstract class AbstractSubsysConfigurable<
+    ConfigType extends object = {},
+    InitParams extends any[] = []
+> extends AbstractSubsys<InitParams> implements IConfigurable<ConfigType> {
+
+    /** Internal field for {@link #config} w/ write access. */
+    private _config: ConfigType | null = null;
+
+    /** The validation schema for the config object. */
+    private readonly configSchema: IObjectSchema;
+
+    /**
+     * Create a new configurable subsystem.
+     *
+     * @param id This subsystem's unique id.  This should be an all-lowercase
+     *     alphanumeric string starting with a letter and may contain dashes
+     *     within.
+     * @param config The configuration object.  If `null`, the
+     *     {@link #readConfigFromEnv} callback is invoked to obtain it.  If that
+     *     returns `null` as well, an {@link InvalidConfigError} is thrown.
+     * @param configSchema A schema describing the exact structure of the
+     *     configuration object.
+     * @throws An {@link InvalidConfigurationError} if the configuration
+     *     had illegal or missing values.
+     */
+    constructor(id: string, config: ConfigType | null, configSchema: IObjectSchema) {
+        super(id);
+
+        this._config = config;
+        this.configSchema = configSchema;
+    }
+
+    /** @inheritdoc */
+    public async init(): Promise<void> {
+        await super.init();
+
+        if (this._config === null) {
+            const configFromEnv = this.readConfigFromEnv();
+
+            if (configFromEnv === null) {
+                throw new InvalidConfigError(
+                    'Unable to obtain the configuration object'
+                );
+            }
+
+            this._config = validateConfig(configFromEnv, this.configSchema);
+        } else {
+            this._config = validateConfig(this._config, this.configSchema);
+        }
+    }
+
+    /** @inheritdoc */
+    public get config(): ConfigType {
+        if (!this.isInitialized) {
+            throw new IllegalAccessError('Cannot access configuration before init()');
+        }
+
+        return this._config!;
     }
 
     /**
@@ -130,7 +158,7 @@ implements ISubsys, IConfigurable<T> {
      *
      * @return The configuration object, composed from environment variables.
      */
-    protected readConfigFromEnv(): T | null {
+    protected readConfigFromEnv(): ConfigType | null {
         return null;
     }
 

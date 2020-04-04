@@ -1,5 +1,5 @@
 /**
- * @file Lifecycle interface definition.
+ * @file Error class for illegal data accesses.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,23 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { SealedArray } from '../array';
-
 /**
- * Something that owns a basic lifecycle, i.e. can be initialized and
- * de-initialized.
- *
- * @param T An optional parameter that is passed to the {@link #init} callback.
+ * Error condition when a property was attempted to be accessed when one was not
+ * supposed to do so at this time.
  */
-export interface ILifecycle<InitArgs extends any[] = []> {
-
-    /** Whether this is currently initialized. */
-    readonly isInitialized: boolean;
-
-    /** Initialize this instance. */
-    init(...args: InitArgs): Promise<void>;
-
-    /** De-initialize this instance. */
-    exit(): void;
-
-}
+export class IllegalAccessError extends Error {}

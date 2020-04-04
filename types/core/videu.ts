@@ -20,19 +20,12 @@
  */
 
 import { ILifecycle } from './lifecycle';
-import { ISubsys } from './subsys';
 
 /**
  * Interface definition for the main application class.
  */
 export interface IVideu extends ILifecycle {
 
-    /**
-     * Get a subsystem by its id.
-     *
-     * @param id The subsystem id.
-     * @return The subsystem, or `null` if it does not exist.
-     */
-    getSubsys(id: string): ISubsys | null;
+    readonly appName: string;
 
 }

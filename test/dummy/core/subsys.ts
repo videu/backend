@@ -1,5 +1,5 @@
 /**
- * @file Dummy implementation of `ISubsys`.
+ * @file Stub subsystem implementations.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,55 +19,47 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ISubsys } from '../../../types/core/subsys';
-import { IVideu } from '../../../types/core/videu';
-
-import { AbstractSubsys } from '../../../src/core/abstract-subsys';
+import {
+    AbstractSubsys,
+    AbstractSubsysConfigurable,
+} from '../../../src/core/abstract-subsys';
 import { IObjectSchema } from '../../../types/util/object-schema';
 
 /**
- * Dummy implementation of a subsystem.
+ * Dummy implementation of a subsystem for testing the {@link AbstractSubsys}
+ * class.
  */
-export class StubSubsys implements ISubsys {
+export class StubSubsys<InitParams extends any[] = []>
+extends AbstractSubsys<InitParams> {
 
-    public readonly id: string;
-
-    public isInitialized: boolean = false;
-    /** If `false`, the dependencies defined in {@link #wants} were not satisfied. */
-    public hasDependenciesSatisfied: boolean =  true;
-
-    public readonly wants: string[];
+    public initParams: InitParams | null = null;
 
     private readonly shouldInitFail: boolean;
     private readonly shouldExitFail: boolean;
 
-    /**
-     * Create a new subsystem dummy.
-     *
-     * @param id The subsystem id.
-     * @param wants All subsystem ids this one depends on.
-     * @param shouldInitFail Whether the {@link #init} callback should throw an error.
-     * @param shouldExitFail Whether the {@link #exit} callback should throw an error.
-     */
-    constructor(id: string, wants: string[], shouldInitFail: boolean, shouldExitFail: boolean) {
-        this.id = id;
-        this.wants = wants;
+    constructor(id: string, shouldInitFail: boolean, shouldExitFail: boolean) {
+        super(id);
+
         this.shouldInitFail = shouldInitFail;
         this.shouldExitFail = shouldExitFail;
     }
 
-    public init(videu: IVideu): Promise<void> {
-        return new Promise((resolve, reject) => {
-            /* check if all subsystems this one depends on have been initialized */
-            for (const subsysId of this.wants) {
-                const subsys = videu.getSubsys(subsysId);
-                if (subsys === null || !subsys.isInitialized) {
-                    this.hasDependenciesSatisfied = false;
-                }
+    public init(...params: InitParams): Promise<void> {
+        /*
+         * Returning a Promise manually instead of declaring init() as async
+         * allows us to use timeouts.  This simulates the actual delay that may
+         * occur with things like connecting to a server.
+         */
+        return new Promise(async (resolve, reject) => {
+            try {
+                await super.init();
+            } catch (err) {
+                reject(err);
             }
 
+            this.initParams = params;
+
             setTimeout(() => {
-                this.isInitialized = true;
                 if (this.shouldInitFail) {
                     reject(new Error('Dummy init failed :('));
                 } else {
@@ -77,42 +69,48 @@ export class StubSubsys implements ISubsys {
         });
     }
 
-    public exit(): void {
-        this.isInitialized = false;
+    public exit() {
+        super.exit();
+
         if (this.shouldExitFail) {
             throw new Error('Dummy exit failed :(');
         }
     }
-
 }
 
+/**
+ * Configuration schema for the {@link StubSubsysConfigurable} class.
+ */
 export interface IStubSubsysConfig {
     someProp: string;
 }
 
 /**
- * Dummy extending the {@link AbstractSubsys} class.
+ * Dummy subsystem w/ config for testing the {@link AbstractSubsysConfigurable}
+ * class.
  */
-export class StubExtAbstractSubsys
-extends AbstractSubsys<IStubSubsysConfig> {
+export class StubSubsysConfigurable<InitParams extends any[] = []>
+extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
 
+    /** The configuration object that is passed to the super class. */
     public static readonly CONFIG: IStubSubsysConfig = {
         someProp: 'some-val',
     };
 
+    /** The config validation schema. */
     private static readonly SCHEMA: IObjectSchema = {
         someProp: {
             type: 'string',
         },
     };
 
-    /** If `false`, the dependencies defined in {@link #wants} were not satisfied. */
-    public hasDependenciesSatisfied: boolean = true;
-
-    public readonly wants: string[];
+    /** An array of all parameters passed to the {@link #init} callback. */
+    public initParams: InitParams | null = null;
 
     private readonly shouldInitFail: boolean;
     private readonly shouldExitFail: boolean;
+    private readonly shouldConfigFail: boolean;
+    private readonly shouldReturnNoConfig: boolean;
 
     /**
      * Create a new subsystem dummy.
@@ -123,39 +121,34 @@ extends AbstractSubsys<IStubSubsysConfig> {
      * @param shouldExitFail Whether the {@link #exit} callback should throw an error.
      * @param shouldConfigFail Whether the configuration should be invalid.
      */
-    constructor(id: string, wants: string[], shouldInitFail: boolean = false,
-                shouldExitFail: boolean = false, shouldConfigFail: boolean = false,
-                configFromEnv: boolean = false) {
+    constructor(id: string, shouldInitFail: boolean = false, shouldExitFail: boolean = false,
+                shouldConfigFail: boolean = false, configFromEnv: boolean = false,
+                shouldReturnNoConfig: boolean = false) {
         super(
             id,
-            shouldConfigFail
-                ? {} as any
-                : configFromEnv
+            shouldConfigFail && !configFromEnv
+                ? {} as IStubSubsysConfig
+                : configFromEnv || shouldReturnNoConfig
                     ? null
-                    : StubExtAbstractSubsys.CONFIG,
-            StubExtAbstractSubsys.SCHEMA
+                    : StubSubsysConfigurable.CONFIG,
+            StubSubsysConfigurable.SCHEMA
         );
 
-        this.wants = wants;
         this.shouldInitFail = shouldInitFail;
         this.shouldExitFail = shouldExitFail;
+        this.shouldConfigFail = shouldConfigFail;
+        this.shouldReturnNoConfig = shouldReturnNoConfig;
     }
 
-    public getApp(): IVideu | null {
-        return this.app;
-    }
-
-    public init(videu: IVideu): Promise<void> {
+    public init(...params: InitParams): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            await super.init(videu);
-
-            /* check if all subsystems this one depends on have been initialized */
-            for (const subsysId of this.wants) {
-                const subsys = videu.getSubsys(subsysId);
-                if (subsys === null || !subsys.isInitialized) {
-                    this.hasDependenciesSatisfied = false;
-                }
+            try {
+                await super.init();
+            } catch (err) {
+                reject(err);
             }
+
+            this.initParams = params;
 
             setTimeout(() => {
                 if (this.shouldInitFail) {
@@ -175,12 +168,19 @@ extends AbstractSubsys<IStubSubsysConfig> {
         }
     }
 
-}
-
-export class StubExtAbstractSubsysFromEnv extends StubExtAbstractSubsys {
-
-    protected readConfigFromEnv(): IStubSubsysConfig {
-        return StubExtAbstractSubsys.CONFIG;
+    protected readConfigFromEnv(): IStubSubsysConfig | null {
+        /*
+         * This can only ever get called if configFromEnv is true as that is the
+         * only way that the config parameter passed to the super constructor is
+         * null.  That means we don't have to check that flag here.
+         */
+        if (this.shouldReturnNoConfig) {
+            return null;
+        } else if (this.shouldConfigFail) {
+            return {} as IStubSubsysConfig;
+        } else {
+            return StubSubsysConfigurable.CONFIG;
+        }
     }
 
 }

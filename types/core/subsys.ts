@@ -20,7 +20,6 @@
  */
 
 import { ILifecycle } from './lifecycle';
-import { IVideu } from './videu';
 
 /**
  * Base interface for subsystems.
@@ -28,22 +27,13 @@ import { IVideu } from './videu';
  * A subsystem is a major component of the application that requires
  * initialization on server start and cleanup on server stop.
  */
-export interface ISubsys extends ILifecycle<IVideu> {
+export interface ISubsys<InitParams extends any[] = []>
+extends ILifecycle<InitParams> {
 
     /** The unique name. Should be an all-lowercase alphanumeric string. */
     readonly id: string;
 
     /** Whether this subsystem is currently initialized. */
     readonly isInitialized: boolean;
-
-    /**
-     * An array of subsystem ids that this subsys requires in order to function.
-     * Any subsystem that is in this array is guaranteed to have been
-     * initialized before this one.  Similarily, this subsystem is guaranteed to
-     * be de-initialized before any in this array.  If there is a conflict
-     * (i.e. two subsystems `want`ing each other), the server will refuse to
-     * start all together.
-     */
-    readonly wants: string[];
 
 }
