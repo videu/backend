@@ -22,35 +22,85 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
 
-import { mongod } from '../dummy/mongod';
+import { StubMongoSubsys } from '../dummy/core/mongo-subsys';
 
-import { MongoSubsys } from '../../src/core/mongo-subsys';
 import { StorageSubsys } from '../../src/core/storage-subsys';
+import { IllegalAccessError } from '../../src/error/illegal-access-error';
 
 describe('core/storage-subsys:StorageSubsys', () => {
     it('should initialize normally', () => {
         const fn = async () => {
-            const mongoSubsys = new MongoSubsys({
-                host: '127.0.0.1',
-                port: await mongod.getPort(),
-                db: await mongod.getDbName(),
-                authSource: 'admin',
-                passwd: '',
-                userName: '',
-                ssl: false,
-            });
             const storageSubsys = new StorageSubsys();
-
-            try {
-                await mongoSubsys.init();
-                await storageSubsys.init(mongoSubsys);
-
-                await storageSubsys.exit();
-            } finally {
-                await mongoSubsys.exit();
-            }
+            await storageSubsys.init(new StubMongoSubsys());
         };
 
         return expect(fn()).to.eventually.be.fulfilled;
+    });
+
+    it('should exit normally', () => {
+        const fn = async () => {
+            const storageSubsys = new StorageSubsys();
+            await storageSubsys.init(new StubMongoSubsys());
+            await storageSubsys.exit();
+        };
+
+        return expect(fn()).to.eventually.be.fulfilled;
+    });
+
+    it('should throw an error if accessing the categoryRepo before init', () => {
+        const fn = () => {
+            const storageSubsys = new StorageSubsys();
+            return storageSubsys.categoryRepo;
+        };
+
+        return expect(fn).to.throw(IllegalAccessError);
+    });
+
+    it('should throw an error if accessing the userRepo before init', () => {
+        const fn = () => {
+            const storageSubsys = new StorageSubsys();
+            return storageSubsys.userRepo;
+        };
+
+        return expect(fn).to.throw(IllegalAccessError);
+    });
+
+    it('should throw an error if accessing the videoRepo before init', () => {
+        const fn = () => {
+            const storageSubsys = new StorageSubsys();
+            return storageSubsys.videoRepo;
+        };
+
+        return expect(fn).to.throw(IllegalAccessError);
+    });
+
+    it('should return the categoryRepo after successful init', () => {
+        const fn = async () => {
+            const storageSubsys = new StorageSubsys();
+            await storageSubsys.init(new StubMongoSubsys());
+            return storageSubsys.categoryRepo;
+        };
+
+        return expect(fn()).to.eventually.be.an('object');
+    });
+
+    it('should return the userRepo after successful init', () => {
+        const fn = async () => {
+            const storageSubsys = new StorageSubsys();
+            await storageSubsys.init(new StubMongoSubsys());
+            return storageSubsys.userRepo;
+        };
+
+        return expect(fn()).to.eventually.be.an('object');
+    });
+
+    it('should return the videoRepo after successful init', () => {
+        const fn = async () => {
+            const storageSubsys = new StorageSubsys();
+            await storageSubsys.init(new StubMongoSubsys());
+            return storageSubsys.videoRepo;
+        };
+
+        return expect(fn()).to.eventually.be.an('object');
     });
 });
