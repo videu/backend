@@ -182,8 +182,8 @@ implements IHTTPSubsys {
 
     /** @inheritdoc */
     public set(setting: string, val: any) {
-        if (!this.isInitialized) {
-            throw new IllegalStateError('HTTP subsystem is not initialized yet');
+        if (this.state !== LifecycleState.INITIALIZED) {
+            throw new IllegalStateError('HTTP subsystem is not initialized');
         }
 
         this.express.set(setting, val);
