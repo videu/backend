@@ -76,19 +76,45 @@ implements IUserRepository {
             }
         }
 
-        return await this.authority.getByEmail(email);
+        const finalHit = await this.authority.getByEmail(email);
+        if (finalHit !== null) {
+            const promises: Array<Promise<void>> = [];
+            for (const cache of this.caches) {
+                promises.push(cache.put(finalHit));
+            }
+            try {
+                await Promise.all(promises);
+            } catch (err) {
+                this.logger.e('Caching error', err);
+            }
+        }
+
+        return finalHit;
     }
 
     /** @inheritdoc */
     public async getById(id: ObjectId): Promise<IUser | null> {
-        for (const ds of this.caches) {
-            const hit = await ds.getById(id);
+        for (const cache of this.caches) {
+            const hit = await cache.getById(id);
             if (hit !== null) {
                 return hit;
             }
         }
 
-        return await this.authority.getById(id);
+        const finalHit = await this.authority.getById(id);
+        if (finalHit !== null) {
+            const promises: Array<Promise<void>> = [];
+            for (const cache of this.caches) {
+                promises.push(cache.put(finalHit));
+            }
+            try {
+                await Promise.all(promises);
+            } catch (err) {
+                this.logger.e('Caching error', err);
+            }
+        }
+
+        return finalHit;
     }
 
     /** @inheritdoc */
@@ -100,7 +126,20 @@ implements IUserRepository {
             }
         }
 
-        return await this.authority.getByUserName(userName);
+        const finalHit = await this.authority.getByUserName(userName);
+        if (finalHit !== null) {
+            const promises: Array<Promise<void>> = [];
+            for (const cache of this.caches) {
+                promises.push(cache.put(finalHit));
+            }
+            try {
+                await Promise.all(promises);
+            } catch (err) {
+                this.logger.e('Caching error', err);
+            }
+        }
+
+        return finalHit;
     }
 
     /** @inheritdoc */

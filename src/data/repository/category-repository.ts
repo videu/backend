@@ -68,7 +68,20 @@ export class CategoryRepository extends AbstractRepository<
             }
         }
 
-        return await this.authority.getById(id);
+        const finalHit = await this.authority.getById(id);
+        if (finalHit !== null) {
+            const promises: Array<Promise<void>> = [];
+            for (const cache of this.caches) {
+                promises.push(cache.put(finalHit));
+            }
+            try {
+                Promise.all(promises);
+            } catch (err) {
+                this.logger.e('Caching error', err);
+            }
+        }
+
+        return finalHit;
     }
 
     /** @inheritdoc */
