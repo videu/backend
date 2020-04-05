@@ -33,7 +33,4 @@ extends ILifecycle<InitParams> {
     /** The unique name. Should be an all-lowercase alphanumeric string. */
     readonly id: string;
 
-    /** Whether this subsystem is currently initialized. */
-    readonly isInitialized: boolean;
-
 }

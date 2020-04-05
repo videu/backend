@@ -22,7 +22,10 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
 
+import { LifecycleState } from '../../types/core/lifecycle';
+
 import { IllegalAccessError } from '../../src/error/illegal-access-error';
+import { IllegalStateError } from '../../src/error/illegal-state-error';
 
 import { IStubSubsysConfig, StubSubsys, StubSubsysConfigurable } from '../dummy/core/subsys';
 
@@ -38,7 +41,7 @@ before(() => {
 interface IStubSubsysTestResult<InitParams extends any[] = []> {
     id: string;
     initParams: InitParams | null;
-    isInitialized: boolean;
+    state: LifecycleState;
 }
 
 /** Test callback function for testing the {@link AbstractSubsys} class. */
@@ -46,6 +49,94 @@ type FStubSubsysTester<InitParams extends any[] = []> =
     () => Promise<IStubSubsysTestResult<InitParams>>;
 
 describe('core/abstract-subsys:AbstractSubsys', () => {
+    it('should have state CREATED after instantiation', () => {
+        return expect(new StubSubsys<[]>('stub', false, false).state).to.eq(LifecycleState.CREATED);
+    });
+
+    it('should have state INITIALIZED after calling init()', () => {
+        const fn = async () => {
+            const dummy = new StubSubsys<[]>('stub', false, false);
+            await dummy.init();
+            return dummy.state;
+        };
+        return expect(fn()).to.eventually.eq(LifecycleState.INITIALIZED);
+    });
+
+    it('should have state EXITED after calling exit()', () => {
+        const fn = async () => {
+            const dummy = new StubSubsys<[]>('stub', false, false);
+            await dummy.init();
+            await dummy.exit();
+            return dummy.state;
+        };
+        return expect(fn()).to.eventually.eq(LifecycleState.EXITED);
+    });
+
+    it('should throw the same error on init() as thrown by onInit()', () => {
+        const fn = async () => {
+            const dummy = new StubSubsys<[]>('failing', true, false);
+            await dummy.init();
+        };
+        return expect(fn()).to.eventually.be.rejectedWith(Error, StubSubsys.INIT_ERROR_MESSAGE);
+    });
+
+    it('should enter ERROR state after onInit() throws an error', () => {
+        const fn = async () => {
+            const dummy = new StubSubsys<[]>('failing', true, false);
+            try {
+                await dummy.init();
+            } catch (err) {
+                return dummy.state;
+            }
+
+            return dummy.state;
+        };
+        return expect(fn()).to.eventually.eq(LifecycleState.ERROR);
+    });
+
+    it('should throw the same error on exit() as thrown by onExit()', () => {
+        const fn = async () => {
+            const dummy = new StubSubsys<[]>('failing', false, true);
+            await dummy.init();
+            await dummy.exit();
+        };
+        return expect(fn()).to.eventually.be.rejectedWith(Error, StubSubsys.EXIT_ERROR_MESSAGE);
+    });
+
+    it('should enter ERROR state after inExit() throws an error', () => {
+        const fn = async () => {
+            const dummy = new StubSubsys<[]>('failing', false, true);
+            await dummy.init();
+            try {
+                await dummy.exit();
+            } catch (err) {
+                return dummy.state;
+            }
+
+            return dummy.state;
+        };
+        return expect(fn()).to.eventually.eq(LifecycleState.ERROR);
+    });
+
+    it('should refuse initializing twice', () => {
+        const fn = async () => {
+            const dummy = new StubSubsys<[]>('stub', false, false);
+            await dummy.init();
+            await dummy.init();
+        };
+        return expect(fn()).to.eventually.be.rejectedWith(IllegalStateError);
+    });
+
+    it('should refuse exiting twice', () => {
+        const fn = async () => {
+            const dummy = new StubSubsys<[]>('stub', false, false);
+            await dummy.init();
+            await dummy.exit();
+            await dummy.exit();
+        };
+        return expect(fn()).to.eventually.be.rejectedWith(IllegalStateError);
+    });
+
     it('should initialize normally without init params', () => {
         const fn: FStubSubsysTester<[]> = async () => {
             const dummy = new StubSubsys<[]>('stub', false, false);
@@ -53,14 +144,14 @@ describe('core/abstract-subsys:AbstractSubsys', () => {
             return {
                 id: dummy.id,
                 initParams: dummy.initParams,
-                isInitialized: dummy.isInitialized,
+                state: dummy.state,
             };
         };
 
         return expect(fn()).to.eventually.deep.equal({
             id: 'stub',
             initParams: [],
-            isInitialized: true,
+            state: LifecycleState.INITIALIZED,
         }, 'Subsys state invalid');
     });
 
@@ -71,14 +162,14 @@ describe('core/abstract-subsys:AbstractSubsys', () => {
             return {
                 id: dummy.id,
                 initParams: dummy.initParams,
-                isInitialized: dummy.isInitialized,
+                state: dummy.state,
             };
         };
 
         return expect(fn()).to.eventually.deep.equal({
             id: 'stub',
             initParams: [ 420 ],
-            isInitialized: true,
+            state: LifecycleState.INITIALIZED,
         }, 'Subsys state invalid');
     });
 
@@ -89,14 +180,14 @@ describe('core/abstract-subsys:AbstractSubsys', () => {
             return {
                 id: dummy.id,
                 initParams: dummy.initParams,
-                isInitialized: dummy.isInitialized,
+                state: dummy.state,
             };
         };
 
         return expect(fn()).to.eventually.deep.equal({
             id: 'stub',
             initParams: [ 'param', 420 ],
-            isInitialized: true,
+            state: LifecycleState.INITIALIZED,
         }, 'Subsys state invalid');
     });
 
@@ -108,14 +199,14 @@ describe('core/abstract-subsys:AbstractSubsys', () => {
             return {
                 id: dummy.id,
                 initParams: dummy.initParams,
-                isInitialized: dummy.isInitialized,
+                state: dummy.state,
             };
         };
 
         return expect(fn()).to.eventually.deep.eq({
             id: 'stub',
             initParams: [],
-            isInitialized: false,
+            state: LifecycleState.EXITED,
         }, 'Subsys state invalid');
     });
 
@@ -147,7 +238,7 @@ describe('core/abstract-subsys:AbstractSubsysConfigurable', () => {
                 id: dummy.id,
                 initParams: dummy.initParams,
                 config: dummy.config,
-                isInitialized: dummy.isInitialized,
+                state: dummy.state,
             };
         };
 
@@ -155,7 +246,7 @@ describe('core/abstract-subsys:AbstractSubsysConfigurable', () => {
             id: 'stub',
             initParams: [],
             config: StubSubsysConfigurable.CONFIG,
-            isInitialized: true,
+            state: LifecycleState.INITIALIZED,
         }, 'Subsys state invalid');
     });
 
@@ -167,7 +258,7 @@ describe('core/abstract-subsys:AbstractSubsysConfigurable', () => {
                 id: dummy.id,
                 initParams: dummy.initParams,
                 config: dummy.config,
-                isInitialized: dummy.isInitialized,
+                state: dummy.state,
             };
         };
 
@@ -175,22 +266,13 @@ describe('core/abstract-subsys:AbstractSubsysConfigurable', () => {
             id: 'stub',
             initParams: [],
             config: StubSubsysConfigurable.CONFIG,
-            isInitialized: true,
+            state: LifecycleState.INITIALIZED,
         }, 'Subsys state invalid');
-    });
-
-    it('should throw an error with no config', () => {
-        const fn = async () => {
-            const dummy = new StubSubsysConfigurable<[]>('stub', false, false, false, false, true);
-            await dummy.init();
-        };
-
-        return expect(fn()).to.be.rejectedWith(Error);
     });
 
     it('should reject accessing the config before init', () => {
         const fn = () => {
-            const dummy = new StubSubsysConfigurable<[]>('stub');
+            const dummy = new StubSubsysConfigurable<[]>('stub', false, false, false, true);
             return dummy.config;
         };
 

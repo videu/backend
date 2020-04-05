@@ -75,8 +75,8 @@ implements IMongoSubsys {
      * @inheritdoc
      * @override
      */
-    public async init() {
-        await super.init();
+    public async onInit() {
+        await super.onInit();
 
         if (process.env.NODE_ENV === 'production' && !this.config.ssl) {
             throw new InvalidConfigError(
@@ -113,9 +113,7 @@ implements IMongoSubsys {
      * @inheritdoc
      * @override
      */
-    public async exit() {
-        super.exit();
-
+    public async onExit() {
         if (this.mongooseInstance !== null) {
             this.logger.v('Disconnecting');
             await this.mongooseInstance.disconnect();

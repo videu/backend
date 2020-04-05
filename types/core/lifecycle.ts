@@ -19,18 +19,46 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { SealedArray } from '../array';
+/**
+ * All states of an {@link ILifecycle}.
+ */
+export const enum LifecycleState {
+
+    /**
+     * The unit has been instantiated, but not initialized yet.
+     * It is not ready for use.
+     */
+    CREATED = 0,
+
+    /**
+     * The unit has been initialized successfully and is ready to be used with
+     * other components.
+     */
+    INITIALIZED = 1,
+
+    /**
+     * The unit has been de-initialized and cannot be used anymore.
+     * It is not possible to re-initialize the same unit again.
+     */
+    EXITED = 2,
+
+    /**
+     * The initialization failed, the unit cannot be used.
+     */
+    ERROR = 3,
+
+}
 
 /**
  * Something that owns a basic lifecycle, i.e. can be initialized and
  * de-initialized.
  *
- * @param T An optional parameter that is passed to the {@link #init} callback.
+ * @param T An optional parameter list that is passed to the {@link #init} callback.
  */
 export interface ILifecycle<InitArgs extends any[] = []> {
 
-    /** Whether this is currently initialized. */
-    readonly isInitialized: boolean;
+    /** The current state of this unit. */
+    readonly state: LifecycleState;
 
     /** Initialize this instance. */
     init(...args: InitArgs): Promise<void>;

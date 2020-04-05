@@ -20,11 +20,13 @@
  */
 
 import { IHTTPSubsys } from '../../types/core/http-subsys';
+import { LifecycleState } from '../../types/core/lifecycle';
 import { IMongoSubsys } from '../../types/core/mongo-subsys';
 import { IStorageSubsys } from '../../types/core/storage-subsys';
 import { IVideu } from '../../types/core/videu';
 import { ILogger } from '../../types/logger';
 
+import { IllegalStateError } from '../error/illegal-state-error';
 import { Logger } from '../util/logger';
 import { HTTPSubsys } from './http-subsys';
 import { MongoSubsys } from './mongo-subsys';
@@ -54,7 +56,7 @@ export class Videu implements IVideu {
      * Internal storage for keeping the public {@link isInitialized} getter
      * readonly while being able to change its value internally.
      */
-    private _isInitialized: boolean = false;
+    private _state: LifecycleState = LifecycleState.CREATED;
 
     /**
      * Create a new application instance.
@@ -67,8 +69,8 @@ export class Videu implements IVideu {
     }
 
     /** @inheritdoc */
-    public get isInitialized(): boolean {
-        return this._isInitialized;
+    public get state(): LifecycleState {
+        return this._state;
     }
 
     /** @inheritdoc */
@@ -86,16 +88,23 @@ export class Videu implements IVideu {
         } catch (err) {
             this.logger.e(`Error while initializing the ${currentId} subsystem`, err);
             await this.exit();
+            this._state = LifecycleState.ERROR;
             return;
         }
 
-        this._isInitialized = true;
+        this._state = LifecycleState.INITIALIZED;
     }
 
     /** @inheritdoc */
     public async exit() {
+        if (this.state !== LifecycleState.INITIALIZED) {
+            throw new IllegalStateError('Cannot exit before init');
+        }
+
+        /* TODO: Find a more elegant approach for this mess */
+
         try {
-            if (this.storageSubsys.isInitialized) {
+            if (this.storageSubsys.state === LifecycleState.INITIALIZED) {
                 await this.storageSubsys.exit();
             }
         } catch (err) {
@@ -103,7 +112,7 @@ export class Videu implements IVideu {
         }
 
         try {
-            if (this.httpSubsys.isInitialized) {
+            if (this.httpSubsys.state === LifecycleState.INITIALIZED) {
                 await this.httpSubsys.exit();
             }
         } catch (err) {
@@ -111,14 +120,14 @@ export class Videu implements IVideu {
         }
 
         try {
-            if (this.mongoSubsys.isInitialized) {
+            if (this.mongoSubsys.state === LifecycleState.INITIALIZED) {
                 await this.mongoSubsys.exit();
             }
         } catch (err) {
             this.logger.e('Unable to de-initialize the mongo subsystem', err);
         }
 
-        this._isInitialized = false;
+        this._state = LifecycleState.EXITED;
         this.logger.i('Thank you and goodbye');
     }
 

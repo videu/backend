@@ -19,11 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { IObjectSchema } from '../../../types/util/object-schema';
+
 import {
     AbstractSubsys,
     AbstractSubsysConfigurable,
 } from '../../../src/core/abstract-subsys';
-import { IObjectSchema } from '../../../types/util/object-schema';
 
 /**
  * Dummy implementation of a subsystem for testing the {@link AbstractSubsys}
@@ -32,6 +33,12 @@ import { IObjectSchema } from '../../../types/util/object-schema';
 export class StubSubsys<InitParams extends any[] = []>
 extends AbstractSubsys<InitParams> {
 
+    /** The error message of errors thrown in {@link #onInit}. */
+    public static INIT_ERROR_MESSAGE: string = 'Dummy init failed :(';
+    /** The error message of errors thrown in {@link #onExit}. */
+    public static EXIT_ERROR_MESSAGE: string = 'Dummy exit failed :(';
+
+    /** The parameters passed to the {@link onInit} callback. */
     public initParams: InitParams | null = null;
 
     private readonly shouldInitFail: boolean;
@@ -44,24 +51,18 @@ extends AbstractSubsys<InitParams> {
         this.shouldExitFail = shouldExitFail;
     }
 
-    public init(...params: InitParams): Promise<void> {
+    public onInit(...params: InitParams): Promise<void> {
         /*
          * Returning a Promise manually instead of declaring init() as async
          * allows us to use timeouts.  This simulates the actual delay that may
          * occur with things like connecting to a server.
          */
         return new Promise(async (resolve, reject) => {
-            try {
-                await super.init(...params);
-            } catch (err) {
-                reject(err);
-            }
-
             this.initParams = params;
 
             setTimeout(() => {
                 if (this.shouldInitFail) {
-                    reject(new Error('Dummy init failed :('));
+                    reject(new Error(StubSubsys.INIT_ERROR_MESSAGE));
                 } else {
                     resolve();
                 }
@@ -69,13 +70,12 @@ extends AbstractSubsys<InitParams> {
         });
     }
 
-    public async exit() {
-        await super.exit();
-
+    public async onExit() {
         if (this.shouldExitFail) {
-            throw new Error('Dummy exit failed :(');
+            throw new Error(StubSubsys.EXIT_ERROR_MESSAGE);
         }
     }
+
 }
 
 /**
@@ -110,7 +110,6 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
     private readonly shouldInitFail: boolean;
     private readonly shouldExitFail: boolean;
     private readonly shouldConfigFail: boolean;
-    private readonly shouldReturnNoConfig: boolean;
 
     /**
      * Create a new subsystem dummy.
@@ -122,13 +121,12 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
      * @param shouldConfigFail Whether the configuration should be invalid.
      */
     constructor(id: string, shouldInitFail: boolean = false, shouldExitFail: boolean = false,
-                shouldConfigFail: boolean = false, configFromEnv: boolean = false,
-                shouldReturnNoConfig: boolean = false) {
+                shouldConfigFail: boolean = false, configFromEnv: boolean = false) {
         super(
             id,
             shouldConfigFail && !configFromEnv
                 ? {} as IStubSubsysConfig
-                : configFromEnv || shouldReturnNoConfig
+                : configFromEnv
                     ? null
                     : StubSubsysConfigurable.CONFIG,
             StubSubsysConfigurable.SCHEMA
@@ -137,13 +135,12 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
         this.shouldInitFail = shouldInitFail;
         this.shouldExitFail = shouldExitFail;
         this.shouldConfigFail = shouldConfigFail;
-        this.shouldReturnNoConfig = shouldReturnNoConfig;
     }
 
-    public init(...params: InitParams): Promise<void> {
+    public onInit(...params: InitParams): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await super.init(...params);
+                await super.onInit(...params);
             } catch (err) {
                 reject(err);
             }
@@ -152,7 +149,7 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
 
             setTimeout(() => {
                 if (this.shouldInitFail) {
-                    reject(new Error('Dummy init failed :('));
+                    reject(new Error(StubSubsys.INIT_ERROR_MESSAGE));
                 } else {
                     resolve();
                 }
@@ -160,23 +157,19 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
         });
     }
 
-    public async exit(): Promise<void> {
-        await super.exit();
-
+    public async onExit(): Promise<void> {
         if (this.shouldExitFail) {
-            throw new Error('Dummy exit failed :(');
+            throw new Error(StubSubsys.EXIT_ERROR_MESSAGE);
         }
     }
 
-    protected readConfigFromEnv(): IStubSubsysConfig | null {
+    protected readConfigFromEnv(): IStubSubsysConfig {
         /*
          * This can only ever get called if configFromEnv is true as that is the
          * only way that the config parameter passed to the super constructor is
          * null.  That means we don't have to check that flag here.
          */
-        if (this.shouldReturnNoConfig) {
-            return null;
-        } else if (this.shouldConfigFail) {
+        if (this.shouldConfigFail) {
             return {} as IStubSubsysConfig;
         } else {
             return StubSubsysConfigurable.CONFIG;

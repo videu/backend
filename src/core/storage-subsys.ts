@@ -54,6 +54,7 @@ export class StorageSubsys extends AbstractSubsys<[IMongoSubsys]> implements ISt
         super('storage');
     }
 
+    /** @inheritdoc */
     public get categoryRepo(): ICategoryRepository {
         if (this._categoryRepo === null) {
             throw new IllegalAccessError(
@@ -64,6 +65,7 @@ export class StorageSubsys extends AbstractSubsys<[IMongoSubsys]> implements ISt
         return this._categoryRepo;
     }
 
+    /** @inheritdoc */
     public get userRepo(): IUserRepository {
         if (this._userRepo === null) {
             throw new IllegalAccessError(
@@ -74,6 +76,7 @@ export class StorageSubsys extends AbstractSubsys<[IMongoSubsys]> implements ISt
         return this._userRepo;
     }
 
+    /** @inheritdoc */
     public get videoRepo(): IVideoRepository {
         if (this._videoRepo === null) {
             throw new IllegalAccessError(
@@ -88,12 +91,20 @@ export class StorageSubsys extends AbstractSubsys<[IMongoSubsys]> implements ISt
      * @inheritdoc
      * @override
      */
-    public async init(mongoSubsys: IMongoSubsys): Promise<void> {
-        await super.init(mongoSubsys);
-
+    public async onInit(mongoSubsys: IMongoSubsys): Promise<void> {
         this._categoryRepo = new CategoryRepository(this.logger, mongoSubsys.categoryDataAuthority);
         this._userRepo = new UserRepository(this.logger, mongoSubsys.userDataAuthority);
         this._videoRepo = new VideoRepository(this.logger, mongoSubsys.videoDataAuthority);
+    }
+
+    /**
+     * @inheritdoc
+     * @override
+     */
+    public async onExit() {
+        this._categoryRepo = null;
+        this._userRepo = null;
+        this._videoRepo = null;
     }
 
 }

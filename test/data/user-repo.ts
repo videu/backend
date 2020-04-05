@@ -48,8 +48,6 @@ describe('data/repository/user-repository:UserRepoistory', () => {
         return expect(fn()).to.eventually.equal(dummy.id);
     });
 
-    let newId: ObjectId | null = null;
-
     it('should register a new user normally w/out cache', () => {
         const fn = async () => {
             const user = await userRepo.register({
@@ -62,8 +60,6 @@ describe('data/repository/user-repository:UserRepoistory', () => {
                     showPP: true,
                 },
             });
-
-            newId = user._id;
 
             return {
                 activationToken: user.activationToken,

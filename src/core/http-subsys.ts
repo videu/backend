@@ -32,6 +32,7 @@ import {
     IHTTPConfig,
     IHTTPSubsys
 } from '../../types/core/http-subsys';
+import { LifecycleState } from '../../types/core/lifecycle';
 
 import { infoRouter } from '../routes/info-router';
 import { userRouter } from '../routes/user-router';
@@ -70,8 +71,8 @@ implements IHTTPSubsys {
      * @inheritdoc
      * @override
      */
-    public async init(): Promise<void> {
-        await super.init();
+    public async onInit(): Promise<void> {
+        await super.onInit();
 
         this.express.use(ipHeaderMiddleware);
         this.express.use(jsonBodyParser({
@@ -105,9 +106,7 @@ implements IHTTPSubsys {
      * @inheritdoc
      * @override
      */
-    public async exit(): Promise<void> {
-        await super.exit();
-
+    public async onExit(): Promise<void> {
         this.logger.v('Closing servers');
 
         for (const server of this.servers) {
@@ -125,13 +124,10 @@ implements IHTTPSubsys {
 
     /* TODO: Find a way to implement these two with purely async functions */
 
-    /**
-     * @inheritdoc
-     * @override
-     */
+    /** @inheritdoc */
     public listenTCP(host: string, port: number): Promise<HTTPServer> {
         return new Promise((resolve, reject) => {
-            if (!this.isInitialized) {
+            if (this.state !== LifecycleState.INITIALIZED) {
                 reject(new IllegalStateError('HTTP subsystem not initialized yet'));
                 return;
             }
@@ -149,13 +145,10 @@ implements IHTTPSubsys {
         });
     }
 
-    /**
-     * @inheritdoc
-     * @override
-     */
+    /** @inheritdoc */
     public listenUNIX(socket: PathLike, permissions: number = 0o770): Promise<HTTPServer> {
         return new Promise(async (resolve, reject) => {
-            if (!this.isInitialized) {
+            if (this.state !== LifecycleState.INITIALIZED) {
                 reject(new IllegalStateError('HTTP subsystem not initialized yet'));
                 return;
             }
@@ -187,10 +180,7 @@ implements IHTTPSubsys {
         });
     }
 
-    /**
-     * @inheritdoc
-     * @override
-     */
+    /** @inheritdoc */
     public set(setting: string, val: any) {
         if (!this.isInitialized) {
             throw new IllegalStateError('HTTP subsystem is not initialized yet');

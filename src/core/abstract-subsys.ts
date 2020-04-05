@@ -20,11 +20,13 @@
  */
 
 import { IConfigurable } from '../../types/configurable';
+import { LifecycleState } from '../../types/core/lifecycle';
 import { ISubsys } from '../../types/core/subsys';
 import { ILogger } from '../../types/logger';
 import { IObjectSchema } from '../../types/util/object-schema';
 
 import { IllegalAccessError } from '../error/illegal-access-error';
+import { IllegalStateError } from '../error/illegal-state-error';
 import { InvalidConfigError } from '../error/invalid-config-error';
 import { Logger } from '../util/logger';
 import { validateConfig } from '../util/validate';
@@ -46,11 +48,8 @@ implements ISubsys<InitParams> {
     /** The logging utility for this subsystem. */
     protected readonly logger: ILogger;
 
-    /**
-     * Internal state memory of {@link #isInitialized} for keeping read-only
-     * access to the cruel outside world.
-     */
-    private _isInitialized: boolean = false;
+    /** Internal field for {@link #state} w/ write access. */
+    private _state: LifecycleState = LifecycleState.CREATED;
 
     /**
      * Create a new subsystem.
@@ -71,20 +70,58 @@ implements ISubsys<InitParams> {
     }
 
     /** @inheritdoc */
-    public get isInitialized(): boolean {
-        return this._isInitialized;
+    public get state(): LifecycleState {
+        return this._state;
     }
 
     /** @inheritdoc */
     public async init(...initParams: InitParams) {
-        this._isInitialized = true;
-        this.logger.v('Initializing');
+        if (this.state !== LifecycleState.CREATED) {
+            throw new IllegalStateError(
+                'Cannot initialize a subsystem that is not in CREATED state'
+            );
+        }
+
+        try {
+            await this.onInit(...initParams);
+            this._state = LifecycleState.INITIALIZED;
+        } catch (err) {
+            this._state = LifecycleState.ERROR;
+            throw err;
+        }
     }
 
     /** @inheritdoc */
     public async exit() {
-        this._isInitialized = false;
+        if (this.state !== LifecycleState.INITIALIZED) {
+            throw new IllegalStateError(
+                'Cannot exit a subsystem that is not in initialized state'
+            );
+        }
+
+        try {
+            await this.onExit();
+            this._state = LifecycleState.EXITED;
+        } catch (err) {
+            this._state = LifecycleState.ERROR;
+            throw err;
+        }
     }
+
+    /**
+     * Callback for doing all required initialization work.  This is called by
+     * the {@link #init} method.  If it throws an error, the subsystem enters
+     * the {@link LifecycleState#ERROR} state.
+     *
+     * @param initParams The initialization parameters.
+     */
+    protected abstract onInit(...initParams: InitParams): Promise<void>;
+
+    /**
+     * Callback for doing all required cleanup work on server stop.
+     * This is called by the {@link #exit} method.
+     */
+    protected abstract onExit(): Promise<void>;
 
 }
 
@@ -97,7 +134,7 @@ export abstract class AbstractSubsysConfigurable<
 > extends AbstractSubsys<InitParams> implements IConfigurable<ConfigType> {
 
     /** Internal field for {@link #config} w/ write access. */
-    private _config: ConfigType | null = null;
+    private _config: ConfigType | null;
 
     /** The validation schema for the config object. */
     private readonly configSchema: IObjectSchema;
@@ -124,19 +161,9 @@ export abstract class AbstractSubsysConfigurable<
     }
 
     /** @inheritdoc */
-    public async init(...initParams: InitParams): Promise<void> {
-        await super.init(...initParams);
-
+    protected async onInit(...initParams: InitParams): Promise<void> {
         if (this._config === null) {
-            const configFromEnv = this.readConfigFromEnv();
-
-            if (configFromEnv === null) {
-                throw new InvalidConfigError(
-                    'Unable to obtain the configuration object'
-                );
-            }
-
-            this._config = validateConfig(configFromEnv, this.configSchema);
+            this._config = validateConfig(this.readConfigFromEnv(), this.configSchema);
         } else {
             this._config = validateConfig(this._config, this.configSchema);
         }
@@ -144,22 +171,18 @@ export abstract class AbstractSubsysConfigurable<
 
     /** @inheritdoc */
     public get config(): ConfigType {
-        if (!this.isInitialized) {
+        if (this._config === null) {
             throw new IllegalAccessError('Cannot access configuration before init()');
         }
 
-        return this._config!;
+        return this._config;
     }
 
     /**
      * Callback for reading the configuration object from environment variables.
-     * If you pass `null` as the `config` parameter in the constructor, you have
-     * to override this method and return a non-`null` value.
      *
      * @return The configuration object, composed from environment variables.
      */
-    protected readConfigFromEnv(): ConfigType | null {
-        return null;
-    }
+    protected abstract readConfigFromEnv(): ConfigType;
 
 }

@@ -22,13 +22,15 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
 
+import { IMongoConfig } from '../../types/core/mongo-subsys';
+
 import { mongod } from '../dummy/mongod';
 
 import { MongoSubsys } from '../../src/core/mongo-subsys';
-import { IMongoConfig } from '../../types/core/mongo-subsys';
 
 class MongoSubsysChild extends MongoSubsys {
 
+    /** Get the return value of `readConfigFromEnv()`. */
     public getConfig(): IMongoConfig {
         return this.readConfigFromEnv();
     }
