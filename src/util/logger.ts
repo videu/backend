@@ -27,67 +27,6 @@ import { ILogger } from '../../types/logger';
 
 type FLog = (message: any, ...optionalParams: any[]) => void;
 
-interface IRealConsole {
-    debug: FLog;
-    log: FLog;
-    info: FLog;
-    warn: FLog;
-    error: FLog;
-}
-
-const realConsole: IRealConsole = {
-    debug: console.debug,
-    log: console.log,
-    info: console.info,
-    warn: console.warn,
-    error: console.error,
-};
-
-console.debug = function(message: any, ...optionalParams: any[]) {
-    const date = new Date().toISOString();
-
-    realConsole.debug(
-        `${Logger.FMT_DIM}${date} [stderr] DEBUG: ${message}${Logger.FMT_RESET}`,
-        ...optionalParams
-    );
-};
-
-console.log = function(message: any, ...optionalParams: any[]) {
-    const date = new Date().toISOString();
-
-    realConsole.log(
-        `${date} [stdout] LOG: ${message}`,
-        ...optionalParams
-    );
-};
-
-console.info = function(message: any, ...optionalParams: any[]) {
-    const date = new Date().toISOString();
-
-    realConsole.info(
-        `${date} [stdout] INFO: ${message}`,
-        ...optionalParams
-    );
-};
-
-console.warn = function(message: any, ...optionalParams: any[]) {
-    const date = new Date().toISOString();
-
-    realConsole.warn(
-        `${Logger.FMT_FG_YELLOW}${date} [stderr] WARN: ${message}${Logger.FMT_RESET}`,
-        ...optionalParams
-    );
-};
-
-console.error = function(message: any, ...optionalParams: any[]) {
-    const date = new Date().toISOString();
-
-    realConsole.error(
-        `${Logger.FMT_FG_RED}${date} [stderr] ERROR: ${message}${Logger.FMT_RESET}`,
-        ...optionalParams
-    );
-};
-
 /**
  * A simple logger.
  */
@@ -123,6 +62,7 @@ export class Logger implements ILogger {
     public static readonly FMG_BG_CYAN: string = '\x1b[46m';
     public static readonly FMT_BG_WHITE: string = '\x1b[47m';
 
+    /** The tag for this logger.  Will appear in all log messages. */
     private tag: string;
 
     /**
@@ -148,79 +88,81 @@ export class Logger implements ILogger {
     /** @inheritdoc */
     public d(msg: string, err?: Error) {
         if (Logger.shouldLog(Logger.LEVEL_DEBUG)) {
-            this.log(realConsole.debug, Logger.FMT_DIM, 'DEBUG', msg, err);
+            this.log(console.debug, Logger.FMT_DIM, 'DEBUG', msg, err);
         }
     }
 
     /** @inheritdoc */
     public v(msg: string, err?: Error) {
         if (Logger.shouldLog(Logger.LEVEL_VERBOSE)) {
-            this.log(realConsole.log, '', 'VERBOSE', msg, err);
+            this.log(console.log, '', 'VERB', msg, err);
         }
     }
 
     /** @inheritdoc */
     public i(msg: string) {
         if (Logger.shouldLog(Logger.LEVEL_INFO)) {
-            this.log(realConsole.info, '', 'INFO', msg);
+            this.log(console.info, '', 'INFO', msg);
         }
     }
 
     /** @inheritdoc */
     public w(msg: string, err?: Error) {
         if (Logger.shouldLog(Logger.LEVEL_WARN)) {
-            this.log(realConsole.warn, Logger.FMT_FG_YELLOW, 'WARN', msg, err);
+            this.log(console.warn, Logger.FMT_FG_YELLOW, 'WARN', msg, err);
         }
     }
 
     /** @inheritdoc */
     public e(msg: string, err?: Error) {
         if (Logger.shouldLog(Logger.LEVEL_ERROR)) {
-            this.log(realConsole.error, Logger.FMT_FG_RED, 'ERROR', msg, err);
+            this.log(console.error, Logger.FMT_FG_RED, 'ERR', msg, err);
         }
     }
 
     /** @inheritdoc */
     public s(msg: string, err?: Error) {
         if (Logger.shouldLog(Logger.LEVEL_SEVERE)) {
-            this.log(realConsole.error, Logger.FMT_FG_RED, 'SEVERE', msg, err);
+            this.log(console.error, Logger.FMT_FG_RED, 'SEVERE', msg, err);
         }
     }
 
     /** @inheritdoc */
     public wtf(msg: string, err?: Error) {
-        this.log(realConsole.error, Logger.FMT_FG_RED, 'WTF', msg, err);
+        this.log(console.error, Logger.FMT_FG_RED, 'WTF', msg, err);
     }
 
     /**
      * Internal method for writing the actual line to the console.
      *
-     * @param func   The logging function to use (either of `console.log`,
-     *               `console.info`, `console.warn` or `console.err`).
-     * @param prefix The prefix (used for log level).
-     * @param msg    The message.
-     * @param err    The error, if any.
+     * @param func The logging function to use (either of `console.log`,
+     *     `console.info`, `console.warn`, `console.err` or `console.debug`).
+     * @param levelName The name of the log level.
+     * @param msg The message.
+     * @param err The error, if any.
      */
-    protected log(func: FLog, color: string, prefix: string, msg: string,
+    protected log(func: FLog, color: string, levelName: string, msg: string,
                   err?: Error) {
         const lines: string[] = msg.split('\n');
         const date: string = new Date().toISOString();
-        const preamble: string = `${color}${date} [${this.tag}] ${prefix}`;
+        const prefix: string = `${color}${date} [${this.tag}] ${levelName}`;
 
         for (const line of lines) {
-            func(`${preamble}: ${line}${Logger.FMT_RESET}`);
+            func(`${prefix}: ${line}${Logger.FMT_RESET}`);
         }
 
         if (err !== undefined) {
+
             if (err.stack === undefined) {
-                func(`${preamble}: ... Caused by: ${err}${Logger.FMT_RESET}`);
+                func(`${prefix}: ... Caused by: ${err}${Logger.FMT_RESET}`);
             } else {
                 const stackLines: string[] = err.stack.split('\n');
-                func(`${preamble}: ... Caused by: ${stackLines.shift()}${Logger.FMT_RESET}`);
+                func(`${prefix}: ... Caused by: ${stackLines.shift()}${Logger.FMT_RESET}`);
                 for (const stackLine of stackLines) {
-                    func(`${preamble}: ... ${stackLine}${Logger.FMT_RESET}`);
+                    func(`${prefix}: ... ${stackLine}${Logger.FMT_RESET}`);
                 }
             }
+
         }
     }
 
