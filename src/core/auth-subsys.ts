@@ -41,8 +41,8 @@ import { AuthError } from '../error/auth-error';
 import { IllegalStateError } from '../error/illegal-state-error';
 import { InvalidConfigError } from '../error/invalid-config-error';
 import { toIntSafe } from '../util/conversions';
-import { generateECKeyPair, IECKeyPairDER, readECKeyPairFromFilesUnchecked } from '../util/ec';
-import { asyncWriteFile, canStat } from '../util/fs';
+import { generateECKeyPair, IECKeyPairPEM, readECKeyPairFromFilesUnchecked } from '../util/ec';
+import { asyncWriteFileStr, canStat } from '../util/fs';
 import { objectIdRegex } from '../util/regex';
 import { AbstractSubsysConfigurable } from './abstract-subsys';
 
@@ -59,8 +59,8 @@ export class AuthSubsys
 extends AbstractSubsysConfigurable<IAuthConfig, [IStorageSubsys]>
 implements IAuthSubsys {
 
-    /** The key pair in DER format. */
-    private keyPair: IECKeyPairDER | null = null;
+    /** The key pair in PEM format. */
+    private keyPair: IECKeyPairPEM | null = null;
 
     /** The user repository to get the user data from. */
     private userRepo: IUserRepository | null = null;
@@ -261,12 +261,12 @@ implements IAuthSubsys {
      *
      * @return The generated key pair in DER format.
      */
-    private async generateAndStoreKeyPair(): Promise<IECKeyPairDER> {
+    private async generateAndStoreKeyPair(): Promise<IECKeyPairPEM> {
         const keyPair = await generateECKeyPair('secp256k1');
 
         await Promise.all([
-            asyncWriteFile(this.config.publicKey, keyPair.publicKey),
-            asyncWriteFile(this.config.privateKey, keyPair.privateKey),
+            asyncWriteFileStr(this.config.publicKey, keyPair.publicKey),
+            asyncWriteFileStr(this.config.privateKey, keyPair.privateKey),
         ]);
 
         return keyPair;

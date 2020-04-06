@@ -33,7 +33,7 @@ import { ISubsys } from './subsys';
 export interface IAuthConfig {
 
     /** The ECDSA used for signing keys.  Defaults to `'ES256'`. */
-    algo: JWTAlgorithm;
+    algo: 'ES256' | 'ES384' | 'ES512';
 
     /**
      * The amount of seconds after which a token expires.
@@ -67,15 +67,7 @@ export interface IAuthConfig {
 export const AUTH_SUBSYS_CONFIG_SCHEMA: IObjectSchema = {
     algo: {
         type: 'string',
-        /*
-         * Allowed values:
-         *
-         * HS256  HS384  HS512
-         * RS256  RS384  RS512
-         * ES256  ES384  ES512
-         * PS256  PS384  PS512
-         */
-        regex: /^[HREP]S((256)|(384)|(512))$/,
+        regex: /^ES(256)|(384)|(512)$/,
         default: 'ES256',
     },
     expire: {
@@ -83,15 +75,15 @@ export const AUTH_SUBSYS_CONFIG_SCHEMA: IObjectSchema = {
         range: [0, Number.MAX_SAFE_INTEGER],
         default: 3600 * 24 * 30, /* 30 days */
     },
-    publicKey: {
+    publicKeyFile: {
         type: 'string',
-        regex: /\.der$/,
+        regex: /(\.der)|(\.pem)$/,
         default: 'jwt.pub.der',
     },
-    privateKey: {
+    privateKeyFile: {
         type: 'string',
-        regex: /\.der$/,
-        default: 'jwt.priv.der',
+        regex: /(\.der)|(\.pem)$/,
+        default: 'jwt.priv.pem',
     },
 };
 

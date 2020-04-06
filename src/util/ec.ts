@@ -40,15 +40,15 @@ import { asyncReadFile, asyncReadFileStr, asyncStat } from './fs';
  */
 
 /**
- * Stores an EC key pair in DER format.
+ * Stores an EC key pair in PEM format.
  */
-export interface IECKeyPairDER {
+export interface IECKeyPairPEM {
 
-    /** The public key in DER spki format. */
-    publicKey: Buffer;
+    /** The public key in PEM format. */
+    publicKey: string;
 
-    /** The private key in DER pkcs8 format. */
-    privateKey: Buffer;
+    /** The private key in PEM format. */
+    privateKey: string;
 
 }
 
@@ -63,22 +63,22 @@ const publicKeyPEMHeaderRegex =
     /^\n*\-{5}BEGIN PUBLIC KEY\-{5}(.*\n)*\-{5}END PUBLIC KEY\-{5}\n*$/m;
 
 /**
- * Generate a new EC key pair in DER format.
+ * Generate a new EC key pair in PEM format.
  *
  * @param namedCurve The name of the elliptic curve to use.
- * @return The EC key pair in DER format.
+ * @return The EC key pair in PEM format.
  */
 export function generateECKeyPair(namedCurve: EllipticCurveName = 'secp256k1'):
-Promise<IECKeyPairDER> {
+Promise<IECKeyPairPEM> {
     return new Promise((resolve, reject) => {
-        const opts: ECKeyPairOptions<'der', 'der'> = {
+        const opts: ECKeyPairOptions<'pem', 'pem'> = {
             namedCurve: namedCurve,
             publicKeyEncoding: {
-                format: 'der',
+                format: 'pem',
                 type: 'spki',
             },
             privateKeyEncoding: {
-                format: 'der',
+                format: 'pem',
                 type: 'sec1',
             },
         };
@@ -238,19 +238,19 @@ export async function readECSec1PrivateKeyFromFile(privateKeyPath: string): Prom
 }
 
 /**
- * Read an EC key pair from public and private key files and return the key pair
- * in DER format.  **This does NOT check if the two keys fit together.**
+ * Read an EC key pair from public and private key files and return the key
+ * pair.  **This does NOT check if the two keys fit together.**
  * The public key MUST be a `spki` key, and the private key MUST be a `sec1`
  * key.  Throws an error if one of the certificate files could not be read or
  * if the keys are in an unsupported format.
  *
  * @param publicKeyPath The path to the public key file.
  * @param privateKeyPath The path to the private key file.
- * @return The key pair in DER format.
+ * @return The key pair in PEM format.
  */
 export async function readECKeyPairFromFilesUnchecked(publicKeyPath: string,
                                                       privateKeyPath: string):
-Promise<IECKeyPairDER> {
+Promise<IECKeyPairPEM> {
     let publicKeyObject: KeyObject | null = null;
     let privateKeyObject: KeyObject | null = null;
 
@@ -265,14 +265,19 @@ Promise<IECKeyPairDER> {
         privateKeyReadFn(),
     ]);
 
+    const publicKeyString: string = publicKeyObject ! .export({
+        format: 'pem',
+        type: 'spki',
+    }) as string;
+    const privateKeyString: string = privateKeyObject ! .export({
+        format: 'pem',
+        type: 'sec1',
+    }) as string;
+
+    const encoder = new TextEncoder();
+
     return {
-        publicKey: publicKeyObject ! .export({
-            format: 'der',
-            type: 'spki',
-        }),
-        privateKey: privateKeyObject ! .export({
-            format: 'der',
-            type: 'sec1',
-        }),
+        publicKey: publicKeyString,
+        privateKey: privateKeyString,
     };
 }

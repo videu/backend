@@ -32,22 +32,26 @@ import {
 } from '../../src/util/ec';
 
 /* see ../dummy/util/test-certs/README.md */
-const PRIVKEY: Buffer = readFileSync('test/dummy/util/test-certs/valid.priv.der');
-const PUBKEY: Buffer = readFileSync('test/dummy/util/test-certs/valid.pub.der');
+const PRIVKEY: string = new TextDecoder().decode(
+    readFileSync('test/dummy/util/test-certs/valid.priv.pem')
+);
+const PUBKEY: string = new TextDecoder().decode(
+    readFileSync('test/dummy/util/test-certs/valid.pub.pem')
+);
 
 describe('util/ec:generateECKeyPair', () => {
-    it('should generate a valid DER key pair', () => {
+    it('should generate a valid PEM key pair', () => {
         const fn = async () => {
             const keyPair = await generateECKeyPair();
             createPublicKey({
                 key: keyPair.publicKey,
                 type: 'spki',
-                format: 'der',
+                format: 'pem',
             });
             createPrivateKey({
                 key: keyPair.privateKey,
                 type: 'sec1',
-                format: 'der',
+                format: 'pem',
             });
         };
 
@@ -62,7 +66,7 @@ describe('util/ec:loadECSpkiPublicKeyFromFile', () => {
                 'test/dummy/util/test-certs/valid.pub.der'
             );
             return publicKey.export({
-                format: 'der',
+                format: 'pem',
                 type: 'spki',
             });
         };
@@ -91,14 +95,14 @@ describe('util/ec:loadECSpkiPublicKeyFromFile', () => {
     });
 });
 
-describe('util/ec:loadECSec1PrivateKeyFromFile', () => {
+describe('util/ec:readECSec1PrivateKeyFromFile', () => {
     it('should load an EC private key', () => {
         const fn = async () => {
             const privateKey = await readECSec1PrivateKeyFromFile(
                 'test/dummy/util/test-certs/valid.priv.der'
             );
             return privateKey.export({
-                format: 'der',
+                format: 'pem',
                 type: 'sec1',
             });
         };
@@ -127,7 +131,7 @@ describe('util/ec:loadECSec1PrivateKeyFromFile', () => {
     });
 });
 
-describe('util/ec:loadECKeyPairFromFilesUnchecked', () => {
+describe('util/ec:readECKeyPairFromFilesUnchecked', () => {
     it('should load a valid DER key pair', () => {
         return expect(readECKeyPairFromFilesUnchecked(
             'test/dummy/util/test-certs/valid.pub.der',
