@@ -27,7 +27,17 @@ import {
     KeyObject,
 } from 'crypto';
 
-import { asyncReadFile, asyncStat } from './fs';
+import { asyncReadFile, asyncReadFileStr, asyncStat } from './fs';
+
+/*
+ * NOTE:
+ * The function/variable names in this file may seem a little verbose.
+ * This was a deliberate design choice, because this is one of those files that
+ * probably shouldn't have any fuckups.  If changes are made, methods should be
+ * kept as simple as possible and, if required, split into multiple ones.
+ *
+ * This is NOT the place to flex with particularily "elegant" solutions.
+ */
 
 /**
  * Stores an EC key pair in DER format.
@@ -46,6 +56,13 @@ export interface IECKeyPairDER {
 export type EllipticCurveName = 'secp256k1' | 'secp384k1' | 'secp512k1';
 
 /**
+ * Regular expression for testing whether a file contains a valid PEM public
+ * key header.  **This is NOT safe for testing whether a PEM file is valid.**
+ */
+const publicKeyPEMHeaderRegex =
+    /^\n*\-{5}BEGIN PUBLIC KEY\-{5}(.*\n)*\-{5}END PUBLIC KEY\-{5}\n*$/m;
+
+/**
  * Generate a new EC key pair in DER format.
  *
  * @param namedCurve The name of the elliptic curve to use.
@@ -62,7 +79,7 @@ Promise<IECKeyPairDER> {
             },
             privateKeyEncoding: {
                 format: 'der',
-                type: 'pkcs8',
+                type: 'sec1',
             },
         };
 
@@ -79,6 +96,15 @@ Promise<IECKeyPairDER> {
     });
 }
 
+/**
+ * Determine the key format of a public or private key by examining the file
+ * extension.  **This is NOT a guarantee** for the key being really in that
+ * format, it is literally just a check if the filename ends in `.der` or
+ * `.pem`. If the file extension is neither of those, an Error is thrown.
+ *
+ * @param filename The key file name.
+ * @return The format, as advertised by the file extension.
+ */
 function getKeyFormatByFileExtension(filename: string): ('der' | 'pem') {
     if (!filename.includes('.')) {
         throw new Error('File name must either have a .der or .pem extension');
@@ -106,6 +132,7 @@ function validateECPublicKey(publicKey: KeyObject): void {
     }
 
     if (publicKey.asymmetricKeyType !== 'ec') {
+        /* `asymmetricKeyType` cannot be undefined as the `type` property is not 'secret' */
         throw new Error(
             `Expected an EC key, gut got ${publicKey.asymmetricKeyType?.toUpperCase()}`
         );
@@ -124,6 +151,7 @@ function validateECPrivateKey(privateKey: KeyObject): void {
     }
 
     if (privateKey.asymmetricKeyType !== 'ec') {
+        /* `asymmetricKeyType` cannot be undefined as the `type` property is not 'secret' */
         throw new Error(
             `Expected an EC key, but got ${privateKey.asymmetricKeyType?.toUpperCase()}`
         );
@@ -131,80 +159,120 @@ function validateECPrivateKey(privateKey: KeyObject): void {
 }
 
 /**
+ * Load an EC public key in DER or PEM format from the specified file.
+ * The file extension MUST be either `.der` (for DER format) or `.pem`
+ * (for PEM format), otherwise an error is thrown.  The key must be of type
+ * `spki`.
+ *
+ * @param publicKeyPath The path to the public key file.
+ * @return The parsed public key.
+ */
+export async function readECSpkiPublicKeyFromFile(publicKeyPath: string): Promise<KeyObject> {
+    const publicKeyFormat: ('der' | 'pem') = getKeyFormatByFileExtension(publicKeyPath);
+
+    const publicKeyStats = await asyncStat(publicKeyPath);
+    if (!publicKeyStats.isFile()) {
+        throw new Error(`Cannot read public key: ${publicKeyPath} is not a regular file`);
+    }
+
+    let publicKeyFileContents: Buffer | string;
+    if (publicKeyFormat === 'der') {
+        publicKeyFileContents = await asyncReadFile(publicKeyPath);
+    } else {
+        publicKeyFileContents = await asyncReadFileStr(publicKeyPath);
+
+        /*
+         * The public key might be included in a private key file, which node's
+         * crypto library is able to extract.  But we don't want that; this
+         * function should ONLY read public keys, period.
+         */
+        if (!publicKeyPEMHeaderRegex.test(publicKeyFileContents)) {
+            throw new Error('Public key has invalid PEM format');
+        }
+    }
+
+    const publicKeyObject: KeyObject = createPublicKey({
+        key: publicKeyFileContents,
+        format: publicKeyFormat,
+        type: 'spki',
+    });
+
+    validateECPublicKey(publicKeyObject);
+
+    return publicKeyObject;
+}
+
+/**
+ * Load an EC private key in DER or PEM format from the specified file.
+ * The file extension MUST be either `.der` (for DER format) or `.pem`
+ * (for PEM format), otherwise an error is thrown.  The key must be of type
+ * `sec1`.
+ *
+ * @param privateKeyPath The path to the private key file.
+ * @return The parsed private key.
+ */
+export async function readECSec1PrivateKeyFromFile(privateKeyPath: string): Promise<KeyObject> {
+    const privateKeyFormat: ('der' | 'pem') = getKeyFormatByFileExtension(privateKeyPath);
+
+    const privateKeyStats = await asyncStat(privateKeyPath);
+    if (!privateKeyStats.isFile()) {
+        throw new Error(`Cannot read private key: ${privateKeyPath} is not a regular file`);
+    }
+
+    let privateKeyFileContents: Buffer | string;
+    if (privateKeyFormat === 'der') {
+        privateKeyFileContents = await asyncReadFile(privateKeyPath);
+    } else {
+        privateKeyFileContents = await asyncReadFileStr(privateKeyPath);
+    }
+
+    const privateKeyObject: KeyObject = createPrivateKey({
+        key: privateKeyFileContents,
+        format: privateKeyFormat,
+        type: 'sec1',
+    });
+
+    validateECPrivateKey(privateKeyObject);
+
+    return privateKeyObject;
+}
+
+/**
  * Read an EC key pair from public and private key files and return the key pair
- * in DER format.  May throw an error if one of the certificate files could not
- * be read or if the keys are in an unsupported format.
+ * in DER format.  **This does NOT check if the two keys fit together.**
+ * The public key MUST be a `spki` key, and the private key MUST be a `sec1`
+ * key.  Throws an error if one of the certificate files could not be read or
+ * if the keys are in an unsupported format.
  *
  * @param publicKeyPath The path to the public key file.
  * @param privateKeyPath The path to the private key file.
  * @return The key pair in DER format.
  */
-export async function loadECKeyPairFromFiles(publicKeyPath: string, privateKeyPath: string):
+export async function readECKeyPairFromFilesUnchecked(publicKeyPath: string,
+                                                      privateKeyPath: string):
 Promise<IECKeyPairDER> {
-    let publicKeyFormat: ('der' | 'pem');
-    let privateKeyFormat: ('der' | 'pem');
+    let publicKeyObject: KeyObject | null = null;
+    let privateKeyObject: KeyObject | null = null;
 
-    try {
-        publicKeyFormat = getKeyFormatByFileExtension(publicKeyPath);
-    } catch (err) {
-        throw new Error(`Unable to read public key: ${err.message}`);
-    }
-    try {
-        privateKeyFormat = getKeyFormatByFileExtension(privateKeyPath);
-    } catch (err) {
-        throw new Error(`Unable to read private key: ${err.message}`);
-    }
-
-    const publicKeyStats = await asyncStat(publicKeyPath);
-    if (!publicKeyStats.isFile() && !publicKeyStats.isSymbolicLink()) {
-        throw new Error('Cannot read public key: not a file');
-    }
-
-    const privateKeyStats = await asyncStat(privateKeyPath);
-    if (!privateKeyStats.isFile() && !privateKeyStats.isSymbolicLink()) {
-        throw new Error('Cannot read public key: not a file');
-    }
-
-    let publicKeyFileContents: Buffer | null = null;
-    let privateKeyFileContents: Buffer | null = null;
-
-    const publicKeyReadFn =
-        async () => publicKeyFileContents = await asyncReadFile(publicKeyPath);
-    const privateKeyReadFn =
-        async () => privateKeyFileContents = await asyncReadFile(privateKeyPath);
-
-    /*
-     * Read both files in parallel to save like 10 ms of startup time and
-     * possibly introduce errors in the process.  This is big brain.
-     */
+    const publicKeyReadFn = async () => {
+        publicKeyObject = await readECSpkiPublicKeyFromFile(publicKeyPath);
+    };
+    const privateKeyReadFn = async () => {
+        privateKeyObject = await readECSec1PrivateKeyFromFile(privateKeyPath);
+    };
     await Promise.all([
         publicKeyReadFn(),
         privateKeyReadFn(),
     ]);
 
-    /* Buffer cannot be null at this point because we `await`ed Promise.all() */
-    const publicKeyObject: KeyObject = createPublicKey({
-        key: publicKeyFileContents ! ,
-        format: publicKeyFormat,
-        type: 'spki',
-    });
-    const privateKeyObject: KeyObject = createPrivateKey({
-        key: privateKeyFileContents ! ,
-        format: privateKeyFormat,
-        type: 'pkcs8',
-    });
-
-    validateECPublicKey(publicKeyObject);
-    validateECPrivateKey(privateKeyObject);
-
     return {
-        publicKey: publicKeyObject.export({
+        publicKey: publicKeyObject ! .export({
             format: 'der',
             type: 'spki',
         }),
-        privateKey: privateKeyObject.export({
+        privateKey: privateKeyObject ! .export({
             format: 'der',
-            type: 'pkcs8',
+            type: 'sec1',
         }),
     };
 }

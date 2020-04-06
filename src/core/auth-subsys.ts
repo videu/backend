@@ -41,7 +41,7 @@ import { AuthError } from '../error/auth-error';
 import { IllegalStateError } from '../error/illegal-state-error';
 import { InvalidConfigError } from '../error/invalid-config-error';
 import { toIntSafe } from '../util/conversions';
-import { generateECKeyPair, IECKeyPairDER, loadECKeyPairFromFiles } from '../util/ec';
+import { generateECKeyPair, IECKeyPairDER, readECKeyPairFromFilesUnchecked } from '../util/ec';
 import { asyncWriteFile, canStat } from '../util/fs';
 import { objectIdRegex } from '../util/regex';
 import { AbstractSubsysConfigurable } from './abstract-subsys';
@@ -174,7 +174,7 @@ implements IAuthSubsys {
 
         if (publicKeyExists && privateKeyExists) {
 
-            this.keyPair = await loadECKeyPairFromFiles(
+            this.keyPair = await readECKeyPairFromFilesUnchecked(
                 this.config.publicKey,
                 this.config.privateKey
             );

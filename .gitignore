@@ -6,4 +6,5 @@ doc/api/
 .nyc_output/
 **/*.pem
 **/*.der
+!test/dummy/util/test-certs/*
 .env
