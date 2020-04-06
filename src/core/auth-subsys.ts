@@ -118,7 +118,7 @@ implements IAuthSubsys {
 
             const cb: JWTVerifyCallback = async (err, data) => {
                 if (err) {
-                    reject(err);
+                    reject(new AuthError(err.message));
                     return;
                 }
 
@@ -169,14 +169,14 @@ implements IAuthSubsys {
 
         this.userRepo = storageSubsys.userRepo;
 
-        const publicKeyExists = await canStat(this.config.publicKey);
-        const privateKeyExists = await canStat(this.config.privateKey);
+        const publicKeyExists = await canStat(this.config.publicKeyFile);
+        const privateKeyExists = await canStat(this.config.privateKeyFile);
 
         if (publicKeyExists && privateKeyExists) {
 
             this.keyPair = await readECKeyPairFromFilesUnchecked(
-                this.config.publicKey,
-                this.config.privateKey
+                this.config.publicKeyFile,
+                this.config.privateKeyFile
             );
 
         } else if (!publicKeyExists && !privateKeyExists) {
@@ -185,8 +185,8 @@ implements IAuthSubsys {
                 this.logger.i('Signing key not found, generating one for you');
                 this.keyPair = await this.generateAndStoreKeyPair();
                 this.logger.i(
-                    `Written public key to ${this.config.publicKey}, `
-                    + `private key to ${this.config.privateKey}`
+                    `Written public key to ${this.config.publicKeyFile}, `
+                    + `private key to ${this.config.privateKeyFile}`
                 );
             } else {
                 throw new InvalidConfigError('Public and private key files do not exist');
@@ -196,13 +196,13 @@ implements IAuthSubsys {
 
             if (publicKeyExists) {
                 throw new InvalidConfigError(
-                    `Public key "${this.config.publicKey}" exists, `
-                    + `but private key "${this.config.privateKey}" doesn't`
+                    `Public key "${this.config.publicKeyFile}" exists, `
+                    + `but private key "${this.config.privateKeyFile}" doesn't`
                 );
             } else {
                 throw new InvalidConfigError(
-                    `Private key "${this.config.privateKey}" exists, `
-                    + `but public key "${this.config.publicKey}" doesn't`
+                    `Private key "${this.config.privateKeyFile}" exists, `
+                    + `but public key "${this.config.publicKeyFile}" doesn't`
                 );
             }
 
@@ -244,12 +244,12 @@ implements IAuthSubsys {
                 ? toIntSafe(process.env.VIDEU_AUTH_EXPIRE)
                 : undefined,
 
-            publicKey: process.env.VIDEU_AUTH_PUBLIC_KEY
-                ? process.env.VIDEU_AUTH_PUBLIC_KEY
+            publicKeyFile: process.env.VIDEU_AUTH_PUBLIC_KEY_FILE
+                ? process.env.VIDEU_AUTH_PUBLIC_KEY_FILE
                 : undefined,
 
-            privateKey: process.env.VIDEU_AUTH_PRIVATE_KEY
-                ? process.env.VIDEU_AUTH_PRIVATE_KEY
+            privateKeyFile: process.env.VIDEU_AUTH_PRIVATE_KEY_FILE
+                ? process.env.VIDEU_AUTH_PRIVATE_KEY_FILE
                 : undefined,
 
         } as IAuthConfig;
@@ -265,8 +265,8 @@ implements IAuthSubsys {
         const keyPair = await generateECKeyPair('secp256k1');
 
         await Promise.all([
-            asyncWriteFileStr(this.config.publicKey, keyPair.publicKey),
-            asyncWriteFileStr(this.config.privateKey, keyPair.privateKey),
+            asyncWriteFileStr(this.config.publicKeyFile, keyPair.publicKey),
+            asyncWriteFileStr(this.config.privateKeyFile, keyPair.privateKey),
         ]);
 
         return keyPair;

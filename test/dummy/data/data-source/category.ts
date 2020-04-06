@@ -1,5 +1,5 @@
 /**
- * @file Dummy implementation of user data sources.
+ * @file Dummy implementation of category data sources.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

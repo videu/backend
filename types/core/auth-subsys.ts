@@ -49,7 +49,7 @@ export interface IAuthConfig {
      * server is in development mode, a new key pair is generated automatically.
      * In all other cases, the server will refuse to start.
      */
-    publicKey: string;
+    publicKeyFile: string;
 
     /**
      * The path to the private key file for JWT signing.
@@ -59,7 +59,7 @@ export interface IAuthConfig {
      * server is in development mode, a new key pair is generated automatically.
      * In all other cases, the server will refuse to start.
      */
-    privateKey: string;
+    privateKeyFile: string;
 
 }
 
