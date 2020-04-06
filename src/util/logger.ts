@@ -216,9 +216,9 @@ export class Logger implements ILogger {
                 func(`${preamble}: ... Caused by: ${err}${Logger.FMT_RESET}`);
             } else {
                 const stackLines: string[] = err.stack.split('\n');
-                func(`${preamble}: ... Caused by: ${stackLines.shift()}`);
+                func(`${preamble}: ... Caused by: ${stackLines.shift()}${Logger.FMT_RESET}`);
                 for (const stackLine of stackLines) {
-                    func(`${preamble}: ... ${stackLine}`);
+                    func(`${preamble}: ... ${stackLine}${Logger.FMT_RESET}`);
                 }
             }
         }
