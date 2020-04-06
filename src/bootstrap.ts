@@ -41,10 +41,7 @@ const log: ILogger = new Logger('Core');
 global.videu.logLevel =
     parseLogLevel(process.env.VIDEU_LOG_LEVEL || 'info') || Logger.LEVEL_INFO;
 
-import { jwtBootstrap } from './bootstrap/jwt';
 import { doInit } from './init';
-
-jwtBootstrap();
 
 /* TODO: Make this file obsolete and move this call to ../index.js */
 doInit();

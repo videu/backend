@@ -37,6 +37,8 @@ import { userRepo } from '../data/repository/user-repository';
 import { AuthError } from '../error/auth-error';
 import { objectIdRegex } from './regex';
 
+/* TODO: Can I PLEASE finally implement the route subsystem so that this can go away ffs */
+
 /**
  * The ECDSA used for signing JWTs.
  *
@@ -61,6 +63,7 @@ const VERIFY_OPTS: VerifyOptions = {
  *
  * @param user The user.
  * @returns The JWT to be sent to the authenticating client.
+ * @deprecated Replaced by the auth subsystem
  */
 export function jwtSign(user: IUser): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -88,6 +91,7 @@ export function jwtSign(user: IUser): Promise<string> {
  * @returns The user this token was assigned to.
  * @throws An error if the JWT could not be verified or the user this token was
  *         assigned to does not exist.
+ * @deprecated Replaced by the auth subsystem
  */
 export function jwtVerify(jwt: string): Promise<IUser> {
     return new Promise((resolve, reject) => {

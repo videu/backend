@@ -21,11 +21,13 @@
 
 import {
     PathLike,
-    readFile as readFileInternal,
-    stat as statInternal,
+    readFile,
+    stat,
     Stats,
-    writeFile as writeFileInternal,
+    writeFile,
 } from 'fs';
+
+export { PathLike, Stats } from 'fs';
 
 /**
  * Get the stats for a file using `fs.stat()`.
@@ -33,9 +35,9 @@ import {
  * @param path The path to the file.
  * @return The stats.
  */
-export function stat(path: PathLike): Promise<Stats> {
+export function asyncStat(path: PathLike): Promise<Stats> {
     return new Promise((resolve, reject) => {
-        statInternal(path, (err, stats) => {
+        stat(path, (err, stats) => {
             if (err) {
                 reject(err);
             } else {
@@ -46,14 +48,28 @@ export function stat(path: PathLike): Promise<Stats> {
 }
 
 /**
+ * Return whether a specific file or directory can be accessed with stat.
+ *
+ * @param path The path to the file.
+ */
+export async function canStat(path: PathLike): Promise<boolean> {
+    try {
+        await asyncStat(path);
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
+
+/**
  * Read a file to a `Buffer` using `fs.readFile()`.
  *
  * @param path The path to the file.
  * @return A `Buffer` containing the file's data.
  */
-export function readFile(path: PathLike): Promise<Buffer> {
+export function asyncReadFile(path: PathLike): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-        readFileInternal(path, (err, data) => {
+        readFile(path, (err, data) => {
             if (err) {
                 reject(err);
             } else {
@@ -70,8 +86,8 @@ export function readFile(path: PathLike): Promise<Buffer> {
  * @param path The path to the file.
  * @return The file contents as a string.
  */
-export async function readFileStr(path: PathLike): Promise<string> {
-    return new TextDecoder('utf-8').decode(await readFile(path));
+export async function asyncReadFileStr(path: PathLike): Promise<string> {
+    return new TextDecoder('utf-8').decode(await asyncReadFile(path));
 }
 
 /**
@@ -80,9 +96,9 @@ export async function readFileStr(path: PathLike): Promise<string> {
  * @param path The path to the file.
  * @param data The data to write to.
  */
-export function writeFile(path: PathLike, data: Buffer): Promise<void> {
+export function asyncWriteFile(path: PathLike, data: Buffer): Promise<void> {
     return new Promise((resolve, reject) => {
-        writeFileInternal(path, data, (err) => {
+        writeFile(path, data, (err) => {
             if (err) {
                 reject(err);
             } else {
@@ -99,6 +115,6 @@ export function writeFile(path: PathLike, data: Buffer): Promise<void> {
  * @param path The path to the file.
  * @param data The data to write to.
  */
-export function writeFileStr(path: PathLike, data: string): Promise<void> {
-    return writeFile(path, Buffer.from(data, 'utf-8'));
+export function asyncWriteFileStr(path: PathLike, data: string): Promise<void> {
+    return asyncWriteFile(path, Buffer.from(data, 'utf-8'));
 }

@@ -41,9 +41,7 @@ export async function doInit() {
             await doExit();
         });
     } catch (err) {
-        console.error(err);
-        doExit();
-        process.exit(1);
+        doExit(1);
     }
 }
 
@@ -51,8 +49,9 @@ export async function doInit() {
  * The application's top-level exit routine.
  * Executed when a SIGINT or a critical error is encountered.
  */
-export async function doExit() {
+export async function doExit(exitCode: number = 0) {
     if (videu !== null) {
         await videu.exit();
     }
+    process.exit(exitCode);
 }

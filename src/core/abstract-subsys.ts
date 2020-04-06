@@ -83,8 +83,8 @@ implements ISubsys<InitParams> {
         }
 
         try {
-            await this.onInit(...initParams);
             this._state = LifecycleState.INITIALIZED;
+            await this.onInit(...initParams);
         } catch (err) {
             this._state = LifecycleState.ERROR;
             throw err;

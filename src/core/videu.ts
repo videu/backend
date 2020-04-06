@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { IAuthSubsys } from '../../types/core/auth-subsys';
 import { IHTTPSubsys } from '../../types/core/http-subsys';
 import { LifecycleState } from '../../types/core/lifecycle';
 import { IMongoSubsys } from '../../types/core/mongo-subsys';
@@ -28,6 +29,7 @@ import { ILogger } from '../../types/logger';
 
 import { IllegalStateError } from '../error/illegal-state-error';
 import { Logger } from '../util/logger';
+import { AuthSubsys } from './auth-subsys';
 import { HTTPSubsys } from './http-subsys';
 import { MongoSubsys } from './mongo-subsys';
 import { StorageSubsys } from './storage-subsys';
@@ -39,6 +41,8 @@ export class Videu implements IVideu {
 
     /** The application name. */
     public readonly appName: string = process.env.VIDEU_APP_NAME || 'videu';
+
+    private authSubsys: IAuthSubsys;
 
     /** The subsystem for managing express. */
     private httpSubsys: IHTTPSubsys;
@@ -63,6 +67,7 @@ export class Videu implements IVideu {
      * There should be at most one instance of this class per server.
      */
     constructor() {
+        this.authSubsys = new AuthSubsys();
         this.httpSubsys = new HTTPSubsys();
         this.mongoSubsys = new MongoSubsys();
         this.storageSubsys = new StorageSubsys();
@@ -85,11 +90,13 @@ export class Videu implements IVideu {
 
             currentId = this.storageSubsys.id;
             await this.storageSubsys.init(this.mongoSubsys);
+
+            currentId = this.authSubsys.id;
+            await this.authSubsys.init(this.storageSubsys);
         } catch (err) {
             this.logger.e(`Error while initializing the ${currentId} subsystem`, err);
-            await this.exit();
             this._state = LifecycleState.ERROR;
-            return;
+            throw err;
         }
 
         this._state = LifecycleState.INITIALIZED;
@@ -97,11 +104,19 @@ export class Videu implements IVideu {
 
     /** @inheritdoc */
     public async exit() {
-        if (this.state !== LifecycleState.INITIALIZED) {
+        if (this.state !== LifecycleState.INITIALIZED && this.state !== LifecycleState.ERROR) {
             throw new IllegalStateError('Cannot exit before init');
         }
 
         /* TODO: Find a more elegant approach for this mess */
+
+        try {
+            if (this.authSubsys.state === LifecycleState.INITIALIZED) {
+                await this.authSubsys.exit();
+            }
+        } catch (err) {
+            this.logger.e('Unable to de-initialize the auth subsystem', err);
+        }
 
         try {
             if (this.storageSubsys.state === LifecycleState.INITIALIZED) {
