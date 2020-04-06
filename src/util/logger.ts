@@ -178,7 +178,6 @@ export class Logger implements ILogger {
         if (Logger.shouldLog(Logger.LEVEL_ERROR)) {
             this.log(realConsole.error, Logger.FMT_FG_RED, 'ERROR', msg, err);
         }
-
     }
 
     /** @inheritdoc */
@@ -206,13 +205,22 @@ export class Logger implements ILogger {
                   err?: Error) {
         const lines: string[] = msg.split('\n');
         const date: string = new Date().toISOString();
+        const preamble: string = `${color}${date} [${this.tag}] ${prefix}`;
 
-        lines.forEach(line => {
-            func(`${color}${date} [${this.tag}] ${prefix}: ${line}${Logger.FMT_RESET}`);
-        });
+        for (const line of lines) {
+            func(`${preamble}: ${line}${Logger.FMT_RESET}`);
+        }
 
         if (err !== undefined) {
-            func(`${color}${date} [${this.tag}] ${prefix}: ${err}${Logger.FMT_RESET}`);
+            if (err.stack === undefined) {
+                func(`${preamble}: ... Caused by: ${err}${Logger.FMT_RESET}`);
+            } else {
+                const stackLines: string[] = err.stack.split('\n');
+                func(`${preamble}: ... Caused by: ${stackLines.shift()}`);
+                for (const stackLine of stackLines) {
+                    func(`${preamble}: ... ${stackLine}`);
+                }
+            }
         }
     }
 
