@@ -1,5 +1,5 @@
 /**
- * @file The AuthError class.
+ * @file The BackendError class.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,17 +19,37 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { HTTPStatusCode } from '../../types/json/response';
-import { BackendError } from './backend-error';
+import { HTTPStatusCode, IErrorResponseBody } from '../../types/json/response';
 
 /**
  * Error condition that indicates an authentication attempt failed due to
  * incorrect credentials.  **This does not include server-side failures.**
  */
-export class AuthError extends BackendError {
+export class BackendError extends Error {
 
-    public constructor(msg: string) {
-        super(msg, HTTPStatusCode.UNAUTHORIZED);
+    /** The HTTP status code to respond with. */
+    public readonly statusCode: HTTPStatusCode;
+
+    /**
+     * Create a new backend error.
+     *
+     * @param msg The error message.
+     * @param statusCode The HTTP status code to respond with.
+     */
+    public constructor(msg: string, statusCode: number = HTTPStatusCode.INTERNAL_SERVER_ERROR) {
+        super(msg);
+
+        this.statusCode = statusCode;
+    }
+
+    /**
+     * Return a JSON object that can be sent to the client as an error response.
+     */
+    public toJSON(): IErrorResponseBody {
+        return {
+            err: true,
+            msg: this.message,
+        };
     }
 
 }

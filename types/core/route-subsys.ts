@@ -1,5 +1,5 @@
 /**
- * @file The AuthError class.
+ * @file Route subsystem interface definition.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,17 +19,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { HTTPStatusCode } from '../../types/json/response';
-import { BackendError } from './backend-error';
+import { IRoute } from '../routes/route';
+import { IAuthSubsys } from './auth-subsys';
+import { IStorageSubsys } from './storage-subsys';
+import { ISubsys } from './subsys';
 
 /**
- * Error condition that indicates an authentication attempt failed due to
- * incorrect credentials.  **This does not include server-side failures.**
+ * Base interface for the route subsystem.
  */
-export class AuthError extends BackendError {
+export interface IRouteSubsys
+extends ISubsys<[IAuthSubsys, IStorageSubsys]> {
 
-    public constructor(msg: string) {
-        super(msg, HTTPStatusCode.UNAUTHORIZED);
-    }
+    /** A map of all top-level routes indexed by their name. */
+    readonly routes: Map<string, IRoute>;
 
 }

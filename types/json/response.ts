@@ -110,6 +110,8 @@ export interface ISuccessResponseBody {
 
     err: false;
 
+    [key: string]: any;
+
 }
 
 /** Either a success or error response in JSON format. */

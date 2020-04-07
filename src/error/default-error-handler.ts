@@ -22,15 +22,15 @@
 
 import { ErrorRequestHandler } from 'express';
 
-import { HttpError } from './http-error';
+import { BackendError } from './backend-error';
 
 /** The catchall error handler. */
 export const defaultErrReqHandler: ErrorRequestHandler = (err, req, res, next) => {
     let msg: string = 'Internal server error';
 
     if (err instanceof Error) {
-        if (err instanceof HttpError) {
-            res.status(err.status).json(err.toJSONReply());
+        if (err instanceof BackendError) {
+            res.status(err.statusCode).json(err.toJSON());
             return;
         } else if (typeof err.message === 'string') {
             msg = err.message;
@@ -38,6 +38,7 @@ export const defaultErrReqHandler: ErrorRequestHandler = (err, req, res, next) =
     }
 
     res.status(500).json({
+        err: true,
         msg: msg,
     });
 };
