@@ -28,9 +28,11 @@ import {
 } from '../../../types/data/data-source/user';
 import { IUserRepository } from '../../../types/data/repository/user';
 import { IUser } from '../../../types/db/user';
+import { HTTPStatusCode } from '../../../types/json/response';
 import { ILogger } from '../../../types/logger';
 
 import { MongoUserDataSource } from '../../data/data-source/user/mongo';
+import { BackendError } from '../../error/backend-error';
 import { ConflictError } from '../../error/conflict-error';
 import { Logger } from '../../util/logger';
 import { AbstractRepository } from './abstract-repository';
@@ -65,6 +67,20 @@ implements IUserRepository {
      */
     public async create(data: IMinimalUserData): Promise<IUser> {
         throw new Error('Don\'t use create() on the user repository, call register() instead');
+    }
+
+    /** @inheritdoc */
+    public async activate(challengeToken: string): Promise<IUser> {
+        const user = await this.authority.activate(challengeToken);
+        if (user === null) {
+            throw new BackendError('Invalid token', HTTPStatusCode.BAD_REQUEST);
+        }
+
+        for (const cache of this.caches) {
+            cache.update(user);
+        }
+
+        return user;
     }
 
     /** @inheritdoc */

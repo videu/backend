@@ -85,6 +85,14 @@ export interface IUserDataSource extends IDataSource<IUser> {
 export interface IUserDataAuthority
 extends IUserDataSource, IDataAuthority<IUser, IMinimalUserData> {
 
+    /**
+     * Get a user that has not completed their account activation challenge yet.
+     *
+     * @param activationToken The challenge token.
+     * @return The user object, or `null` it was not found.
+     */
+    activate(activationToken: string): Promise<IUser | null>;
+
     findCollidingUser(userName: string, email: string): Promise<IUser | null>;
 
 }

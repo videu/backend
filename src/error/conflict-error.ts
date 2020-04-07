@@ -19,15 +19,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { HTTPStatusCode } from '../../types/json/response';
+
+import { BackendError } from './backend-error';
+
 /**
  * Error condition that indicates an attempt to insert new data into a data
  * source conflicts with existing entries in that data source, for example due
  * to unique index constraints.
  */
-export class ConflictError extends Error {
+export class ConflictError extends BackendError {
 
     public constructor(msg: string) {
-        super(msg);
+        super(msg, HTTPStatusCode.CONFLICT);
     }
 
 }

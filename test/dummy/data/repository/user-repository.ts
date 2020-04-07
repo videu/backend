@@ -28,6 +28,9 @@ import {
 import { IUserRepository } from '../../../../types/data/repository/user';
 import { IUser } from '../../../../types/db/user';
 
+import { BackendError } from '../../../../src/error/backend-error';
+import { HTTPStatusCode } from '../../../../types/json/response';
+
 import { StubUserDataAuthority } from '../data-source/user';
 
 /**
@@ -39,6 +42,14 @@ export class StubUserRepository implements IUserRepository {
 
     public async create(_data: IMinimalUserData): Promise<IUser> {
         throw new Error('User register() instead');
+    }
+
+    public async activate(challengeToken: string): Promise<IUser> {
+        const user = await this.authority.activate(challengeToken);
+        if (user === null) {
+            throw new BackendError('Invalid token', HTTPStatusCode.NOT_FOUND);
+        }
+        return user;
     }
 
     public delete(user: IUser): Promise<void> {

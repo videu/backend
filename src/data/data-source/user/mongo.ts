@@ -45,6 +45,17 @@ export class MongoUserDataSource implements IUserDataAuthority {
     }
 
     /** @inheritdoc */
+    public async activate(challengeToken: string): Promise<IUser | null> {
+        return await User.findOneAndUpdate(
+            { activationToken: challengeToken },
+            {
+                activationToken: null,
+                v: true,
+            }
+        );
+    }
+
+    /** @inheritdoc */
     public async getByEmail(email: string): Promise<IUser | null> {
         return await User.findOne({ email: email });
     }

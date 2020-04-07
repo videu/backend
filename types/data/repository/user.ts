@@ -29,6 +29,15 @@ export interface IUserRepository
 extends IRepository<IUser, IMinimalUserData, IUserDataAuthority, IUserDataCache> {
 
     /**
+     * Activate a user account.
+     * Throws an error if the challenge token was not found.
+     *
+     * @param challengeToken The activation token sent via email.
+     * @return The user object.
+     */
+    activate(challengeToken: string): Promise<IUser>;
+
+    /**
      * Get a user by their email address.
      *
      * @param email The email address.

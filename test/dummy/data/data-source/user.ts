@@ -66,6 +66,24 @@ export class StubUserDataAuthority implements IUserDataAuthority {
         return user;
     }
 
+    public async activate(challengeToken: string): Promise<IUser | null> {
+        let user: IUser | null = null;
+
+        for (const u of this.users.values()) {
+            if (u.activationToken === challengeToken) {
+                user = u;
+                break;
+            }
+        }
+
+        if (user !== null) {
+            user.activationToken = undefined;
+            user.v = true;
+        }
+
+        return user;
+    }
+
     public async delete(user: IUser): Promise<void> {
         this.users.delete(user.id);
     }
