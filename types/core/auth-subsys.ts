@@ -78,7 +78,7 @@ export const AUTH_SUBSYS_CONFIG_SCHEMA: IObjectSchema = {
     publicKeyFile: {
         type: 'string',
         regex: /(\.der)|(\.pem)$/,
-        default: 'jwt.pub.der',
+        default: 'jwt.pub.pem',
     },
     privateKeyFile: {
         type: 'string',

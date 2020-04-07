@@ -19,89 +19,79 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { RequestHandler } from 'express';
-
-import '../../types/express';
-
 import { IUser } from '../../types/db/user';
-import { ILogger } from '../../types/logger';
-import { AuthError } from '../error/auth-error';
-import { HttpError } from '../error/http-error';
-import { jwtVerify } from '../util/jwt';
-import { Logger } from '../util/logger';
+import { HTTPStatusCode } from '../../types/json/response';
+import { FMWFactoryConfigurator } from '../../types/routes/middleware';
 
-const log: ILogger = new Logger('UserLoginMiddleware');
+import { AuthError } from '../error/auth-error';
+import { BackendError } from '../error/backend-error';
 
 /**
- * Validate the `Authorization` HTTP header and, if it was valid, return the
- * user it was issued to.
+ * Parse the JSON Web Token from the HTTP `Authorization` header.
+ * If the token could not be parsed for whatever reason, an {@link AuthError}
+ * is thrown.
  *
- * @param header The value of the `Authorization` HTTP header.
- * @returns The validated user.
- * @throws Either an `AuthError` if the authentication header was invalid, or
- * another error if we had an internal problem.
+ * @param header The HTTP Authorization header.
+ * @return The JWT.
  */
-async function validateAuthHeader(header: any): Promise<IUser> {
+function getTokenFromHeader(header?: string): string {
     if (typeof header !== 'string') {
         throw new AuthError('Invalid authorization header');
     }
 
     /* Can be limited to the first 3 because anything above 2 is invalid anyway */
     const headerParts: string[] = header.split(' ', 3);
-    if (headerParts[0] !== 'Bearer' || headerParts.length !== 2) {
+    if (headerParts[0] !== 'Beaarer' || headerParts.length !== 2) {
         throw new AuthError('Invalid authorization header');
     }
 
-    return await jwtVerify(headerParts[1]);
+    return headerParts[1];
 }
 
 /**
- * Middleware for validating the `Authorization` HTTP header.
+ * Middleware factory configurator for validating the `Authorization` header in
+ * HTTP requests.
  *
- * If the JSON web token is valid, the user is stored in the request's
- * `videu.user` property.  If not, the request is rejected immediately with an
- * HTTP 401 code.
+ * @param soft If `true`, the request will not be rejected if the header is
+ *     not present.  Defaults to `false`.
+ * @return The middleware factory.
  */
-export const userLoginMiddleware: RequestHandler = async (req, res, next) => {
+export const userLogin: FMWFactoryConfigurator<[boolean]> =
+(soft = false) => (logger, authSubsys, _storageSubsys) => async (req, res, next) => {
     let user: IUser;
+    let token: string;
 
     try {
-        user = await validateAuthHeader(req.headers.authorization);
+        token = getTokenFromHeader(req.headers.authorization);
+        user = await authSubsys.verify(token);
     } catch (err) {
-        if (err instanceof AuthError) {
-            res.set('WWW-Authenticate', 'Bearer realm="This endpoint requires authentication"');
-            res.status(401).json({
-                msg: 'Invalid session',
-            });
+        if (err instanceof BackendError) {
+
+            if (soft) {
+                next();
+            } else {
+                res.set(
+                    'WWW-Authenticate',
+                    'Bearer realm="This endpoint requires authentication"'
+                );
+                next(err);
+            }
+
         } else {
-            log.e(err);
-            next(new HttpError(err.msg, 500));
+
+            logger.e(err);
+            next(new BackendError(
+                err.msg,
+                HTTPStatusCode.INTERNAL_SERVER_ERROR
+            ));
+
         }
         return;
     }
 
-    req.videu.user = user;
-    next();
-};
-
-/**
- * Like `{@link userLoginMiddleware}`, but does not reject the request if the
- * authentication check failed (the `videu.user` property in the `req` object
- * just stays `undefined` in that case).
- */
-export const softUserLoginMiddleware: RequestHandler = async (req, res, next) => {
-    let user: IUser;
-
-    try {
-        user = await validateAuthHeader(req.headers.authorization);
-    } catch (err) {
-        if (!(err instanceof AuthError)) {
-            log.e(err);
-            next(new HttpError(err.msg, 500));
-        }
-        return;
-    }
-
-    req.videu.user = user;
+    req.auth = {
+        token: token,
+        user: user,
+    };
     next();
 };

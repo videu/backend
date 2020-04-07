@@ -33,10 +33,8 @@ import {
     IHTTPSubsys
 } from '../../types/core/http-subsys';
 import { LifecycleState } from '../../types/core/lifecycle';
-
-import { infoRouter } from '../routes/info-router';
-import { userRouter } from '../routes/user-router';
-import { videoRouter } from '../routes/video-router';
+import { IRouteSubsys } from '../../types/core/route-subsys';
+import { IRoute } from '../../types/routes/route';
 
 import { defaultErrReqHandler } from '../error/default-error-handler';
 import { IllegalStateError } from '../error/illegal-state-error';
@@ -49,7 +47,7 @@ import { AbstractSubsysConfigurable } from './abstract-subsys';
  * The HTTP server subsystem.
  */
 export class HTTPSubsys
-extends AbstractSubsysConfigurable<IHTTPConfig>
+extends AbstractSubsysConfigurable<IHTTPConfig, [IRouteSubsys]>
 implements IHTTPSubsys {
 
     /** The express instance. */
@@ -62,7 +60,7 @@ implements IHTTPSubsys {
     private readonly servers: Map<string, HTTPServer> = new Map();
 
     constructor(config: IHTTPConfig | null = null) {
-        super('express', config, HTTP_SUBSYS_CONFIG_SCHEMA);
+        super('http', config, HTTP_SUBSYS_CONFIG_SCHEMA);
 
         this.express = Express();
     }
@@ -71,8 +69,8 @@ implements IHTTPSubsys {
      * @inheritdoc
      * @override
      */
-    public async onInit(): Promise<void> {
-        await super.onInit();
+    public async onInit(routeSubsys: IRouteSubsys): Promise<void> {
+        await super.onInit(routeSubsys);
 
         this.express.use(ipHeaderMiddleware);
         this.express.use(jsonBodyParser({
@@ -81,10 +79,9 @@ implements IHTTPSubsys {
             type: 'application/json',
         }));
 
-        /* TODO: Replace these with some OOP magic */
-        this.express.use('/info', infoRouter);
-        this.express.use('/user', userRouter);
-        this.express.use('/video', videoRouter);
+        for (const route of routeSubsys.routes.values()) {
+            this.use(route);
+        }
 
         this.express.use(defaultErrReqHandler);
 
@@ -189,7 +186,20 @@ implements IHTTPSubsys {
         this.express.set(setting, val);
     }
 
-    /* TODO: Add `use(route)` method for adding routes when the route subsys is implemented */
+    /**
+     * Add a top-level route to express.
+     * This is the same as calling the `use()` function on an express app, so
+     * only top-level routes may be added here.
+     *
+     * @param route The route.
+     */
+    public use(route: IRoute) {
+        if (this.state !== LifecycleState.INITIALIZED) {
+            throw new IllegalStateError('HTTP subsystem is not initialized');
+        }
+
+        this.express.use(`/${route.name}`, route.router);
+    }
 
     /**
      * @inheritdoc

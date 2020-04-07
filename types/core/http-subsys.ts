@@ -23,7 +23,9 @@ import { PathLike } from 'fs';
 import { Server as HTTPServer } from 'http';
 
 import { IConfigurable } from '../configurable';
+import { IRoute } from '../routes/route';
 import { IObjectSchema } from '../util/object-schema';
+import { IRouteSubsys } from './route-subsys';
 import { ISubsys } from './subsys';
 
 /**
@@ -74,7 +76,7 @@ export const HTTP_SUBSYS_CONFIG_SCHEMA: IObjectSchema = {
 /**
  * Interface for the express management subsystem.
  */
-export interface IHTTPSubsys extends ISubsys, IConfigurable<IHTTPConfig> {
+export interface IHTTPSubsys extends ISubsys<[IRouteSubsys]>, IConfigurable<IHTTPConfig> {
 
     /**
      * Listen on a TCP port.
@@ -103,5 +105,14 @@ export interface IHTTPSubsys extends ISubsys, IConfigurable<IHTTPConfig> {
      * @param val The value.
      */
     set(setting: string, val: any): void;
+
+    /**
+     * Include the specified route in the express routing tree.
+     * You only need to do this for top-level routes as they already contain all
+     * of their children.
+     *
+     * @param route The route.
+     */
+    use(route: IRoute): void;
 
 }

@@ -23,6 +23,7 @@ import { IAuthSubsys } from '../../types/core/auth-subsys';
 import { IHTTPSubsys } from '../../types/core/http-subsys';
 import { LifecycleState } from '../../types/core/lifecycle';
 import { IMongoSubsys } from '../../types/core/mongo-subsys';
+import { IRouteSubsys } from '../../types/core/route-subsys';
 import { IStorageSubsys } from '../../types/core/storage-subsys';
 import { IVideu } from '../../types/core/videu';
 import { ILogger } from '../../types/logger';
@@ -32,6 +33,7 @@ import { Logger } from '../util/logger';
 import { AuthSubsys } from './auth-subsys';
 import { HTTPSubsys } from './http-subsys';
 import { MongoSubsys } from './mongo-subsys';
+import { RouteSubsys } from './route-subsys';
 import { StorageSubsys } from './storage-subsys';
 
 /**
@@ -53,6 +55,9 @@ export class Videu implements IVideu {
     /** The subsystem for repository management. */
     private storageSubsys: IStorageSubsys;
 
+    /** The subsystem for route handlers. */
+    private routeSubsys: IRouteSubsys;
+
     /** The logger for this class. */
     private logger: ILogger = new Logger('core');
 
@@ -71,6 +76,7 @@ export class Videu implements IVideu {
         this.httpSubsys = new HTTPSubsys();
         this.mongoSubsys = new MongoSubsys();
         this.storageSubsys = new StorageSubsys();
+        this.routeSubsys = new RouteSubsys();
     }
 
     /** @inheritdoc */
@@ -80,11 +86,9 @@ export class Videu implements IVideu {
 
     /** @inheritdoc */
     public async init() {
+        const now = Date.now();
         let currentId: string = '';
         try {
-            currentId = this.httpSubsys.id;
-            await this.httpSubsys.init();
-
             currentId = this.mongoSubsys.id;
             await this.mongoSubsys.init();
 
@@ -93,12 +97,19 @@ export class Videu implements IVideu {
 
             currentId = this.authSubsys.id;
             await this.authSubsys.init(this.storageSubsys);
+
+            currentId = this.routeSubsys.id;
+            await this.routeSubsys.init(this.authSubsys, this.storageSubsys);
+
+            currentId = this.httpSubsys.id;
+            await this.httpSubsys.init(this.routeSubsys);
         } catch (err) {
             this.logger.e(`Error while initializing the ${currentId} subsystem`, err);
             this._state = LifecycleState.ERROR;
             throw err;
         }
 
+        this.logger.i(`Bootstrap finished in ${Date.now() - now} ms`);
         this._state = LifecycleState.INITIALIZED;
     }
 
@@ -109,6 +120,22 @@ export class Videu implements IVideu {
         }
 
         /* TODO: Find a more elegant approach for this mess */
+
+        try {
+            if (this.httpSubsys.state === LifecycleState.INITIALIZED) {
+                await this.httpSubsys.exit();
+            }
+        } catch (err) {
+            this.logger.e('Unable to de-initialize the http subsystem', err);
+        }
+
+        try {
+            if (this.routeSubsys.state === LifecycleState.INITIALIZED) {
+                await this.routeSubsys.exit();
+            }
+        } catch (err) {
+            this.logger.e('Unable to de-initialize the route subsystem', err);
+        }
 
         try {
             if (this.authSubsys.state === LifecycleState.INITIALIZED) {
@@ -124,14 +151,6 @@ export class Videu implements IVideu {
             }
         } catch (err) {
             this.logger.e('Unable to de-initialize the storage subsystem', err);
-        }
-
-        try {
-            if (this.httpSubsys.state === LifecycleState.INITIALIZED) {
-                await this.httpSubsys.exit();
-            }
-        } catch (err) {
-            this.logger.e('Unable to de-initialize the http subsystem', err);
         }
 
         try {
