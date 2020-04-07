@@ -21,6 +21,8 @@
 
 import { IUser } from './db/user';
 
+/* TODO: Get rid of this */
+
 declare global {
     namespace Express {
         /* tslint:disable-next-line:interface-name */
@@ -28,6 +30,8 @@ declare global {
             /**
              * Additional request data supplied from videu's master pre-hooks
              * and various middlewares.
+             *
+             * @deprecated This is part of the old routing system
              */
             videu: {
                 /** The remote IP address. */

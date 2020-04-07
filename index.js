@@ -69,28 +69,7 @@ global.videu = {
     logLevel: 0, // will be parsed in TypeScript
     appName: process.env.VIDEU_APP_NAME || 'videu',
     instanceId: process.env.VIDEU_INSTANCE_ID || 'default',
-    socket: process.env.VIDEU_SOCKET || null,
-    port: Number.parseInt(process.env.VIDEU_PORT, 10) || 4201,
     jwt: {},
-    mongo: {
-        host: process.env.VIDEU_MONGO_HOST || '127.0.0.1',
-        port: Number.parseInt(process.env.VIDEU_MONGO_PORT, 10) || 27017,
-        db: process.env.VIDEU_MONGO_DBNAME || 'videu',
-        user: process.env.VIDEU_MONGO_USER || null,
-        passwd: process.env.VIDEU_MONGO_PASSWD || null,
-        authSource: process.env.VIDEU_MONGO_AUTH_SOURCE || null,
-        ssl: process.env.VIDEU_MONGO_SSL == 'true'
-    },
-    smtp: {
-        enable: process.env.VIDEU_SMTP_ENABLE == 'true',
-        host: process.env.VIDEU_SMTP_HOST || '127.0.0.1',
-        port: Number.parseInt(process.env.VIDEU_SMTP_PORT, 10) || 465,
-        user: process.env.VIDEU_SMTP_USER || null,
-        passwd: process.env.VIDEU_SMTP_PASSWD || null,
-        authMethod:
-            typeof process.env.VIDEU_SMTP_AUTH_METHOD === 'string' ?
-                process.env.VIDEU_SMTP_AUTH_METHOD : 'none'
-    }
 };
 
 try {

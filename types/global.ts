@@ -21,77 +21,19 @@
 
 /* tslint:disable:interface-name */
 
+/* TODO: make all of these except MasterConfig obsolete */
+
 /**
- * A DER (preferred) or PEM encoded EC secp256k1 key pair used for signing and
+ * A PEM encoded EC secp256k1 key pair used for signing and
  * validating JSON Web Tokens.
+ *
+ * @deprecated The auth subsystem takes care of this now
  */
 export interface JWTKeyPair {
     /** The public key (DER or PEM encoded). */
     pubKey: Buffer | string;
     /** The private key (DER or PEM encoded). */
     privKey: Buffer | string;
-}
-
-export interface MongoConfig {
-    /** The MongoDB server host name or IP address. */
-    readonly host: string;
-
-    /** The MongoDB serever port. */
-    readonly port: number;
-
-    /** The database name. */
-    readonly db: string;
-
-    /**
-     * The MongoDB user name to log in as.
-     * If `null`, authentication is disabled.
-     */
-    readonly user: string | null;
-
-    /**
-     * The MongoDB password for the user name.
-     * If `null`, authentication is disabled.
-     */
-    readonly passwd: string | null;
-
-    /** The MongoDB database to authenticate against. */
-    readonly authSource: string | null;
-
-    /** Whether SSL should be used. */
-    readonly ssl: boolean;
-}
-
-export interface SMTPConfig {
-    /**
-     * Whether to send emails.
-     * If this is `false`, the entire configuration is ignored and the
-     * SMTP subsystem is not loaded in the first place.
-     */
-    readonly enable: boolean;
-
-    /** The SMTP host name. */
-    readonly host: string;
-
-    /** The SMTP port. */
-    readonly port: number;
-
-    /** How to establish a secure connection to the SMTP server. */
-    readonly security: 'STARTTLS' | 'SSL';
-
-    /** The SMTP user name. */
-    readonly user: string;
-
-    /** The SMTP password. */
-    readonly passwd: string;
-
-    /** The SMTP authentication method. */
-    readonly authMethod: 'none' | 'plain';
-
-    /** The `Reply-To` SMTP header. */
-    readonly replyTo: string;
-
-    /** The name to include in the `From` SMTP header. */
-    readonly fromName: string;
 }
 
 export interface VersionConfig {
@@ -136,18 +78,6 @@ export interface MasterConfig {
 
     /** The key pair for signing JWTs. */
     jwt: JWTKeyPair;
-
-    /** The port this server is listening on. */
-    readonly port: number | null;
-
-    /** The UNIX socket path this server is listening on. */
-    readonly socket: string | null;
-
-    /** MongoDB database configuration. */
-    readonly mongo: MongoConfig;
-
-    /** SMTP server configuration. */
-    readonly smtp: SMTPConfig;
 
     /** The backend server version. */
     readonly version: VersionConfig;

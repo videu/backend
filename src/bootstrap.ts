@@ -36,7 +36,7 @@ if (typeof global.videu === 'undefined') {
 import { ILogger } from '../types/logger';
 import { Logger, parseLogLevel } from './util/logger';
 
-const log: ILogger = new Logger('Core');
+const log: ILogger = new Logger('core');
 
 global.videu.logLevel =
     parseLogLevel(process.env.VIDEU_LOG_LEVEL || 'info') || Logger.LEVEL_INFO;
