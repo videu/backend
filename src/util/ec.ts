@@ -105,7 +105,7 @@ Promise<IECKeyPairPEM> {
  * @param filename The key file name.
  * @return The format, as advertised by the file extension.
  */
-function getKeyFormatByFileExtension(filename: string): ('der' | 'pem') {
+export function guessKeyFormatByFileExtension(filename: string): ('der' | 'pem') {
     if (!filename.includes('.')) {
         throw new Error('File name must either have a .der or .pem extension');
     }
@@ -168,7 +168,7 @@ function validateECPrivateKey(privateKey: KeyObject): void {
  * @return The parsed public key.
  */
 export async function readECSpkiPublicKeyFromFile(publicKeyPath: string): Promise<KeyObject> {
-    const publicKeyFormat: ('der' | 'pem') = getKeyFormatByFileExtension(publicKeyPath);
+    const publicKeyFormat: ('der' | 'pem') = guessKeyFormatByFileExtension(publicKeyPath);
 
     const publicKeyStats = await asyncStat(publicKeyPath);
     if (!publicKeyStats.isFile()) {
@@ -212,7 +212,7 @@ export async function readECSpkiPublicKeyFromFile(publicKeyPath: string): Promis
  * @return The parsed private key.
  */
 export async function readECSec1PrivateKeyFromFile(privateKeyPath: string): Promise<KeyObject> {
-    const privateKeyFormat: ('der' | 'pem') = getKeyFormatByFileExtension(privateKeyPath);
+    const privateKeyFormat: ('der' | 'pem') = guessKeyFormatByFileExtension(privateKeyPath);
 
     const privateKeyStats = await asyncStat(privateKeyPath);
     if (!privateKeyStats.isFile()) {

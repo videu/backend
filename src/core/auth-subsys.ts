@@ -41,7 +41,11 @@ import { AuthError } from '../error/auth-error';
 import { IllegalStateError } from '../error/illegal-state-error';
 import { InvalidConfigError } from '../error/invalid-config-error';
 import { toIntSafe } from '../util/conversions';
-import { generateECKeyPair, IECKeyPairPEM, readECKeyPairFromFilesUnchecked } from '../util/ec';
+import {
+    generateECKeyPair,
+    IECKeyPairPEM,
+    readECKeyPairFromFilesUnchecked,
+} from '../util/ec';
 import { asyncWriteFileStr, canStat } from '../util/fs';
 import { objectIdRegex } from '../util/regex';
 import { AbstractSubsysConfigurable } from './abstract-subsys';
