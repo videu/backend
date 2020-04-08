@@ -35,8 +35,14 @@ export class MongoVideoDataSource implements IVideoDataAuthority {
     public readonly isPersistent: boolean = true;
 
     /** @inheritdoc */
-    public async create(video: IMinimalVideoData): Promise<IVideo> {
-        return await Video.create(video);
+    public async create(data: IMinimalVideoData): Promise<IVideo> {
+        if (data._id === undefined) {
+            data._id = new ObjectId();
+        }
+
+        const video = new Video(data);
+        await video.save();
+        return video;
     }
 
     /** @inheritdoc */

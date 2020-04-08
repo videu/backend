@@ -35,8 +35,14 @@ export class MongoUserDataSource implements IUserDataAuthority {
     public readonly isPersistent: boolean = true;
 
     /** @inheritdoc */
-    public async create(user: IMinimalUserData): Promise<IUser> {
-        return await User.create(user);
+    public async create(data: IMinimalUserData): Promise<IUser> {
+        if (data._id === undefined) {
+            data._id = new ObjectId();
+        }
+
+        const user = new User(data);
+        await user.save();
+        return user;
     }
 
     /** @inheritdoc */

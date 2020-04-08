@@ -40,8 +40,14 @@ export class MongoCategoryDataSource implements ICategoryDataAuthority {
     public readonly isPersistent: boolean = true;
 
     /** @inheritdoc */
-    public async create(user: IMinimalCategoryData): Promise<ICategory> {
-        return await Category.create(user);
+    public async create(data: IMinimalCategoryData): Promise<ICategory> {
+        if (data._id === undefined) {
+            data._id = new ObjectId();
+        }
+
+        const category = new Category(data);
+        await category.save();
+        return category;
     }
 
     /** @inheritdoc */
