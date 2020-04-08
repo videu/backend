@@ -36,9 +36,7 @@ import {
     RequestMethodName,
 } from '../../types/routes/route';
 
-import { IllegalAccessError } from '../error/illegal-access-error';
 import { IllegalStateError } from '../error/illegal-state-error';
-import { injectValue } from '../util/decorators/inject-value';
 import { RouteLogger } from '../util/logger';
 
 /** An array of all supported HTTP request methods. */
@@ -70,18 +68,12 @@ export class AbstractRoute implements IRoute {
      * actual request handler at the end of the array.
      *
      * Middleware handlers should never be added manually here, the
-     * `@middleware` decorator is responsible for this.
+     * `@middleware` decorator is responsible for this (as well as instantiating
+     * this field in the first place)
      *
      * @see {@link ../../src/util/decorator/middleware}
      */
-    @injectValue<IMiddlewareFactories>({
-        get: [],
-        post: [],
-        put: [],
-        delete: [],
-        patch: [],
-    })
-    public readonly middleware: IMiddlewareFactories | undefined;
+    public readonly middleware?: IMiddlewareFactories;
 
     /** The logger for this route. */
     protected readonly logger: ILogger;
@@ -117,7 +109,7 @@ export class AbstractRoute implements IRoute {
     /** @inheritdoc */
     public async init(): Promise<void> {
         if (this.state !== LifecycleState.CREATED) {
-            throw new IllegalAccessError(
+            throw new IllegalStateError(
                 'Cannot initialize a route that is not in "created" state'
             );
         }
@@ -148,35 +140,35 @@ export class AbstractRoute implements IRoute {
          * to even tickle the CPU.  So let's just say I will "fix that later"™.
          */
 
-        this.router.get('/', ...this.mw(this.middleware ! .get), async (req, res, next) => {
+        this.router.get('/', ...this.mw('get'), async (req, res, next) => {
             try {
                 await this.get(req, res);
             } catch (err) {
                 next(err);
             }
         });
-        this.router.post('/', ...this.mw(this.middleware ! .post), async (req, res, next) => {
+        this.router.post('/', ...this.mw('post'), async (req, res, next) => {
             try {
                 await this.post(req, res);
             } catch (err) {
                 next(err);
             }
         });
-        this.router.put('/', ...this.mw(this.middleware ! .put), async (req, res, next) => {
+        this.router.put('/', ...this.mw('put'), async (req, res, next) => {
             try {
                 await this.put(req, res);
             } catch (err) {
                 next(err);
             }
         });
-        this.router.delete('/', ...this.mw(this.middleware ! .delete), async (req, res, next) => {
+        this.router.delete('/', ...this.mw('delete'), async (req, res, next) => {
             try {
                 await this.delete(req, res);
             } catch (err) {
                 next(err);
             }
         });
-        this.router.patch('/', ...this.mw(this.middleware ! .patch), async (req, res, next) => {
+        this.router.patch('/', ...this.mw('patch'), async (req, res, next) => {
             try {
                 await this.patch(req, res);
             } catch (err) {
@@ -296,18 +288,19 @@ export class AbstractRoute implements IRoute {
     /**
      * Instantiate all middlewares for a specific request method handler.
      *
-     * @param factories The middleware factories for the request method.
+     * @param method The request method of which to instantiate the middleware
+     *     handlers for.
      * @return The array of middleware handlers.
      */
-    private mw(factories: FMWFactory[]): IRequestHandler[] {
-        const middlewares: IRequestHandler[] = [];
-
-        for (const factory of factories) {
-            middlewares.push(
-                factory(this.logger, this.authSubsys, this.storageSubsys)
-            );
+    private mw(method: RequestMethodName): IRequestHandler[] {
+        if (this.middleware === undefined) {
+            return [];
         }
 
+        const middlewares: IRequestHandler[] = [];
+        for (const factory of this.middleware[method]) {
+            middlewares.push(factory(this.logger, this.authSubsys, this.storageSubsys));
+        }
         return middlewares;
     }
 

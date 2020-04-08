@@ -35,7 +35,7 @@ export type RequestMethodName = 'get' | 'post' | 'put' | 'delete' | 'patch';
  *
  * @param RequestBody The request body type.
  */
-export interface IRequest<RequestBody extends object = any>
+export interface IRequest<RequestBody extends object | undefined = undefined>
 extends Request<any, any, RequestBody> {
 
     /**
@@ -76,11 +76,15 @@ export interface IRequestHandler<
  * initialization.
  */
 export interface IMiddlewareFactories {
-    /** All middleware factories  */
+    /** All middleware factories for GET requests, or `undefined` if there are none */
     get: FMWFactory[];
+    /** All middleware factories for POST requests, or `undefined` if there are none */
     post: FMWFactory[];
+    /** All middleware factories for PUT requests, or `undefined` if there are none */
     put: FMWFactory[];
+    /** All middleware factories for DELETE requests, or `undefined` if there are none */
     delete: FMWFactory[];
+    /** All middleware factories for PATCH requests, or `undefined` if there are none */
     patch: FMWFactory[];
 }
 
@@ -98,7 +102,7 @@ export interface IRoute extends ILifecycle {
      *
      * See {@link AbstractRoute#init} for how an implementation looks like.
      */
-    readonly middleware: IMiddlewareFactories | undefined;
+    middleware?: IMiddlewareFactories | undefined;
 
     /**
      * The route name; this becomes the name of the path segment.

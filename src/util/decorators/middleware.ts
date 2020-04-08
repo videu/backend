@@ -35,11 +35,14 @@ import {
  */
 export function middleware<M extends RequestMethodName>(mwFactory: FMWFactory) {
     return function(route: IRoute, method: M) {
-        if (typeof route.middleware === 'undefined') {
-            throw new TypeError(
-                'Middleware factory chains object is undefined '
-                + '(forgot instantiation with @injectValue?)'
-            );
+        if (route.middleware === undefined) {
+            route.middleware = {
+                get: [],
+                post: [],
+                put: [],
+                delete: [],
+                patch: [],
+            };
         }
 
         /*
