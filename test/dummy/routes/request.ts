@@ -71,70 +71,81 @@ export interface IMockRequestOpts<T extends object | undefined = undefined> {
 export class MockRequest<BodyType extends object | undefined = undefined>
 implements IRequest<BodyType> {
 
-    public body: BodyType | undefined;
+    public body: BodyType;
 
-    public auth?: { token: string; user: IUser; };
+    public videu: {
+        clientIp: string;
+        auth?: {
+            token: string;
+            user: IUser;
+        };
+    };
 
     public headers: IncomingHttpHeaders = {
         'content-type': 'application/json',
     };
 
-    public accepted: MediaType[];
-    public protocol: string;
-    public secure: boolean;
-    public ip: string;
-    public ips: string[];
-    public subdomains: string[];
-    public path: string;
-    public hostname: string;
-    public host: string;
-    public fresh: boolean;
-    public stale: boolean;
-    public xhr: boolean;
-    public cookies: any;
-    public method: string;
-    public params: any;
-    public query: any;
-    public route: any;
-    public signedCookies: any;
-    public originalUrl: string;
-    public url: string;
-    public baseUrl: string;
+    public accepted: MediaType[] = [];
+    public protocol: string = 'http/1.1';
+    public secure: boolean = false;
+    public ip: string = '0.0.0.0';
+    public ips: string[] = ['0.0.0.0'];
+    public subdomains: string[] = [];
+    public path: string = '';
+    public hostname: string = 'localhost';
+    public host: string = 'localhost';
+    public fresh: boolean = true;
+    public stale: boolean = false;
+    public xhr: boolean = true;
+    public cookies: any = {};
+    public method: string = '';
+    public params: any = {};
+    public query: any = {};
+    public route: any = {};
+    public signedCookies: any = {};
+    public originalUrl: string = '';
+    public url: string = '';
+    public baseUrl: string = '';
     public app: ExpressApplication;
     public res?: IResponse<any>;
     public next?: NextFunction;
-    public aborted: boolean;
+    public aborted: boolean = false;
     public httpVersion: string = '1.1';
-    public httpVersionMajor: number;
-    public httpVersionMinor: number;
-    public complete: boolean;
-    public connection: Socket;
-    public socket: Socket;
-    public rawHeaders: string[];
-    public trailers: { [key: string]: string; };
-    public rawTrailers: string[];
+    public httpVersionMajor: number = 1;
+    public httpVersionMinor: number = 1;
+    public complete: boolean = false;
+    public connection: Socket = null as any as Socket;
+    public socket: Socket = null as any as Socket;
+    public rawHeaders: string[] = [];
+    public trailers: { [key: string]: string; } = {};
+    public rawTrailers: string[] = [];
     public statusCode?: number;
     public statusMessage?: string;
-    public readable: boolean;
-    public readableHighWaterMark: number;
-    public readableLength: number;
-    public readableObjectMode: boolean;
-    public destroyed: boolean;
+    public readable: boolean = true;
+    public readableHighWaterMark: number = 0;
+    public readableLength: number = 0;
+    public readableObjectMode: boolean = false;
+    public destroyed: boolean = false;
 
     /**
      * Create a new mock request.
      *
      * @param opts Some options.
      */
-    constructor(opts?: IMockRequestOpts) {
+    constructor(app: ExpressApplication, body?: BodyType, opts?: IMockRequestOpts) {
+        this.videu = {
+            clientIp: '0.0.0.0',
+        };
+        this.app = app;
+
+        this.body = body!;
+
         if (opts) {
 
             if (opts.auth) {
-                this.auth = opts.auth;
+                this.videu.auth = opts.auth;
                 this.headers.authorization = `Bearer ${opts.auth.token}`;
             }
-
-            this.body = opts.body;
 
             if (opts.headers) {
                 for (const header in opts.headers) {

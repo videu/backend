@@ -49,38 +49,38 @@ import { MockRequest } from './request';
 export class MockResponse<ResponseBody extends JSONResponseBody>
 implements IResponse<ResponseBody> {
 
-    public body: ResponseBody | IErrorResponseBody;
+    public body?: ResponseBody | IErrorResponseBody;
     public headers: OutgoingHttpHeaders = {
         'content-type': 'application/json',
     };
-    public statusCode: HTTPStatusCode;
+    public statusCode: HTTPStatusCode = -1;
 
     public app: ExpressApplication;
     public req?: ExpressRequest<ParamsDictionary, any, any>;
-    public statusMessage: string;
-    public headersSent: boolean;
+    public statusMessage: string = '';
+    public headersSent: boolean = false;
     public locals: any;
-    public charset: string;
-    public writable: boolean;
-    public writableEnded: boolean;
-    public writableFinished: boolean;
-    public writableHighWaterMark: number;
-    public writableLength: number;
-    public writableObjectMode: boolean;
-    public writableCorked: number;
-    public destroyed: boolean;
-    public upgrading: boolean;
-    public chunkedEncoding: boolean;
-    public shouldKeepAlive: boolean;
-    public useChunkedEncodingByDefault: boolean;
-    public sendDate: boolean;
-    public finished: boolean;
-    public connection: Socket;
-    public socket: Socket;
+    public charset: string = 'utf-8';
+    public writable: boolean = true;
+    public writableEnded: boolean = false;
+    public writableFinished: boolean = false;
+    public writableHighWaterMark: number = 0;
+    public writableLength: number = 0;
+    public writableObjectMode: boolean = false;
+    public writableCorked: number = 0;
+    public destroyed: boolean = false;
+    public upgrading: boolean = false;
+    public chunkedEncoding: boolean = false;
+    public shouldKeepAlive: boolean = false;
+    public useChunkedEncodingByDefault: boolean = false;
+    public sendDate: boolean = true;
+    public finished: boolean = false;
+    public connection: Socket = null as any as Socket;
+    public socket: Socket = null as any as Socket;
 
-    public constructor(req?: MockRequest, app?: ExpressApplication) {
-        this.req = req;
+    public constructor(app: ExpressApplication, req?: MockRequest) {
         this.app = app;
+        this.req = req;
     }
 
     public status(code: number): this {
@@ -130,12 +130,14 @@ implements IResponse<ResponseBody> {
         return val;
     }
 
-    public json(body: ResponseBody | IErrorResponseBody) {
+    public json(body: ResponseBody | IErrorResponseBody | undefined) {
         if (this.body) {
             throw new Error('Body already sent');
         }
 
         this.body = body;
+        this.headersSent = true;
+        this.finished = true;
         return this;
     }
 
