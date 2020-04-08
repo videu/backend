@@ -20,7 +20,6 @@
  */
 
 import { IUser } from '../../types/db/user';
-import { HTTPStatusCode } from '../../types/json/response';
 import { FMWFactoryConfigurator } from '../../types/routes/middleware';
 
 import { AuthError } from '../error/auth-error';
@@ -41,23 +40,31 @@ function getTokenFromHeader(header?: string): string {
 
     /* Can be limited to the first 3 because anything above 2 is invalid anyway */
     const headerParts: string[] = header.split(' ', 3);
-    if (headerParts[0] !== 'Beaarer' || headerParts.length !== 2) {
+    if (headerParts[0] !== 'Bearer' || headerParts.length !== 2) {
         throw new AuthError('Invalid authorization header');
     }
 
     return headerParts[1];
 }
 
+/** Options for the `userLogin` middleware. */
+interface IUserLoginMiddlewareOpts {
+    soft: boolean;
+}
+
+const DEFAULT_OPTS: IUserLoginMiddlewareOpts = {
+    soft: false,
+};
+
 /**
  * Middleware factory configurator for validating the `Authorization` header in
  * HTTP requests.
  *
- * @param soft If `true`, the request will not be rejected if the header is
- *     not present.  Defaults to `false`.
+ * @param config Configuration options.
  * @return The middleware factory.
  */
-export const userLogin: FMWFactoryConfigurator<[boolean]> =
-(soft = false) => (logger, authSubsys, _storageSubsys) => async (req, res, next) => {
+export const userLogin: FMWFactoryConfigurator<IUserLoginMiddlewareOpts> =
+(config = DEFAULT_OPTS) => (logger, authSubsys, _storageSubsys) => async (req, res, next) => {
     let user: IUser;
     let token: string;
 
@@ -67,7 +74,7 @@ export const userLogin: FMWFactoryConfigurator<[boolean]> =
     } catch (err) {
         if (err instanceof BackendError) {
 
-            if (soft) {
+            if (config.soft) {
                 next();
             } else {
                 res.set(
@@ -80,16 +87,13 @@ export const userLogin: FMWFactoryConfigurator<[boolean]> =
         } else {
 
             logger.e(err);
-            next(new BackendError(
-                err.msg,
-                HTTPStatusCode.INTERNAL_SERVER_ERROR
-            ));
+            next(new BackendError(err.msg));
 
         }
         return;
     }
 
-    req.auth = {
+    req.videu.auth = {
         token: token,
         user: user,
     };

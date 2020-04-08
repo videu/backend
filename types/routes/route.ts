@@ -38,15 +38,23 @@ export type RequestMethodName = 'get' | 'post' | 'put' | 'delete' | 'patch';
 export interface IRequest<RequestBody extends object | undefined = undefined>
 extends Request<any, any, RequestBody> {
 
-    /**
-     * If this value exists, the request contained a valid `Authorization`
-     * header and is therefore authenticated.
-     */
-    auth?: {
-        /** The JSON Web Token this user authenticated with. */
-        token: string;
-        /** The user object. */
-        user: IUser;
+    /** Various videu-specific extension data for requests. */
+    videu: {
+
+        /** The client IP address. */
+        clientIp: string;
+
+        /**
+         * If this value exists, the request contained a valid `Authorization`
+         * header and is therefore authenticated.
+         */
+        auth?: {
+            /** The JSON Web Token this user authenticated with. */
+            token: string;
+            /** The user object. */
+            user: IUser;
+        };
+
     };
 
 }
@@ -66,8 +74,8 @@ extends Response<ResponseBody | IErrorResponseBody> { }
  * therefore never be used to avoid nasty type errors.
  */
 export interface IRequestHandler<
-    RequestBody extends object = any,
-    ResponseBody extends JSONResponseBody = any
+    RequestBody extends object | undefined = undefined,
+    ResponseBody extends JSONResponseBody = JSONResponseBody
 > extends RequestHandler<any, ResponseBody | IErrorResponseBody, RequestBody> { }
 
 /**
@@ -76,15 +84,15 @@ export interface IRequestHandler<
  * initialization.
  */
 export interface IMiddlewareFactories {
-    /** All middleware factories for GET requests, or `undefined` if there are none */
+    /** All middleware factories for GET requests. */
     get: FMWFactory[];
-    /** All middleware factories for POST requests, or `undefined` if there are none */
+    /** All middleware factories for POST requests. */
     post: FMWFactory[];
-    /** All middleware factories for PUT requests, or `undefined` if there are none */
+    /** All middleware factories for PUT requests. */
     put: FMWFactory[];
-    /** All middleware factories for DELETE requests, or `undefined` if there are none */
+    /** All middleware factories for DELETE requests. */
     delete: FMWFactory[];
-    /** All middleware factories for PATCH requests, or `undefined` if there are none */
+    /** All middleware factories for PATCH requests. */
     patch: FMWFactory[];
 }
 
@@ -139,8 +147,10 @@ export interface IRoute extends ILifecycle {
  * @param RequestBody The type of the request body in GET requests.
  * @param ResponseBody The type of the response body in GET requests.
  */
-export interface IGetEndpoint<RequestBody extends object, ResponseBody extends JSONResponseBody>
-extends IRoute {
+export interface IGetEndpoint<
+    RequestBody extends object | undefined = undefined,
+    ResponseBody extends JSONResponseBody = JSONResponseBody
+> extends IRoute {
 
     /** The request handler for GET requests. */
     get: IRequestHandler<RequestBody, ResponseBody>;
@@ -153,8 +163,10 @@ extends IRoute {
  * @param RequestBody The type of the request body in POST requests.
  * @param ResponseBody The type of the response body in POST requests.
  */
-export interface IPostEndpoint<RequestBody extends object, ResponseBody extends JSONResponseBody>
-extends IRoute {
+export interface IPostEndpoint<
+    RequestBody extends object | undefined = undefined,
+    ResponseBody extends JSONResponseBody = JSONResponseBody
+> extends IRoute {
 
     /** The request handler for POST requests. */
     post: IRequestHandler<RequestBody, ResponseBody>;
@@ -167,8 +179,10 @@ extends IRoute {
  * @param RequestBody The type of the request body in PUT requests.
  * @param ResponseBody The type of the response body in PUT requests.
  */
-export interface IPutEndpoint<RequestBody extends object, ResponseBody extends JSONResponseBody>
-extends IRoute {
+export interface IPutEndpoint<
+    RequestBody extends object | undefined = undefined,
+    ResponseBody extends JSONResponseBody = JSONResponseBody
+> extends IRoute {
 
     /** The request handler for PUT requests. */
     put: IRequestHandler<RequestBody, ResponseBody>;
@@ -181,8 +195,10 @@ extends IRoute {
  * @param RequestBody The type of the request body in DELETE requests.
  * @param ResponseBody The type of the response body in DELETE requests.
  */
-export interface IDeleteEndpoint<RequestBody extends object, ResponseBody extends JSONResponseBody>
-extends IRoute {
+export interface IDeleteEndpoint<
+    RequestBody extends object | undefined = undefined,
+    ResponseBody extends JSONResponseBody = JSONResponseBody
+> extends IRoute {
 
     /** The request handler for DELETE requests. */
     delete: IRequestHandler<RequestBody, ResponseBody>;
@@ -195,8 +211,10 @@ extends IRoute {
  * @param RequestBody The type of the request body in PATCH requests.
  * @param ResponseBody The type of the response body in PATCH requests.
  */
-export interface IPatchEndpoint<RequestBody extends object, ResponseBody extends JSONResponseBody>
-extends IRoute {
+export interface IPatchEndpoint<
+    RequestBody extends object | undefined = undefined,
+    ResponseBody extends JSONResponseBody = JSONResponseBody
+> extends IRoute {
 
     /** The request handler for PATCH requests. */
     patch: IRequestHandler<RequestBody, ResponseBody>;

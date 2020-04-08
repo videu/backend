@@ -52,7 +52,7 @@ export type FMWFactory =
  * should be passed as the parameter for the `@middleware` decorator.
  *
  * @param T The type of the configuration parameters.
- * @param params The configuration parameters.
+ * @param opts The configuration options.
  * @returns The middleware factories w/ configuration parameters baked in.
  */
-export type FMWFactoryConfigurator<T extends any[]> = (...params: T) => FMWFactory;
+export type FMWFactoryConfigurator<T extends object | undefined> = (opts: T) => FMWFactory;
