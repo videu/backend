@@ -26,7 +26,6 @@ import { LifecycleState } from '../../types/core/lifecycle';
 import { IStorageSubsys } from '../../types/core/storage-subsys';
 import { HTTPStatusCode } from '../../types/json/response';
 import { ILogger } from '../../types/logger';
-import { FMWFactory } from '../../types/routes/middleware';
 import {
     IMiddlewareFactories,
     IRequest,
@@ -59,7 +58,7 @@ export class AbstractRoute implements IRoute {
     /** @inheritdoc */
     public readonly children: Map<string, IRoute> = new Map();
 
-    /** The express router instance. */
+    /** @inheritdoc */
     public readonly router: ExpressRouter;
 
     /**
@@ -73,7 +72,7 @@ export class AbstractRoute implements IRoute {
      *
      * @see {@link ../../src/util/decorator/middleware}
      */
-    public readonly middleware?: IMiddlewareFactories;
+    public middleware?: IMiddlewareFactories;
 
     /** The logger for this route. */
     protected readonly logger: ILogger;
@@ -116,9 +115,8 @@ export class AbstractRoute implements IRoute {
 
         for (const child of this.children.values()) {
             await child.init();
-            if (child instanceof AbstractRoute) {
-                this.router.use(`/${child.name}`, child.router);
-            }
+            this.router.use(`/${child.name}`, child.router);
+            this.logger.i(`Using ${child.name}`);
         }
 
         /*
@@ -199,8 +197,10 @@ export class AbstractRoute implements IRoute {
 
         this._state = LifecycleState.EXITED;
 
-        for (const method of REQUEST_METHODS) {
-            this.middleware ! [method] = [];
+        if (this.middleware !== undefined) {
+            for (const method of REQUEST_METHODS) {
+                this.middleware ! [method] = [];
+            }
         }
     }
 

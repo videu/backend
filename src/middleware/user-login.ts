@@ -52,10 +52,6 @@ interface IUserLoginMiddlewareOpts {
     soft: boolean;
 }
 
-const DEFAULT_OPTS: IUserLoginMiddlewareOpts = {
-    soft: false,
-};
-
 /**
  * Middleware factory configurator for validating the `Authorization` header in
  * HTTP requests.
@@ -64,7 +60,7 @@ const DEFAULT_OPTS: IUserLoginMiddlewareOpts = {
  * @return The middleware factory.
  */
 export const userLogin: FMWFactoryConfigurator<IUserLoginMiddlewareOpts> =
-(config = DEFAULT_OPTS) => (logger, authSubsys, _storageSubsys) => async (req, res, next) => {
+(config) => (logger, authSubsys, _storageSubsys) => async (req, res, next) => {
     let user: IUser;
     let token: string;
 

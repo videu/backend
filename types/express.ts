@@ -36,17 +36,21 @@ declare global {
             videu: {
                 /** The remote IP address. */
                 clientIp: string;
-
-                /**
-                 * If the request has a *valid* authentication header, this
-                 * property contains the user object.  In all other cases,
-                 * it is `undefined`.  Note that this does **NOT** get injected
-                 * by default, you need to inject the user login middleware
-                 * manually in each route you need it.
-                 *
-                 * @see {@link ../../middleware/user-login}
-                 */
-                user?: IUser;
+                /** If this exists, the request is authenticated. */
+                auth?: {
+                    /** The JWT. */
+                    token: string;
+                    /**
+                     * If the request has a *valid* authentication header, this
+                     * property contains the user object.  In all other cases,
+                     * it is `undefined`.  Note that this does **NOT** get injected
+                     * by default, you need to inject the user login middleware
+                     * manually in each route you need it.
+                     *
+                     * @see {@link ../../middleware/user-login}
+                     */
+                    user: IUser;
+                };
             };
         }
     }

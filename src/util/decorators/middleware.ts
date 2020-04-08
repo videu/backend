@@ -43,7 +43,7 @@ type FMiddlewareRet<M extends RequestMethodName> = (route: IRoute, method: M) =>
  * @param factory The middleware factory.
  * @return The decorator that adds the middleware.
  */
-export function middleware<M extends RequestMethodName>(factory: FMWFactory, opts: undefined):
+export function middleware<M extends RequestMethodName>(factory: FMWFactory):
 FMiddlewareRet<M>;
 
 /**

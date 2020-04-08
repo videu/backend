@@ -20,7 +20,9 @@
  */
 
 import { Router as ExpressRouter } from 'express';
-import { Request, RequestHandler, Response } from 'express-serve-static-core';
+import { NextFunction, Request, RequestHandler, Response } from 'express-serve-static-core';
+
+import '../express';
 
 import { ILifecycle } from '../core/lifecycle';
 import { IUser } from '../db/user';
@@ -64,7 +66,7 @@ extends Request<any, any, RequestBody> {
  *
  * @param ResponseBody The response body type.
  */
-export interface IResponse<ResponseBody extends JSONResponseBody = JSONResponseBody>
+export interface IResponse<ResponseBody extends JSONResponseBody>
 extends Response<ResponseBody | IErrorResponseBody> { }
 
 /**
@@ -74,9 +76,9 @@ extends Response<ResponseBody | IErrorResponseBody> { }
  * therefore never be used to avoid nasty type errors.
  */
 export interface IRequestHandler<
-    RequestBody extends object | undefined = undefined,
-    ResponseBody extends JSONResponseBody = JSONResponseBody
-> extends RequestHandler<any, ResponseBody | IErrorResponseBody, RequestBody> { }
+    RequestBody extends object | undefined = any,
+    ResponseBody extends JSONResponseBody = any
+> extends RequestHandler<any, ResponseBody | IErrorResponseBody, RequestBody> {}
 
 /**
  * Holds an array of all middleware factories applied to request handlers.
@@ -164,8 +166,8 @@ export interface IGetEndpoint<
  * @param ResponseBody The type of the response body in POST requests.
  */
 export interface IPostEndpoint<
-    RequestBody extends object | undefined = undefined,
-    ResponseBody extends JSONResponseBody = JSONResponseBody
+    RequestBody extends object | undefined,
+    ResponseBody extends JSONResponseBody
 > extends IRoute {
 
     /** The request handler for POST requests. */

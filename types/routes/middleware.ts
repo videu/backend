@@ -19,15 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { NextFunction, RequestHandler } from 'express-serve-static-core';
-
 import { IAuthSubsys } from '../core/auth-subsys';
 import { IStorageSubsys } from '../core/storage-subsys';
 import { ILogger } from '../logger';
-import {
-    IRequest,
-    IResponse,
-} from './route';
+import { IRequestHandler } from './route';
 
 /**
  * A middleware handler factory.
@@ -43,8 +38,7 @@ import {
  *     type from express).
  */
 export type FMWFactory =
-(logger: ILogger, authSubsys: IAuthSubsys, storageSubsys: IStorageSubsys) =>
-    (req: IRequest, res: IResponse, next: NextFunction) => void | Promise<void>;
+    (logger: ILogger, authSubsys: IAuthSubsys, storageSubsys: IStorageSubsys) => IRequestHandler;
 
 /**
  * A "factory for middleware factories" where configuration parameters can be
