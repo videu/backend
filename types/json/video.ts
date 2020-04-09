@@ -1,5 +1,7 @@
 /**
- * @file JSON format specs for video data.
+ * JSON format specs for video data.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

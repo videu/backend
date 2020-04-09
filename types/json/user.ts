@@ -1,5 +1,7 @@
 /**
- * @file JSON format specs for user data.
+ * JSON format specs for user data.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

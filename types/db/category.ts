@@ -1,5 +1,7 @@
 /**
- * @file Type definitions for the `categories` table.
+ * Type definitions for the `categories` table.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

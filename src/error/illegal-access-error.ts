@@ -1,5 +1,7 @@
 /**
- * @file Error class for illegal data accesses.
+ * Error class for illegal data accesses.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

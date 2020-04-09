@@ -1,5 +1,7 @@
 /**
- * @file Lifecycle interface definition.
+ * Lifecycle interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -20,7 +22,7 @@
  */
 
 /**
- * All states of an {@link ILifecycle}.
+ * All states of an {@linkcode ILifecycle}.
  */
 export const enum LifecycleState {
 
@@ -53,7 +55,8 @@ export const enum LifecycleState {
  * Something that owns a basic lifecycle, i.e. can be initialized and
  * de-initialized.
  *
- * @param T An optional parameter list that is passed to the {@link #init} callback.
+ * @typeParam InitArgs An optional parameter list that is passed to the
+ *     {@linkcode .init} callback.
  */
 export interface ILifecycle<InitArgs extends any[] = []> {
 

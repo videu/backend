@@ -1,5 +1,7 @@
 /**
- * @file Base interface definition for all documents.
+ * Base interface definition for all documents.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -22,7 +24,7 @@
 import { Document } from 'mongoose';
 
 /**
- * Transform this {@link Document} into a JSON object that is safe to send
+ * Transform this {@linkcode Document} into a JSON object that is safe to send
  * to clients; i.e. does not contain anything users should not see.
  *
  * **Never** send anything other than the return value of this function to
@@ -31,6 +33,8 @@ import { Document } from 'mongoose';
  * @param showPrivates If `true`, the returned JSON
  * @param ShowPrivates The value of the regular `showPrivates` parameter; this
  *     is an auto-generated copy for typesafe return values.
+ * @typeParam TIn The type of the document this function is executed on.
+ * @typeParam TOut The type of the returned JSON object.
  * @returns This document as a JSON object for clients.
  */
 export type FToJSON<TIn extends Document, TOut> = (this: TIn) => TOut;
@@ -38,9 +42,9 @@ export type FToJSON<TIn extends Document, TOut> = (this: TIn) => TOut;
 /**
  * Base interface for any database document type.
  *
- * @param T The type of the document, i.e. the interface extending this one.
- * @param TPubJSON The structure of JSON objects containing public data.
- * @param TPrivJSON The structure of JSON objects containing private data.
+ * @typeParam T The type of the document, i.e. the interface extending this one.
+ * @typeParam TPubJSON The structure of JSON objects containing public data.
+ * @typeParam TPrivJSON The structure of JSON objects containing private data.
  */
 export interface IBaseDocument<T extends Document, TPubJSON = void, TPrivJSON = void>
 extends Document {
@@ -50,17 +54,17 @@ extends Document {
      * document that can safely be sent to clients.  This is only available
      * if the `TPubJSON` type parameter is specified.
      *
-     * @return This document as a JSON object.
+     * @returns This document as a JSON object.
      */
     toPublicJSON: TPubJSON extends void ? undefined : FToJSON<T, TPubJSON>;
 
     /**
-     * Return a JSON object containing anything that {@link #toPublicJSON} does,
-     * as well as additional sensitive data. The return value of this function
-     * may only be sent to authenticated clients requesting their own data.
-     * This is only available if the `TPrivJSON` parameter is not `void`.
+     * Return a JSON object containing anything that {@linkcode .toPublicJSON}
+     * does, as well as additional sensitive data. The return value of this
+     * function may only be sent to authenticated clients requesting their own
+     * data.  This is only available if the `TPrivJSON` parameter is not `void`.
      *
-     * @return This document as a JSON object containing private details.
+     * @returns This document as a JSON object containing private details.
      */
     toPrivateJSON: TPrivJSON extends void ? undefined : FToJSON<T, TPrivJSON>;
 

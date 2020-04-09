@@ -1,5 +1,7 @@
 /**
- * @file JSON format specs for category data.
+ * JSON format specs for category data.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

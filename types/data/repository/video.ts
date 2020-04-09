@@ -1,5 +1,7 @@
 /**
- * @file Video repository interface definition.
+ * Video repository interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -35,7 +37,7 @@ extends IRepository<IVideo, IMinimalVideoData, IVideoDataAuthority, IVideoDataCa
      * Get a video by its id.
      *
      * @param id The video id.
-     * @return The video, or `null` if it does not exist.
+     * @returns The video, or `null` if it does not exist.
      */
     getById(id: ObjectId): Promise<IVideo | null>;
 
@@ -45,7 +47,7 @@ extends IRepository<IVideo, IMinimalVideoData, IVideoDataAuthority, IVideoDataCa
      * @param userId The user id.
      * @param limit The maximum amount of results per page.
      * @param page The page.
-     * @return An array of videos created by the specified user, or `null` if
+     * @returns An array of videos created by the specified user, or `null` if
      *     there aren't any.
      */
     getAllByUser(userId: ObjectId, limit?: number, page?: number): Promise<IVideo[] | null>;

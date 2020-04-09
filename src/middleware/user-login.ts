@@ -1,5 +1,7 @@
 /**
- * @file Middleware for checking whether a user is logged in.
+ * Middleware for checking whether a user is logged in.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -27,11 +29,11 @@ import { BackendError } from '../error/backend-error';
 
 /**
  * Parse the JSON Web Token from the HTTP `Authorization` header.
- * If the token could not be parsed for whatever reason, an {@link AuthError}
- * is thrown.
+ * If the token could not be parsed for whatever reason, an
+ * {@linkcode AuthError} is thrown.
  *
  * @param header The HTTP Authorization header.
- * @return The JWT.
+ * @returns The JWT.
  */
 function getTokenFromHeader(header?: string): string {
     if (typeof header !== 'string') {
@@ -47,7 +49,7 @@ function getTokenFromHeader(header?: string): string {
     return headerParts[1];
 }
 
-/** Options for the `userLogin` middleware. */
+/** Options for the {@linkcode userLogin} middleware. */
 interface IUserLoginMiddlewareOpts {
     soft: boolean;
 }
@@ -57,7 +59,7 @@ interface IUserLoginMiddlewareOpts {
  * HTTP requests.
  *
  * @param config Configuration options.
- * @return The middleware factory.
+ * @returns The middleware factory.
  */
 export const userLogin: FMWFactoryConfigurator<IUserLoginMiddlewareOpts> =
 (config) => (logger, authSubsys, _storageSubsys) => async (req, res, next) => {

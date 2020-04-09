@@ -1,5 +1,7 @@
 /**
- * @file Create mock requests.
+ * Create mock requests.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

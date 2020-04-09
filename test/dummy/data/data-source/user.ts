@@ -1,5 +1,7 @@
 /**
- * @file Dummy implementation of user data sources.
+ * Dummy implementation of user data sources.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

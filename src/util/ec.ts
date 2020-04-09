@@ -1,5 +1,7 @@
 /**
- * @file EC Certificate validation and generation utilities.
+ * EC Certificate validation and generation utilities.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -66,7 +68,7 @@ const publicKeyPEMHeaderRegex =
  * Generate a new EC key pair in PEM format.
  *
  * @param namedCurve The name of the elliptic curve to use.
- * @return The EC key pair in PEM format.
+ * @returns The EC key pair in PEM format.
  */
 export function generateECKeyPair(namedCurve: EllipticCurveName = 'secp256k1'):
 Promise<IECKeyPairPEM> {
@@ -103,7 +105,7 @@ Promise<IECKeyPairPEM> {
  * `.pem`. If the file extension is neither of those, an Error is thrown.
  *
  * @param filename The key file name.
- * @return The format, as advertised by the file extension.
+ * @returns The format, as advertised by the file extension.
  */
 export function guessKeyFormatByFileExtension(filename: string): ('der' | 'pem') {
     if (!filename.includes('.')) {
@@ -165,7 +167,7 @@ function validateECPrivateKey(privateKey: KeyObject): void {
  * `spki`.
  *
  * @param publicKeyPath The path to the public key file.
- * @return The parsed public key.
+ * @returns The parsed public key.
  */
 export async function readECSpkiPublicKeyFromFile(publicKeyPath: string): Promise<KeyObject> {
     const publicKeyFormat: ('der' | 'pem') = guessKeyFormatByFileExtension(publicKeyPath);
@@ -209,7 +211,7 @@ export async function readECSpkiPublicKeyFromFile(publicKeyPath: string): Promis
  * `sec1`.
  *
  * @param privateKeyPath The path to the private key file.
- * @return The parsed private key.
+ * @returns The parsed private key.
  */
 export async function readECSec1PrivateKeyFromFile(privateKeyPath: string): Promise<KeyObject> {
     const privateKeyFormat: ('der' | 'pem') = guessKeyFormatByFileExtension(privateKeyPath);
@@ -246,7 +248,7 @@ export async function readECSec1PrivateKeyFromFile(privateKeyPath: string): Prom
  *
  * @param publicKeyPath The path to the public key file.
  * @param privateKeyPath The path to the private key file.
- * @return The key pair in PEM format.
+ * @returns The key pair in PEM format.
  */
 export async function readECKeyPairFromFilesUnchecked(publicKeyPath: string,
                                                       privateKeyPath: string):

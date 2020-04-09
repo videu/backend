@@ -1,5 +1,7 @@
 /**
- * @file Mongoose schema and model definition for the `videos` table.
+ * Mongoose schema and model definition for the `videos` table.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

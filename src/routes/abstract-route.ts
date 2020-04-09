@@ -1,5 +1,7 @@
 /**
- * @file General Router implementation.
+ * General Router implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -67,10 +69,8 @@ export class AbstractRoute implements IRoute {
      * actual request handler at the end of the array.
      *
      * Middleware handlers should never be added manually here, the
-     * `@middleware` decorator is responsible for this (as well as instantiating
-     * this field in the first place)
-     *
-     * @see {@link ../../src/util/decorator/middleware}
+     * {@linkcode middleware} decorator is responsible for this (as well as
+     * instantiating this field in the first place).
      */
     public middleware?: IMiddlewareFactories;
 
@@ -87,7 +87,7 @@ export class AbstractRoute implements IRoute {
      */
     protected readonly storageSubsys: IStorageSubsys;
 
-    /** Internal field for {@link #state} w/ write access. */
+    /** Internal field for {@linkcode .state} w/ write access. */
     private _state: LifecycleState = LifecycleState.CREATED;
 
     /**
@@ -290,7 +290,7 @@ export class AbstractRoute implements IRoute {
      *
      * @param method The request method of which to instantiate the middleware
      *     handlers for.
-     * @return The array of middleware handlers.
+     * @returns The array of middleware handlers.
      */
     private mw(method: RequestMethodName): IRequestHandler[] {
         if (this.middleware === undefined) {

@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the `/user/auth` endpoint.
+ * Unit test for the `/user/auth` endpoint.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

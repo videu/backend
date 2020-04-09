@@ -1,5 +1,5 @@
 /**
- * @file Base interface for data sources.
+ * Base interface for data sources.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -28,7 +28,7 @@ import { Document } from 'mongoose';
  * cache or database server.  Respositories are the only element interacting
  * with data sources directly.
  *
- * @param T The mongoose document type this DataSource manages.  This is
+ * @typeParam T The mongoose document type this DataSource manages.  This is
  *     required to ensure type safety when adding or removing data sources
  *     to/from a repository.  Methods from implementing classes may ONLY have
  *     return values of this type (or rather Promises for it).
@@ -54,7 +54,7 @@ export interface IDataSource<T extends Document> {
      * The behavior when updating a document that did previously not exist in
      * the data source depends on whether this data source is an authority.
      * If it is, an error will be thrown.  If it is just a cache, the method
-     * call will have the same effect as calling {@link IDataCache#put}.
+     * call will have the same effect as calling {@linkcode IDataCache.put}.
      *
      * @param doc The updated document.
      */
@@ -69,8 +69,8 @@ export interface IDataSource<T extends Document> {
  * caches, the data from this data source is always considered correct.
  * It should be obvious that there can only ever be one authority per data type.
  *
- * @param T The mongoose document type.
- * @param M The minimal data required to create a new document.
+ * @typeParam T The mongoose document type.
+ * @typeParam M The minimal data required to create a new document.
  */
 export interface IDataAuthority<T extends Document, M extends object> extends IDataSource<T> {
 
@@ -80,7 +80,7 @@ export interface IDataAuthority<T extends Document, M extends object> extends ID
      * operation is complete.
      *
      * @param data The data for this document.
-     * @return The new document.
+     * @returns The new document.
      */
     create(data: M): Promise<T>;
 
@@ -92,7 +92,7 @@ export interface IDataAuthority<T extends Document, M extends object> extends ID
  * frequently accessed data.  Unlike the authoritative data source, it may
  * contain incomplete or outdated data.
  *
- * @param T The document type.
+ * @typeParam T The document type.
  */
 export interface IDataCache<T extends Document> extends IDataSource<T> {
 

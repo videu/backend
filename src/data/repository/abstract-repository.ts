@@ -1,5 +1,7 @@
 /**
- * @file The category repository.
+ * The category repository.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -25,6 +27,14 @@ import { IDataAuthority, IDataCache } from '../../../types/data/data-source';
 import { IRepository } from '../../../types/data/repository';
 import { ILogger } from '../../../types/logger';
 
+/**
+ * Abstract base class for all repositories.
+ *
+ * @typeParam T The type of the mongoose document.
+ * @typeParam M The type of the minimal data required to create new documents.
+ * @typeParam A The type of the data authority.
+ * @typeParam C The type of data caches.
+ */
 export abstract class AbstractRepository<
     T extends Document,
     M extends object,

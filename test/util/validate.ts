@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the object schema validation utility.
+ * Unit test for the object schema validation utility.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

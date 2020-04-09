@@ -1,5 +1,7 @@
 /**
- * @file Utility functions for password hashing and validation.
+ * Utility functions for password hashing and validation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -35,14 +37,14 @@ export const PASSWD_MAX_BYTES: number = 72;
 
 /**
  * Compute the salted bcrypt hash for a password.
- * The password must be at least `{@link PASSWD_MIN_LENGTH}` characters and at
- * most {@link PASSWD_MAX_BYTES} bytes long, and not contain any ASCII `NUL`
- * characters.
+ * The password must be at least {@linkcode PASSWD_MIN_LENGTH} characters and
+ * at most {@linkcode PASSWD_MAX_BYTES} bytes long, and not contain any ASCII
+ * `NUL` characters.
  *
  * @param passwd The cleartext password.
  * @param rounds The difficulty to calculate the hash with.
- * Defaults to `{@link DEFAULT_ROUNDS}` if not specified and must be at least
- * `{@link MIN_ROUNDS}`.
+ * Defaults to `{@linkcode DEFAULT_ROUNDS}` if not specified and must be at
+ * least `{@linkcode MIN_ROUNDS}`.
  * @returns The bcrypt-hashed password.
  */
 export function passwdHash(passwd: string, rounds: number = DEFAULT_ROUNDS): Promise<string> {

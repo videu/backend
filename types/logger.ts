@@ -1,5 +1,7 @@
 /**
- * @file Type definitions for the logging interface.
+ * Type definitions for the logging interface.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

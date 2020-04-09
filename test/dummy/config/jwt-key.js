@@ -1,5 +1,7 @@
 /**
- * @file Dummy JWT key pair provider for unit tests.
+ * Dummy JWT key pair provider for unit tests.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

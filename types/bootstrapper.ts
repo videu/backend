@@ -1,5 +1,7 @@
 /**
- * @file Type definition for a bootstrap function.
+ * Type definition for a bootstrap function.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

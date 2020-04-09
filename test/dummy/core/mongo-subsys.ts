@@ -1,5 +1,7 @@
 /**
- * @file Stub mongo subsystem implementation.
+ * Stub mongo subsystem implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

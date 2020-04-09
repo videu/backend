@@ -1,5 +1,7 @@
 /**
- * @file Mongoose schema and model definition for the `video_clicks` table.
+ * Mongoose schema and model definition for the `video_clicks` table.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

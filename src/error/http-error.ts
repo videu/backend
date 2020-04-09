@@ -1,5 +1,7 @@
 /**
- * @file Generic class for HTTP error codes.
+ * Generic class for HTTP error codes.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

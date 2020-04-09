@@ -1,5 +1,7 @@
 /**
- * @file Data source interface definition for videos.
+ * Data source interface definition for videos.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -44,7 +46,7 @@ export interface IVideoDataSource extends IDataSource<IVideo> {
      * Get a video by its id.
      *
      * @param id The user id.
-     * @return A Promise for the user object, or `null` if it was not found.
+     * @returns A Promise for the user object, or `null` if it was not found.
      */
     getById(id: ObjectId): Promise<IVideo | null>;
 

@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the EC utilities.
+ * Unit test for the EC utilities.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

@@ -1,5 +1,7 @@
 /**
- * @file Type definition for the error handler interface.
+ * Type definition for the error handler interface.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

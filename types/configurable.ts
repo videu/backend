@@ -1,5 +1,7 @@
 /**
- * @file Interface definition for all configurable app components.
+ * Interface definition for all configurable app components.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

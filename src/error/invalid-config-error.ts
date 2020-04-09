@@ -1,5 +1,7 @@
 /**
- * @file Error class for invalid configuration values.
+ * Error class for invalid configuration values.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -22,4 +24,4 @@
 /**
  * Error condition when a configuration contained a missing or illegal value.
  */
-export class InvalidConfigError extends Error { }
+export class InvalidConfigError extends Error {}

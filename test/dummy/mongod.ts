@@ -1,5 +1,7 @@
 /**
- * @file Dummy MongoDB in-memory server.
+ * Dummy MongoDB in-memory server.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

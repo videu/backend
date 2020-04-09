@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the password hashing API.
+ * Unit test for the password hashing API.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

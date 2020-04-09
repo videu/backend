@@ -1,5 +1,7 @@
 /**
- * @file Main init routine.
+ * Main init routine.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

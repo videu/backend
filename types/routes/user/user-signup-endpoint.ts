@@ -1,5 +1,7 @@
 /**
- * @file `/user/signup` route interface definition.
+ * `/user/signup` route interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

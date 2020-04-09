@@ -1,5 +1,7 @@
 /**
- * @file Promisified wrappers for various APIs from the `fs` package.
+ * Promisified wrappers for various APIs from the `fs` package.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -45,7 +47,7 @@ export function asyncChmod(path: PathLike, mode: string | number): Promise<void>
  * Get the stats for a file using `fs.stat()`.
  *
  * @param path The path to the file.
- * @return The stats.
+ * @returns The stats.
  */
 export function asyncStat(path: PathLike): Promise<Stats> {
     return new Promise((resolve, reject) => {
@@ -77,7 +79,7 @@ export async function canStat(path: PathLike): Promise<boolean> {
  * Read a file to a `Buffer` using `fs.readFile()`.
  *
  * @param path The path to the file.
- * @return A `Buffer` containing the file's data.
+ * @returns A `Buffer` containing the file's data.
  */
 export function asyncReadFile(path: PathLike): Promise<Buffer> {
     return new Promise((resolve, reject) => {
@@ -96,7 +98,7 @@ export function asyncReadFile(path: PathLike): Promise<Buffer> {
  * The file is assumed to be in UTF-8 encoding.
  *
  * @param path The path to the file.
- * @return The file contents as a string.
+ * @returns The file contents as a string.
  */
 export async function asyncReadFileStr(path: PathLike): Promise<string> {
     return new TextDecoder('utf-8').decode(await asyncReadFile(path));

@@ -1,5 +1,7 @@
 /**
- * @file HTTP server subsystem implementation.
+ * HTTP server subsystem implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -54,8 +56,8 @@ implements IHTTPSubsys {
     public readonly express: ExpressApp;
 
     /**
-     * A Map of all servers we are listening on where the hostname / socket is the key.
-     * TCP server keys have the form `hostname:port`.
+     * A Map of all servers we are listening on where the hostname / socket is
+     * the key.  TCP server keys have the form `hostname:port`.
      */
     private readonly servers: Map<string, HTTPServer> = new Map();
 

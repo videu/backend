@@ -1,5 +1,7 @@
 /**
- * @file Load the `banner.txt` file or `null`.
+ * Load the `banner.txt` file or `null`.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

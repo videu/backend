@@ -1,5 +1,7 @@
 /**
- * @file Data source interface definition for users.
+ * Data source interface definition for users.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -59,7 +61,7 @@ export interface IUserDataSource extends IDataSource<IUser> {
      * If the id does not exist, the Promise resolves to `null`.
      *
      * @param id The user id.
-     * @return A Promise for the user object, or `null` if it was not found.
+     * @returns A Promise for the user object, or `null` if it was not found.
      */
     getById(id: ObjectId): Promise<IUser | null>;
 
@@ -68,7 +70,7 @@ export interface IUserDataSource extends IDataSource<IUser> {
      * If the user name does not exist, the Promise resolves to `null`.
      *
      * @param userName The user name.
-     * @return A Promise for the user object, or `null` if it was not found.
+     * @returns A Promise for the user object, or `null` if it was not found.
      */
     getByUserName(userName: string): Promise<IUser | null>;
 
@@ -89,7 +91,7 @@ extends IUserDataSource, IDataAuthority<IUser, IMinimalUserData> {
      * Get a user that has not completed their account activation challenge yet.
      *
      * @param activationToken The challenge token.
-     * @return The user object, or `null` it was not found.
+     * @returns The user object, or `null` it was not found.
      */
     activate(activationToken: string): Promise<IUser | null>;
 

@@ -1,5 +1,7 @@
 /**
- * @file Stub subsystem implementations.
+ * Stub subsystem implementations.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -27,18 +29,18 @@ import {
 } from '../../../src/core/abstract-subsys';
 
 /**
- * Dummy implementation of a subsystem for testing the {@link AbstractSubsys}
- * class.
+ * Dummy implementation of a subsystem for testing the
+ * {@linkcode AbstractSubsys} class.
  */
 export class StubSubsys<InitParams extends any[] = []>
 extends AbstractSubsys<InitParams> {
 
-    /** The error message of errors thrown in {@link #onInit}. */
+    /** The error message of errors thrown in {@linkcode .onInit}. */
     public static INIT_ERROR_MESSAGE: string = 'Dummy init failed :(';
-    /** The error message of errors thrown in {@link #onExit}. */
+    /** The error message of errors thrown in {@linkcode .onExit}. */
     public static EXIT_ERROR_MESSAGE: string = 'Dummy exit failed :(';
 
-    /** The parameters passed to the {@link onInit} callback. */
+    /** The parameters passed to the {@linkcode .onInit} callback. */
     public initParams: InitParams | null = null;
 
     private readonly shouldInitFail: boolean;
@@ -79,15 +81,15 @@ extends AbstractSubsys<InitParams> {
 }
 
 /**
- * Configuration schema for the {@link StubSubsysConfigurable} class.
+ * Configuration schema for the {@linkcode StubSubsysConfigurable} class.
  */
 export interface IStubSubsysConfig {
     someProp: string;
 }
 
 /**
- * Dummy subsystem w/ config for testing the {@link AbstractSubsysConfigurable}
- * class.
+ * Dummy subsystem w/ config for testing the
+ * {@linkcode AbstractSubsysConfigurable} class.
  */
 export class StubSubsysConfigurable<InitParams extends any[] = []>
 extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
@@ -104,7 +106,7 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
         },
     };
 
-    /** An array of all parameters passed to the {@link #init} callback. */
+    /** An array of all parameters passed to the {@linkcode .init} callback. */
     public initParams: InitParams | null = null;
 
     private readonly shouldInitFail: boolean;
@@ -116,8 +118,8 @@ extends AbstractSubsysConfigurable<IStubSubsysConfig, InitParams> {
      *
      * @param id The subsystem id.
      * @param wants All subsystem ids this one depends on.
-     * @param shouldInitFail Whether the {@link #init} callback should throw an error.
-     * @param shouldExitFail Whether the {@link #exit} callback should throw an error.
+     * @param shouldInitFail Whether the {@linkcode .init} callback should throw an error.
+     * @param shouldExitFail Whether the {@linkcode .exit} callback should throw an error.
      * @param shouldConfigFail Whether the configuration should be invalid.
      */
     constructor(id: string, shouldInitFail: boolean = false, shouldExitFail: boolean = false,

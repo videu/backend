@@ -1,5 +1,7 @@
 /**
- * @file Stub logger implementation.
+ * Stub logger implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

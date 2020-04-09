@@ -1,5 +1,7 @@
 /**
- * @file Default route handler for endpoints that do not exist.
+ * Default route handler for endpoints that do not exist.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

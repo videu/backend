@@ -1,5 +1,7 @@
 /**
- * @file Error class for illegal states.
+ * Error class for illegal states.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -23,6 +25,4 @@
  * Error condition when something was attempted to be accessed while in an
  * illegal state, e.g. a subsystem being used before initialization.
  */
-export class IllegalStateError extends Error {
-
-}
+export class IllegalStateError extends Error {}

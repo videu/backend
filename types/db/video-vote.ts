@@ -1,5 +1,7 @@
 /**
- * @file Type definitions for `video_vote` objects.
+ * Type definitions for `video_vote` objects.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

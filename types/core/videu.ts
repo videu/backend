@@ -1,5 +1,7 @@
 /**
- * @file Base interface definition for the main videu instance.
+ * Base interface definition for the main videu instance.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

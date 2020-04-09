@@ -1,5 +1,7 @@
 /**
- * @file Data source interface definition for categories.
+ * Data source interface definition for categories.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

@@ -1,5 +1,7 @@
 /**
- * @file Dummy implementation of the video repository.
+ * Dummy implementation of the video repository.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the AbstractRoute class.
+ * Unit test for the AbstractRoute class.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

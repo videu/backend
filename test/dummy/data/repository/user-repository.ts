@@ -1,5 +1,7 @@
 /**
- * @file Dummy implementation of the user repository.
+ * Dummy implementation of the user repository.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

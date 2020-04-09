@@ -1,5 +1,7 @@
 /**
- * @file The BackendError class.
+ * The BackendError class.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -22,8 +24,9 @@
 import { HTTPStatusCode, IErrorResponseBody } from '../../types/json/response';
 
 /**
- * Error condition that indicates an authentication attempt failed due to
- * incorrect credentials.  **This does not include server-side failures.**
+ * General error condition that is sthe fault of the client.
+ * If an error of this class is caught in a route handler, the output of
+ * {@linkcode .toJSON} is sent to the client.
  */
 export class BackendError extends Error {
 

@@ -1,5 +1,7 @@
 /**
- * @file User repository interface definition.
+ * User repository interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -33,7 +35,7 @@ extends IRepository<IUser, IMinimalUserData, IUserDataAuthority, IUserDataCache>
      * Throws an error if the challenge token was not found.
      *
      * @param challengeToken The activation token sent via email.
-     * @return The user object.
+     * @returns The user object.
      */
     activate(challengeToken: string): Promise<IUser>;
 
@@ -41,7 +43,7 @@ extends IRepository<IUser, IMinimalUserData, IUserDataAuthority, IUserDataCache>
      * Get a user by their email address.
      *
      * @param email The email address.
-     * @return The user, or `null` if they were not found.
+     * @returns The user, or `null` if they were not found.
      */
     getByEmail(email: string): Promise<IUser | null>;
 
@@ -49,7 +51,7 @@ extends IRepository<IUser, IMinimalUserData, IUserDataAuthority, IUserDataCache>
      * Get a user by their unique id.
      *
      * @param id The user id.
-     * @return The user, or `null` if they were not found.
+     * @returns The user, or `null` if they were not found.
      */
     getById(id: ObjectId): Promise<IUser | null>;
 
@@ -57,7 +59,7 @@ extends IRepository<IUser, IMinimalUserData, IUserDataAuthority, IUserDataCache>
      * Get a user by their user (@) name.
      *
      * @param userName The user name.
-     * @return The user, or `null` if they were not found.
+     * @returns The user, or `null` if they were not found.
      */
     getByUserName(userName: string): Promise<IUser | null>;
 
@@ -65,7 +67,7 @@ extends IRepository<IUser, IMinimalUserData, IUserDataAuthority, IUserDataCache>
      * The same as create, but also checks for email and user name collisions.
      *
      * @param userData The user data.
-     * @return The new user.
+     * @returns The new user.
      */
     register(userData: IMinimalUserData): Promise<IUser>;
 

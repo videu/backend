@@ -1,5 +1,7 @@
 /**
- * @file Abstract base class for all subsystems.
+ * Provides the abstract base class for all subsystems.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -27,7 +29,6 @@ import { IObjectSchema } from '../../types/util/object-schema';
 
 import { IllegalAccessError } from '../error/illegal-access-error';
 import { IllegalStateError } from '../error/illegal-state-error';
-import { InvalidConfigError } from '../error/invalid-config-error';
 import { Logger } from '../util/logger';
 import { validateConfig } from '../util/validate';
 
@@ -37,7 +38,7 @@ const subsysIdRegex: RegExp = /^[a-z]([a-z0-9\-]*[a-z0-9])?$/;
 /**
  * Abstract base class for all subsystems.
  *
- * @param T The type of the configuration object.
+ * @typeParam InitParams The parameter list passed to {@linkcode .init}.
  */
 export abstract class AbstractSubsys<InitParams extends any[] = []>
 implements ISubsys<InitParams> {
@@ -48,7 +49,7 @@ implements ISubsys<InitParams> {
     /** The logging utility for this subsystem. */
     protected readonly logger: ILogger;
 
-    /** Internal field for {@link #state} w/ write access. */
+    /** Internal field for {@linkcode .state} w/ write access. */
     private _state: LifecycleState = LifecycleState.CREATED;
 
     /**
@@ -110,8 +111,8 @@ implements ISubsys<InitParams> {
 
     /**
      * Callback for doing all required initialization work.  This is called by
-     * the {@link #init} method.  If it throws an error, the subsystem enters
-     * the {@link LifecycleState#ERROR} state.
+     * the {@linkcode .init} method.  If it throws an error, the subsystem enters
+     * the {@linkcode LifecycleState.ERROR} state.
      *
      * @param initParams The initialization parameters.
      */
@@ -119,7 +120,7 @@ implements ISubsys<InitParams> {
 
     /**
      * Callback for doing all required cleanup work on server stop.
-     * This is called by the {@link #exit} method.
+     * This is called by the {@linkcode .exit} method.
      */
     protected abstract onExit(): Promise<void>;
 
@@ -127,13 +128,16 @@ implements ISubsys<InitParams> {
 
 /**
  * Abstract base class for all subsystems that are configurable.
+ *
+ * @typeParam ConfigType The type of the configuration object.
+ * @typeParam InitParams The parameter list passed to {@linkcode .init}.
  */
 export abstract class AbstractSubsysConfigurable<
     ConfigType extends object = {},
     InitParams extends any[] = []
 > extends AbstractSubsys<InitParams> implements IConfigurable<ConfigType> {
 
-    /** Internal field for {@link #config} w/ write access. */
+    /** Internal field for {@linkcode .config} w/ write access. */
     private _config: ConfigType | null;
 
     /** The validation schema for the config object. */
@@ -146,11 +150,12 @@ export abstract class AbstractSubsysConfigurable<
      *     alphanumeric string starting with a letter and may contain dashes
      *     within.
      * @param config The configuration object.  If `null`, the
-     *     {@link #readConfigFromEnv} callback is invoked to obtain it.  If that
-     *     returns `null` as well, an {@link InvalidConfigError} is thrown.
+     *     {@linkcode .readConfigFromEnv} callback is invoked to obtain it.
+     *     If that returns `null` as well, an {@linkcode InvalidConfigError} is
+     *     thrown.
      * @param configSchema A schema describing the exact structure of the
      *     configuration object.
-     * @throws An {@link InvalidConfigurationError} if the configuration
+     * @throws An {@linkcode InvalidConfigError} if the configuration
      *     had illegal or missing values.
      */
     constructor(id: string, config: ConfigType | null, configSchema: IObjectSchema) {
@@ -181,7 +186,7 @@ export abstract class AbstractSubsysConfigurable<
     /**
      * Callback for reading the configuration object from environment variables.
      *
-     * @return The configuration object, composed from environment variables.
+     * @returns The configuration object, composed from environment variables.
      */
     protected abstract readConfigFromEnv(): ConfigType;
 

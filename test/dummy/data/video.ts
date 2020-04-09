@@ -1,5 +1,7 @@
 /**
- * @file Dummy data provider for various video objects.
+ * Dummy data provider for various video objects.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

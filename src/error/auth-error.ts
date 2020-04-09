@@ -1,5 +1,7 @@
 /**
- * @file The AuthError class.
+ * The AuthError class.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

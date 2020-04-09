@@ -1,5 +1,7 @@
 /**
- * @file Type definitions for middleware factories.
+ * Type definitions for middleware factories.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -26,15 +28,15 @@ import { IRequestHandler } from './route';
 
 /**
  * A middleware handler factory.
- * This gets called by the {@link AbstractRoute#init} method to construct the
- * actual middleware handler that is passed to express.  These factories should
- * only be passed to the `@middleware` decorator and never called directly by
- * a route endpoint.
+ * This gets called by the {@linkcode AbstractRoute.init} method to construct
+ * the actual middleware handler that is passed to express.  These factories
+ * should only be passed to the {@linkcode middleware} decorator and never
+ * called directly by a route endpoint.
  *
  * @param logger The logger.
  * @param authSubsys The auth subsystem.
  * @param storageSubsys The storage subsystem.
- * @return The middleware request handler (compatible to the RequestHandler
+ * @returns The middleware request handler (compatible to the RequestHandler
  *     type from express).
  */
 export type FMWFactory =
@@ -43,10 +45,10 @@ export type FMWFactory =
 /**
  * A "factory for middleware factories" where configuration parameters can be
  * passed in.  The return value of this function (i.e. the actual factory)
- * should be passed as the parameter for the `@middleware` decorator.
+ * should be passed as the parameter for the {@linkcode middleware} decorator.
  *
- * @param T The type of the configuration parameters.
  * @param opts The configuration options.
+ * @typeParam T The type of the configuration parameters.
  * @returns The middleware factories w/ configuration parameters baked in.
  */
 export type FMWFactoryConfigurator<T extends object> = (opts: T) => FMWFactory;

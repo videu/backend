@@ -9,7 +9,7 @@
     "coverage": "nyc npm run test",
     "build": "rm -rf build/; tsc",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/bootstrap.ts",
-    "doc": "rm -rf doc/api/; typedoc --includeDeclarations --out doc/api/ src/",
+    "doc": "rm -rf doc/api/; typedoc --options typedoc.js src/ types/",
     "start": "tsc && ./index.js"
   },
   "repository": {

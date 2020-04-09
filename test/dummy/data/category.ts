@@ -1,5 +1,7 @@
 /**
- * @file Dummy data provider for various category objects.
+ * Dummy data provider for various category objects.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

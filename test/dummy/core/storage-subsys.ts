@@ -1,5 +1,7 @@
 /**
- * @file Stub storage subsystem implementation.
+ * Stub storage subsystem implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

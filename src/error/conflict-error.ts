@@ -1,5 +1,7 @@
 /**
- * @file The ConflictError class.
+ * The ConflictError class.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

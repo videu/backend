@@ -1,5 +1,7 @@
 /**
- * @file Mongoose schema and model definition for the `video_votes` table.
+ * Mongoose schema and model definition for the `video_votes` table.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

@@ -1,5 +1,7 @@
 /**
- * @file Type definitions for object schema validation utilities.
+ * Type definitions for object schema validation utilities.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

@@ -1,5 +1,7 @@
 /**
- * @file typeof statement return type definition.
+ * typeof statement return type definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

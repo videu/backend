@@ -1,5 +1,7 @@
 /**
- * @file Data source for users using mongoose.
+ * Data source for users using mongoose.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -27,7 +29,7 @@ import { IUser } from '../../../../types/db/user';
 import { User } from '../../../model/user';
 
 /**
- * User data source for MongoDB.
+ * The authoritative data source for usesr data.
  */
 export class MongoUserDataSource implements IUserDataAuthority {
 
@@ -86,7 +88,7 @@ export class MongoUserDataSource implements IUserDataAuthority {
      *
      * @param userName The user name.
      * @param email The mail address.
-     * @return The colliding user, or `null` if there is none.
+     * @returns The colliding user, or `null` if there is none.
      */
     public async findCollidingUser(userName: string, email: string): Promise<IUser | null> {
         return await User.findOne({

@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the conversion utilities.
+ * Unit test for the conversion utilities.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

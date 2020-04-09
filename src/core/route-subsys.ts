@@ -1,5 +1,7 @@
 /**
- * @file Route subsystem implementation.
+ * Route subsystem implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

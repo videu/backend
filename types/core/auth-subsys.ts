@@ -1,5 +1,7 @@
 /**
- * @file Interface definition for the auth subsystem.
+ * Interface definition for the auth subsystem.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -96,18 +98,18 @@ export interface IAuthSubsys extends ISubsys<[IStorageSubsys]>, IConfigurable<IA
      * Generate a signed JSON Web Token for the specified user.
      *
      * @param user The user.
-     * @return The JWT.
+     * @returns The JWT.
      */
     sign(user: IUser): Promise<string>;
 
     /**
      * Verify the signature of a JSON Web Token.
      * If the token is valid, the user that this token was issued to is
-     * returned.  If not, an {@link AuthError} is thrown.
+     * returned.  If not, an {@linkcode AuthError} is thrown.
      *
      * @param token The token to verify.
-     * @return The user this token was issued to.
-     * @throws An {@link AuthError} if the token's signature is invalid.
+     * @returns The user this token was issued to.
+     * @throws An {@linkcode AuthError} if the token's signature is invalid.
      */
     verify(token: string): Promise<IUser>;
 

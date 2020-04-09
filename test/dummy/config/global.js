@@ -1,5 +1,7 @@
 /**
- * @file Populate the `global.videu` field with defaults for unit testing.
+ * Populate the `global.videu` field with defaults for unit testing.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

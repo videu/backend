@@ -1,5 +1,7 @@
 /**
- * @file Data source for categories using mongoose.
+ * Data source for categories using mongoose.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

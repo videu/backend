@@ -1,5 +1,7 @@
 /**
- * @file Interface definition for the express subsystem.
+ * Interface definition for the express subsystem.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -86,7 +88,7 @@ export interface IHTTPSubsys extends ISubsys<[IRouteSubsys]>, IConfigurable<IHTT
      * This is usually not needed as the port is parsed from the config.
      *
      * @param port The port.
-     * @return The newly created HTTP server.
+     * @returns The newly created HTTP server.
      */
     listenTCP(host: string, port: number): Promise<HTTPServer>;
 
@@ -97,7 +99,7 @@ export interface IHTTPSubsys extends ISubsys<[IRouteSubsys]>, IConfigurable<IHTT
      *
      * @param socketPath The path to the socket.
      * @param permissions The octal file permissions.
-     * @return The newly created HTTP server.
+     * @returns The newly created HTTP server.
      */
     listenUNIX(socketPath: string, permissions?: number): Promise<HTTPServer>;
 

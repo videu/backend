@@ -1,5 +1,7 @@
 /**
- * @file Global type extensions for express-specific types.
+ * Global type extensions for express-specific types.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -47,7 +49,7 @@ declare global {
                      * by default, you need to inject the user login middleware
                      * manually in each route you need it.
                      *
-                     * @see {@link ../../middleware/user-login}
+                     * @see {@linkcode userLogin}
                      */
                     user: IUser;
                 };

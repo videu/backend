@@ -1,5 +1,7 @@
 /**
- * @file Category repository interface definition.
+ * Category repository interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

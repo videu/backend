@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the middleware decorator.
+ * Unit test for the middleware decorator.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

@@ -1,5 +1,7 @@
 /**
- * @file Middleware decorator factory.
+ * Middleware decorator factory.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -31,6 +33,7 @@ import {
  *
  * @param route The route class this is applied on.
  * @param method The request method name this is applied on.
+ * @typeParam M The request method name.
  */
 type FMiddlewareRet<M extends RequestMethodName> = (route: IRoute, method: M) => void;
 
@@ -38,10 +41,10 @@ type FMiddlewareRet<M extends RequestMethodName> = (route: IRoute, method: M) =>
  * Decorator factory that adds a middleware handler factory to the request
  * handler's middleware factory chain it is applied to.
  *
- * @param M The request method name (determined automatically, don't set this
- *     explicitly).
  * @param factory The middleware factory.
- * @return The decorator that adds the middleware.
+ * @typeParam M The request method name (determined automatically, don't set
+ *     this explicitly).
+ * @returns The decorator that adds the middleware.
  */
 export function middleware<M extends RequestMethodName>(factory: FMWFactory):
 FMiddlewareRet<M>;
@@ -50,13 +53,13 @@ FMiddlewareRet<M>;
  * Decorator factory that adds a configurable middleware handler to the request
  * handler's middleware factory chain it is applied to.
  *
- * @param M The request method name (determined automatically, don't set this
- *     explicitly).
- * @param O The middleware configuration type (determined automatically, don't
- *     set this explicitly).
+ * @typeParam M The request method name (determined automatically, don't set
+ *     this explicitly).
+ * @typeParam O The middleware configuration type (determined automatically,
+ *     don't set this explicitly).
  * @param factoryConfigurator The middleware factory configurator.
  * @param opts The middleware configuration options.
- * @return The decorator that adds the middleware.
+ * @returns The decorator that adds the middleware.
  */
 export function middleware<
     M extends RequestMethodName,

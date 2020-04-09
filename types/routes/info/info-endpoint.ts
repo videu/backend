@@ -1,5 +1,7 @@
 /**
- * @file `/info` route interface definition.
+ * `/info` route interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

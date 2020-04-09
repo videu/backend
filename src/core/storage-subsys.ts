@@ -1,5 +1,7 @@
 /**
- * @file Storage subsystem implementation.
+ * Storage subsystem implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

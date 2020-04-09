@@ -1,5 +1,7 @@
 /**
- * @file Base interface definition for repositories.
+ * Base interface definition for repositories.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -31,10 +33,10 @@ import { IDataAuthority, IDataCache } from './data-source';
  * responsibility is to select an appropriate data source for obtaining said
  * data.
  *
- * @param T The Document type this repository takes care of.
- * @param M The minimal data required to create new documents.
- * @param A The data authority for this repository.
- * @param C The interface for caches for this repository.
+ * @typeParam T The Document type this repository takes care of.
+ * @typeParam M The minimal data required to create new documents.
+ * @typeParam A The data authority for this repository.
+ * @typeParam C The interface for caches for this repository.
  */
 export interface IRepository<
     T extends Document,
@@ -53,11 +55,13 @@ export interface IRepository<
 
     /**
      * Create a new document and store it at least in the authoritative data
-     * source.  A {@link ConflictError} may be thrown if there are conflicting
-     * documents in the authoritative data source.
+     * source.  A {@linkcode ConflictError} may be thrown if there are
+     * conflicting documents in the authoritative data source.
      *
      * @param data The data for the new document.
-     * @return The new document.
+     * @returns The new document.
+     * @throws A {@linkcode ConflictError} If the user name or email is already
+     *     used by another account.
      */
     create(data: M): Promise<T>;
 
@@ -72,7 +76,7 @@ export interface IRepository<
      * Update a document in all data sources.
      *
      * @param doc The document.
-     * @return The updated document.
+     * @returns The updated document.
      */
     update(doc: T): Promise<T>;
 

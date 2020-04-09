@@ -1,8 +1,8 @@
 /**
- * @file `/user` route implementation.
- * @author Felix Kopp <sandtler@sandtler.club>
+ * `/user` route implementation.
+ * @packageDocumentation
  *
- * The `/info` route is just for general information on the backend server.
+ * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
  * Copyright (c) 2020 The videu Project <videu@freetube.eu>

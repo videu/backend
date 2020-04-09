@@ -1,5 +1,7 @@
 /**
- * @file Object schema validation.
+ * Object schema validation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -30,7 +32,7 @@ import { InvalidConfigError } from '../error/invalid-config-error';
 
 /**
  * Validate a single element of type object.
- * The {@link validateObject} function is called for every child.
+ * The {@linkcode validateObject} function is called for every child.
  *
  * @param val The object to validate.
  * @param schema The schema to validate against.
@@ -60,6 +62,7 @@ function validateObjectSingle(val: any, schema: IObjectPropSchema, propChain: st
  * @param val The value.
  * @param schema The schema to validate against.
  * @param propChain The full property chain.
+ * @returns The validated number.
  */
 function validateNumberSingle(val: number, schema: INumberPropSchema, propChain: string[]): number {
     if (Number.isNaN(val)) {
@@ -86,6 +89,7 @@ function validateNumberSingle(val: number, schema: INumberPropSchema, propChain:
  * @param val The value.
  * @param schema The schema to validate against.
  * @param propChain The full property chain.
+ * @returns The validated string.
  */
 function validateStringSingle(val: string, schema: IStringPropSchema, propChain: string[]): string {
     if (schema.regex && !schema.regex.test(val)) {
@@ -100,13 +104,14 @@ function validateStringSingle(val: string, schema: IStringPropSchema, propChain:
 
 /**
  * Validate a single value against the specified schema.
- * This is a fairly low-level API, you should use the {@link validateConfig}
+ * This is a fairly low-level API, you should use the {@linkcode validateConfig}
  * function for configuration validation instead.
  *
  * @param val The value.
  * @param schema The property definition of what the value _should_ be.
  * @param propChain The current chain in the property list, relative to the root
  *     object.  Required for specifying the exact variable that failed the spec.
+ * @returns The validated value.
  */
 export function validate(val: any, schema: PropSchema, propChain: string[] = []): any {
     if (typeof val === 'undefined') {
@@ -144,6 +149,8 @@ export function validate(val: any, schema: PropSchema, propChain: string[] = [])
  *
  * @param config The configuration object.
  * @param schema The schema describing what the configuration should look like.
+ * @returns The validated config.
+ * @throws An {@linkcode InvalidConfigError} if `config` didn't match `schema`.
  */
 export function validateConfig<T extends object>(config: T, schema: IObjectSchema): T {
     if (typeof config !== 'object') {

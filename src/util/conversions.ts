@@ -1,5 +1,7 @@
 /**
- * @file Various sanitized conversion methods.
+ * Various sanitized conversion methods.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

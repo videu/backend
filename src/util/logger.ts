@@ -1,5 +1,7 @@
 /**
- * @file The logging utility.
+ * The logging utility.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -169,7 +171,7 @@ export class Logger implements ILogger {
 }
 
 /**
- * Slightly modified version of {@link Logger} that logs route names as well.
+ * Slightly modified version of {@linkcode Logger} that logs route names as well.
  */
 export class RouteLogger extends Logger {
 
@@ -183,7 +185,7 @@ export class RouteLogger extends Logger {
      * @param route The route name.
      */
     constructor(route: string) {
-        super('Router');
+        super('route');
 
         this.route = route;
     }
@@ -203,6 +205,7 @@ export class RouteLogger extends Logger {
  * Parse a log level as specified in the configuration file.
  *
  * @param level The log level from the configuration file.
+ * @returns The log level.
  */
 export function parseLogLevel(level: string): number | undefined {
     let logLevel: number = 0x00;

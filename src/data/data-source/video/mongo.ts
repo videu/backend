@@ -1,5 +1,7 @@
 /**
- * @file Data source for videos using mongoose.
+ * Data source for videos using mongoose.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -27,7 +29,7 @@ import { IVideo } from '../../../../types/db/video';
 import { Video } from '../../../model/video';
 
 /**
- * Video data source for MongoDB.
+ * The authoritative data source for video data.
  */
 export class MongoVideoDataSource implements IVideoDataAuthority {
 

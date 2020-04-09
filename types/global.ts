@@ -1,5 +1,7 @@
 /**
- * @file TypeScript type definitions for the `global.videu` object.
+ * TypeScript type definitions for the `global.videu` object.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

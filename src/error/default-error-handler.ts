@@ -1,6 +1,8 @@
 /**
- * @file The default error handler that all request handlers can pass their
+ * The default error handler that all request handlers can pass their
  * errors to.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

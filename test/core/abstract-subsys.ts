@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the AbstractSubsys and AbstractSubsysConfigurable classes.
+ * Unit test for the AbstractSubsys and AbstractSubsysConfigurable classes.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -37,14 +39,14 @@ before(() => {
     }
 });
 
-/** Test result data returned by a {@link FStubSubsysTester} callback. */
+/** Test result data returned by a {@linkcode FStubSubsysTester} callback. */
 interface IStubSubsysTestResult<InitParams extends any[] = []> {
     id: string;
     initParams: InitParams | null;
     state: LifecycleState;
 }
 
-/** Test callback function for testing the {@link AbstractSubsys} class. */
+/** Test callback function for testing the {@linkcode AbstractSubsys} class. */
 type FStubSubsysTester<InitParams extends any[] = []> =
     () => Promise<IStubSubsysTestResult<InitParams>>;
 
@@ -217,15 +219,15 @@ describe('core/abstract-subsys:AbstractSubsys', () => {
 });
 
 /**
- * Return value of a {@link FStubSubsysConfigurableTester} callback function
- * used in the individual test cases for {@link AbstractSubsysConfigurable}.
+ * Return value of a {@linkcode FStubSubsysConfigurableTester} callback function
+ * used in the individual test cases for {@linkcode AbstractSubsysConfigurable}.
  */
 interface IStubSubsysConfigurableTestResult<InitParams extends any[] = []>
 extends IStubSubsysTestResult<InitParams> {
     config: IStubSubsysConfig;
 }
 
-/** Test callback for testing the {@link AbstractSubsysConfigurable} class */
+/** Callback for testing the {@linkcode AbstractSubsysConfigurable} class */
 type FStubSubsysConfigurableTester<InitParams extends any[] = []> =
     () => Promise<IStubSubsysConfigurableTestResult<InitParams>>;
 

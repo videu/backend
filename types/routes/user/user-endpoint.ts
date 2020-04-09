@@ -1,5 +1,7 @@
 /**
- * @file `/user` route interface definition.
+ * `/user` route interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

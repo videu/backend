@@ -1,5 +1,7 @@
 /**
- * @file `/user` route implementation.
+ * `/user` route implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * The `/info` route is just for general information on the backend server.

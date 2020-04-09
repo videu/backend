@@ -1,5 +1,7 @@
 /**
- * @file Mongo subsystem implementation.
+ * Mongo subsystem implementation.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -255,9 +257,9 @@ implements IAuthSubsys {
 
     /**
      * Generate a new EC secp256k1 key pair and write it to disk.
-     * Does not alter the {@link #keyPair} property!
+     * Does not alter the {@linkcode .keyPair} property!
      *
-     * @return The generated key pair in DER format.
+     * @returns The generated key pair in DER format.
      */
     private async generateAndStoreKeyPair(): Promise<IECKeyPairPEM> {
         const keyPair = await generateECKeyPair('secp256k1');

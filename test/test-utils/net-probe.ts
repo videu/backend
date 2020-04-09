@@ -1,5 +1,7 @@
 /**
- * @file Test utility for probing network connections.
+ * Test utility for probing network connections.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

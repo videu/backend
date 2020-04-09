@@ -1,5 +1,7 @@
 /**
- * @file Storage subsystem interface definition.
+ * Storage subsystem interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

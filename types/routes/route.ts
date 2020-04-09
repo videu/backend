@@ -1,5 +1,7 @@
 /**
- * @file Type definitions for the route interface.
+ * Type definitions for the route interface.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -20,7 +22,7 @@
  */
 
 import { Router as ExpressRouter } from 'express';
-import { NextFunction, Request, RequestHandler, Response } from 'express-serve-static-core';
+import { Request, RequestHandler, Response } from 'express-serve-static-core';
 
 import '../express';
 
@@ -35,7 +37,7 @@ export type RequestMethodName = 'get' | 'post' | 'put' | 'delete' | 'patch';
 /**
  * Base interface for incoming HTTP requests.
  *
- * @param RequestBody The request body type.
+ * @typeParam RequestBody The request body type.
  */
 export interface IRequest<RequestBody extends object | undefined = undefined>
 extends Request<any, any, RequestBody> {
@@ -64,7 +66,7 @@ extends Request<any, any, RequestBody> {
 /**
  * Base interface for outgoing HTTP responses.
  *
- * @param ResponseBody The response body type.
+ * @typeParam ResponseBody The response body type.
  */
 export interface IResponse<ResponseBody extends JSONResponseBody>
 extends Response<ResponseBody | IErrorResponseBody> { }
@@ -82,7 +84,7 @@ export interface IRequestHandler<
 
 /**
  * Holds an array of all middleware factories applied to request handlers.
- * An implementation of {@link IRoute} will instantiate them upon
+ * An implementation of {@linkcode IRoute} will instantiate them upon
  * initialization.
  */
 export interface IMiddlewareFactories {
@@ -110,7 +112,7 @@ export interface IRoute extends ILifecycle {
      * to use these factories to create the middleware handlers for each request
      * method, and pass them to express accordingly.
      *
-     * See {@link AbstractRoute#init} for how an implementation looks like.
+     * See {@linkcode AbstractRoute.init} for how an implementation looks like.
      */
     middleware?: IMiddlewareFactories | undefined;
 
@@ -128,8 +130,8 @@ export interface IRoute extends ILifecycle {
 
     /**
      * The express router.
-     * This is used by the {@link IHTTPSubsys} to add top-level routes to the
-     * express app instance.
+     * This is used by the {@linkcode IHTTPSubsys} to add top-level routes to
+     * the express app instance.
      */
     readonly router: ExpressRouter;
 
@@ -146,8 +148,8 @@ export interface IRoute extends ILifecycle {
 /**
  * Any endpoint that has a HTTP GET handler.
  *
- * @param RequestBody The type of the request body in GET requests.
- * @param ResponseBody The type of the response body in GET requests.
+ * @typeParam RequestBody The type of the request body in GET requests.
+ * @typeParam ResponseBody The type of the response body in GET requests.
  */
 export interface IGetEndpoint<
     RequestBody extends object | undefined = undefined,
@@ -162,8 +164,8 @@ export interface IGetEndpoint<
 /**
  * Any endpoint that has a HTTP POST handler.
  *
- * @param RequestBody The type of the request body in POST requests.
- * @param ResponseBody The type of the response body in POST requests.
+ * @typeParam RequestBody The type of the request body in POST requests.
+ * @typeParam ResponseBody The type of the response body in POST requests.
  */
 export interface IPostEndpoint<
     RequestBody extends object | undefined,
@@ -178,8 +180,8 @@ export interface IPostEndpoint<
 /**
  * Any endpoint that has a HTTP PUT handler.
  *
- * @param RequestBody The type of the request body in PUT requests.
- * @param ResponseBody The type of the response body in PUT requests.
+ * @typeParam RequestBody The type of the request body in PUT requests.
+ * @typeParam ResponseBody The type of the response body in PUT requests.
  */
 export interface IPutEndpoint<
     RequestBody extends object | undefined = undefined,
@@ -194,8 +196,8 @@ export interface IPutEndpoint<
 /**
  * Any endpoint that has a HTTP DELETE handler.
  *
- * @param RequestBody The type of the request body in DELETE requests.
- * @param ResponseBody The type of the response body in DELETE requests.
+ * @typeParam RequestBody The type of the request body in DELETE requests.
+ * @typeParam ResponseBody The type of the response body in DELETE requests.
  */
 export interface IDeleteEndpoint<
     RequestBody extends object | undefined = undefined,
@@ -210,8 +212,8 @@ export interface IDeleteEndpoint<
 /**
  * Any endpoint that has a HTTP PATCH handler.
  *
- * @param RequestBody The type of the request body in PATCH requests.
- * @param ResponseBody The type of the response body in PATCH requests.
+ * @typeParam RequestBody The type of the request body in PATCH requests.
+ * @typeParam ResponseBody The type of the response body in PATCH requests.
  */
 export interface IPatchEndpoint<
     RequestBody extends object | undefined = undefined,

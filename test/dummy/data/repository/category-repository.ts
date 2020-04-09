@@ -1,5 +1,7 @@
 /**
- * @file Dummy implementation of the category repository.
+ * Dummy implementation of the category repository.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

@@ -1,5 +1,7 @@
 /**
- * @file Type definitions for some special forms of arrays.
+ * Type definitions for some special forms of arrays.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

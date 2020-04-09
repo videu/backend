@@ -1,5 +1,7 @@
 /**
- * @file Type definitions for the `users` table.
+ * Type definitions for the `users` table.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

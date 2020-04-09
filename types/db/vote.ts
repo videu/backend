@@ -1,5 +1,7 @@
 /**
- * @file Base interface for all types of votes.
+ * Base interface for all types of votes.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

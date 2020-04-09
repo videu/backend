@@ -1,5 +1,7 @@
 /**
- * @file Route subsystem interface definition.
+ * Route subsystem interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

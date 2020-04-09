@@ -1,5 +1,7 @@
 /**
- * @file Dummy implementation of video data sources.
+ * Dummy implementation of video data sources.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

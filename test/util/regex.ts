@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the regex collection.
+ * Unit test for the regex collection.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

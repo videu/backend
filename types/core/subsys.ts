@@ -1,5 +1,7 @@
 /**
- * @file Base interface definition for all subsystems.
+ * Base interface definition for all subsystems.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -26,6 +28,8 @@ import { ILifecycle } from './lifecycle';
  *
  * A subsystem is a major component of the application that requires
  * initialization on server start and cleanup on server stop.
+ *
+ * @typeParam InitParams The parameter list passed to {@linkcode .init}.
  */
 export interface ISubsys<InitParams extends any[] = []>
 extends ILifecycle<InitParams> {

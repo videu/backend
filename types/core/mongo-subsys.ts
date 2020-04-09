@@ -1,5 +1,7 @@
 /**
- * @file Mongo subsystem interface definition.
+ * Mongo subsystem interface definition.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

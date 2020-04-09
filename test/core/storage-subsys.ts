@@ -1,5 +1,7 @@
 /**
- * @file Unit test for the storage subsystem.
+ * Unit test for the storage subsystem.
+ * @packageDocumentation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license

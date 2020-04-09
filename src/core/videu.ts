@@ -1,5 +1,7 @@
 /**
- * @file Main app implementation.
+ * Main app implementation.
+ * @packageDocumentaation
+ *
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -62,7 +64,7 @@ export class Videu implements IVideu {
     private logger: ILogger = new Logger('core');
 
     /**
-     * Internal storage for keeping the public {@link isInitialized} getter
+     * Internal storage for keeping the public {@linkcode .isInitialized} getter
      * readonly while being able to change its value internally.
      */
     private _state: LifecycleState = LifecycleState.CREATED;

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * @file Early bootstrap routine for loading the application.
+ * Early bootstrap routine for loading the application.
+ * @packageDocumentation
  *
  * Note about how videu is started:
  * Configuration parsing is done in plain JavaScript.  The reason for this is
