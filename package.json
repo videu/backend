@@ -1,6 +1,6 @@
 {
   "name": "videu-backend",
-  "version": "0.1.0-alpha",
+  "version": "0.1.1-alpha",
   "description": "Backend REST API for the videu platform",
   "main": "index.js",
   "private": true,
