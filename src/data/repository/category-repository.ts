@@ -31,8 +31,6 @@ import { ICategory } from '../../../types/db/category';
 import { IVideo } from '../../../types/db/video';
 import { ILogger } from '../../../types/logger';
 
-import { Logger } from '../../util/logger';
-import { MongoCategoryDataSource } from '../data-source/category/mongo';
 import { AbstractRepository } from './abstract-repository';
 
 /**
@@ -113,9 +111,3 @@ export class CategoryRepository extends AbstractRepository<
     }
 
 }
-
-/* TODO: Just implement the route subsystem so this gets obsolete ffs */
-export const categoryRepo = new CategoryRepository(
-    new Logger('deprecated'),
-    new MongoCategoryDataSource()
-);

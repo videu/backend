@@ -211,12 +211,6 @@ implements IAuthSubsys {
             }
 
         }
-
-        /* For compatibility with src/util/jwt.ts */
-
-        /* TODO: Make this obsolete */
-        global.videu.jwt.pubKey = this.keyPair.publicKey;
-        global.videu.jwt.privKey = this.keyPair.privateKey;
     }
 
     /** @inheritdoc */

@@ -19,24 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* tslint:disable:interface-name */
-
-/* TODO: make all of these except MasterConfig obsolete */
-
-/**
- * A PEM encoded EC secp256k1 key pair used for signing and
- * validating JSON Web Tokens.
- *
- * @deprecated The auth subsystem takes care of this now
- */
-export interface JWTKeyPair {
-    /** The public key (DER or PEM encoded). */
-    pubKey: Buffer | string;
-    /** The private key (DER or PEM encoded). */
-    privKey: Buffer | string;
-}
-
-export interface VersionConfig {
+export interface IVersionConfig {
     /**
      * The full version string.
      *
@@ -59,7 +42,7 @@ export interface VersionConfig {
     readonly tags: string[];
 }
 
-export interface MasterConfig {
+export interface IMasterConfig {
     /**
      * The log level.
      * There are 6 types of log messages: `debug`, `verbose`, `info`,
@@ -76,16 +59,13 @@ export interface MasterConfig {
     /** The unique name of this backend instance. */
     readonly instanceId: string;
 
-    /** The key pair for signing JWTs. */
-    jwt: JWTKeyPair;
-
     /** The backend server version. */
-    readonly version: VersionConfig;
+    readonly version: IVersionConfig;
 }
 
 declare global {
     namespace NodeJS {
-        interface Global {
+        interface Global { /* tslint:disable-line: interface-name */
 
             /*
              * NOTE:
@@ -107,7 +87,7 @@ declare global {
              */
 
             /** Global root configuration object for the videu platform. */
-            readonly videu: MasterConfig;
+            readonly videu: IMasterConfig;
 
         }
     }

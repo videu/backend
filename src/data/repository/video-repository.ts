@@ -30,8 +30,6 @@ import { IVideoRepository } from '../../../types/data/repository/video';
 import { IVideo } from '../../../types/db/video';
 import { ILogger } from '../../../types/logger';
 
-import { MongoVideoDataSource } from '../../data/data-source/video/mongo';
-import { Logger } from '../../util/logger';
 import { AbstractRepository } from './abstract-repository';
 
 /**
@@ -96,6 +94,3 @@ implements IVideoRepository {
     }
 
 }
-
-/* TODO: Just implement the route subsystem so this gets obsolete ffs */
-export const videoRepo = new VideoRepository(new Logger('deprecated'), new MongoVideoDataSource());

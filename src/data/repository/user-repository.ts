@@ -31,10 +31,8 @@ import { IUser } from '../../../types/db/user';
 import { HTTPStatusCode } from '../../../types/json/response';
 import { ILogger } from '../../../types/logger';
 
-import { MongoUserDataSource } from '../../data/data-source/user/mongo';
 import { BackendError } from '../../error/backend-error';
 import { ConflictError } from '../../error/conflict-error';
-import { Logger } from '../../util/logger';
 import { AbstractRepository } from './abstract-repository';
 
 /**
@@ -187,6 +185,3 @@ implements IUserRepository {
     }
 
 }
-
-/* TODO: Just implement the route subsystem so this gets obsolete ffs */
-export const userRepo = new UserRepository(new Logger('deprecated'), new MongoUserDataSource());
