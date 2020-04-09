@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { PathLike } from 'fs';
+import { Application as ExpressApp } from 'express';
 import { Server as HTTPServer } from 'http';
 
 import { IConfigurable } from '../configurable';
@@ -77,6 +77,9 @@ export const HTTP_SUBSYS_CONFIG_SCHEMA: IObjectSchema = {
  * Interface for the express management subsystem.
  */
 export interface IHTTPSubsys extends ISubsys<[IRouteSubsys]>, IConfigurable<IHTTPConfig> {
+
+    /** The express app instance. */
+    readonly express: ExpressApp;
 
     /**
      * Listen on a TCP port.

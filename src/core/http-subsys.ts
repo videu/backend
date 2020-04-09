@@ -51,7 +51,7 @@ extends AbstractSubsysConfigurable<IHTTPConfig, [IRouteSubsys]>
 implements IHTTPSubsys {
 
     /** The express instance. */
-    private readonly express: ExpressApp;
+    public readonly express: ExpressApp;
 
     /**
      * A Map of all servers we are listening on where the hostname / socket is the key.
