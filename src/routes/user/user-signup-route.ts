@@ -48,7 +48,7 @@ export class UserSignupRoute extends AbstractRoute implements IUserSignupRoute {
     private readonly userRepo: IUserRepository;
 
     constructor(authSubsys: IAuthSubsys, storageSubsys: IStorageSubsys) {
-        super('signup', authSubsys, storageSubsys);
+        super('signup', authSubsys, storageSubsys, ['user']);
 
         this.userRepo = storageSubsys.userRepo;
     }

@@ -50,7 +50,7 @@ export class UserAuthRoute extends AbstractRoute implements IUserAuthRoute {
     private readonly userRepo: IUserRepository;
 
     constructor(authSubsys: IAuthSubsys, storageSubsys: IStorageSubsys) {
-        super('auth', authSubsys, storageSubsys);
+        super('auth', authSubsys, storageSubsys, ['user']);
 
         this.userRepo = storageSubsys.userRepo;
     }

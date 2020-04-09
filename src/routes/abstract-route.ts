@@ -96,13 +96,19 @@ export class AbstractRoute implements IRoute {
      * @param name The name of the path segment.
      * @param storageSubsys The storage subsystem.
      */
-    constructor(name: string, authSubsys: IAuthSubsys, storageSubsys: IStorageSubsys) {
+    public constructor(name: string, authSubsys: IAuthSubsys, storageSubsys: IStorageSubsys,
+                       parentChain: string[] = []) {
         this.name = name;
         this.authSubsys = authSubsys;
         this.storageSubsys = storageSubsys;
 
         this.router = ExpressRouter();
-        this.logger = new RouteLogger(name);
+
+        let chainName: string = parentChain.join('/') + `/${name}`;
+        if (parentChain.length > 0) {
+            chainName = '/' + chainName;
+        }
+        this.logger = new RouteLogger(chainName);
     }
 
     /** @inheritdoc */
@@ -116,7 +122,7 @@ export class AbstractRoute implements IRoute {
         for (const child of this.children.values()) {
             await child.init();
             this.router.use(`/${child.name}`, child.router);
-            this.logger.i(`Using ${child.name}`);
+            this.logger.d(`Using child route /${child.name}`);
         }
 
         /*
