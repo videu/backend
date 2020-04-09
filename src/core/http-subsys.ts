@@ -21,7 +21,6 @@
 
 import { json as jsonBodyParser } from 'body-parser';
 import Express, { Application as ExpressApp } from 'express';
-import { chmod, PathLike, stat } from 'fs';
 import {
     createServer as createHTTPServer,
     Server as HTTPServer
@@ -41,6 +40,7 @@ import { IllegalStateError } from '../error/illegal-state-error';
 import { InvalidConfigError } from '../error/invalid-config-error';
 import { ipHeaderMiddleware } from '../middleware/ip-header';
 import { toIntSafe } from '../util/conversions';
+import { asyncChmod } from '../util/fs';
 import { AbstractSubsysConfigurable } from './abstract-subsys';
 
 /**
@@ -143,36 +143,23 @@ implements IHTTPSubsys {
     }
 
     /** @inheritdoc */
-    public listenUNIX(socket: PathLike, permissions: number = 0o770): Promise<HTTPServer> {
+    public listenUNIX(socketPath: string, permissions: number = 0o770): Promise<HTTPServer> {
         return new Promise(async (resolve, reject) => {
             if (this.state !== LifecycleState.INITIALIZED) {
                 reject(new IllegalStateError('HTTP subsystem not initialized yet'));
                 return;
             }
 
-            if (this.servers.has(socket.toString())) {
-                reject(new Error(`Already listening on ${socket.toString()}`));
-                return;
-            }
-
-            let shouldContinue: boolean = true;
-            await stat(this.config.socket, fsErr => {
-                if (fsErr !== null) {
-                    reject(fsErr);
-                    shouldContinue = false;
-                }
-            });
-            if (!shouldContinue) {
+            if (this.servers.has(socketPath.toString())) {
+                reject(new Error(`Already listening on ${socketPath.toString()}`));
                 return;
             }
 
             const server = createHTTPServer(this.express);
-            server.listen(socket, () => {
-                chmod(socket, permissions, () => {
-                    this.logger.i(`Listening on UNIX socket ${socket}`);
-                    this.servers.set(socket.toString(), server);
-                    resolve(server);
-                });
+            server.listen(socketPath, async () => {
+                await asyncChmod(socketPath, permissions);
+                this.servers.set(socketPath.toString(), server);
+                resolve(server);
             }).on('error', httpErr => reject(httpErr));
         });
     }

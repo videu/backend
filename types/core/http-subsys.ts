@@ -44,7 +44,7 @@ export interface IHTTPConfig {
      * The UNIX socket to listen on.
      * If this is an empty string, the server will not listen on any socket.
      */
-    socket: PathLike;
+    socket: string;
     /**
      * The octal file access mode for the UNIX socket.
      * Defaults to `0o770`.
@@ -92,11 +92,11 @@ export interface IHTTPSubsys extends ISubsys<[IRouteSubsys]>, IConfigurable<IHTT
      * This is usually not needed as the socket is parsed from the config.
      * The behavior of this method is completely unknown on Windows systems.
      *
-     * @param socket The path to the socket.
-     * @param mode The octal file permissions.
+     * @param socketPath The path to the socket.
+     * @param permissions The octal file permissions.
      * @return The newly created HTTP server.
      */
-    listenUNIX(socket: PathLike, mode?: number): Promise<HTTPServer>;
+    listenUNIX(socketPath: string, permissions?: number): Promise<HTTPServer>;
 
     /**
      * Change a setting in Express.

@@ -20,6 +20,7 @@
  */
 
 import {
+    chmod,
     PathLike,
     readFile,
     stat,
@@ -28,6 +29,17 @@ import {
 } from 'fs';
 
 export { PathLike, Stats } from 'fs';
+
+/**
+ * Change the octal file permissions of a file using `fs.chmod()`.
+ *
+ * @param path The path to the file.
+ * @param mode The octal file permission mode.  Will be parsed as an octal
+ *     number is it is a string.
+ */
+export function asyncChmod(path: PathLike, mode: string | number): Promise<void> {
+    return new Promise( resolve => chmod(path, mode, () => resolve()) );
+}
 
 /**
  * Get the stats for a file using `fs.stat()`.
