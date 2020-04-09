@@ -1,5 +1,5 @@
 /**
- * @file Route handlers for all endpoints in `/video`.
+ * @file `/user/signup` route interface definition.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,10 +19,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Router } from 'express';
+import { ISuccessResponseBody } from '../../json/response';
+import { IPrivateUserJSON } from '../../json/user';
+import { IPostEndpoint, IPutEndpoint } from '../route';
 
-import { metaRouter } from './video/meta-router';
+export interface IUserSignupPostRequestBody {
+    userName?: string;
+    passwd?: string;
+    email?: string;
+    settings?: {
+        newsletter?: boolean;
+        showPP?: boolean;
+    };
+}
 
-export const videoRouter: Router = Router();
+export interface IUserSignupPutRequestBody {
+    challenge?: string;
+}
 
-videoRouter.use('/meta', metaRouter);
+export interface IUserSignupPutResponseBody extends ISuccessResponseBody {
+    token: string;
+    user: IPrivateUserJSON;
+}
+
+export interface IUserSignupRoute extends
+IPostEndpoint<IUserSignupPostRequestBody, ISuccessResponseBody>,
+IPutEndpoint<IUserSignupPutRequestBody, IUserSignupPutResponseBody> {}

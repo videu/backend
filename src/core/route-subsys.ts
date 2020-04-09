@@ -24,21 +24,37 @@ import { IRouteSubsys } from '../../types/core/route-subsys';
 import { IStorageSubsys } from '../../types/core/storage-subsys';
 import { IRoute } from '../../types/routes/route';
 
+import { InfoRoute } from '../routes/info/info-route';
+import { UserRoute } from '../routes/user/user-route';
 import { AbstractSubsys } from './abstract-subsys';
 
+/**
+ * The route subsystem.
+ */
 export class RouteSubsys
 extends AbstractSubsys<[IAuthSubsys, IStorageSubsys]>
 implements IRouteSubsys {
 
+    /** @inheritdoc */
     public readonly routes: Map<string, IRoute> = new Map();
 
+    /**
+     * Instantiate the route subsystem.
+     */
     public constructor() {
         super('route');
     }
 
     /** @inheritdoc */
     public async onInit(authSubsys: IAuthSubsys, storageSubsys: IStorageSubsys) {
-        /* TODO: Instantiate routes here */
+        const infoRoute = new InfoRoute(authSubsys, storageSubsys);
+        const userRoute = new UserRoute(authSubsys, storageSubsys);
+
+        this.routes.set(infoRoute.name, infoRoute);
+        this.routes.set(userRoute.name, userRoute);
+
+        await infoRoute.init();
+        await userRoute.init();
     }
 
     /** @inheritdoc */

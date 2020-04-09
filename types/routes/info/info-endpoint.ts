@@ -1,8 +1,6 @@
 /**
- * @file Route handlers for all endpoints in `/info`.
+ * @file `/info` route interface definition.
  * @author Felix Kopp <sandtler@sandtler.club>
- *
- * The `/info` route is just for general information on the backend server.
  *
  * @license
  * Copyright (c) 2020 The videu Project <videu@freetube.eu>
@@ -21,23 +19,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { RequestHandler, Router } from 'express';
-
-import '../../types/express';
-import '../../types/global';
-
-export const infoRouter: Router = Router();
+import { ISuccessResponseBody } from '../../json/response';
+import { IGetEndpoint } from '../route';
 
 /**
- * GET `/info`
+ * The response body for GET requests to the `/info` endpoint
+ * (this is basically the same as `global.videu.version`).
  */
-export const infoGetHandler: RequestHandler = (req, res, next) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    res.status(200).json({
-        clientIp: req.videu.clientIp,
-        instance: global.videu.instanceId,
-        time: Date.now(),
-        version: global.videu.version,
-    });
-};
-infoRouter.get('/', infoGetHandler);
+export interface IInfoGetResponseBody extends ISuccessResponseBody {
+    clientIp: string;
+    instance: string;
+    time: number;
+    version: {
+        versionString: string;
+        major: number;
+        minor: number;
+        patch: number;
+        tags: string[];
+    };
+}
+
+/**
+ * Interface definition for the `/info` endpoint.
+ */
+export interface IInfoEndpoint extends IGetEndpoint<undefined, IInfoGetResponseBody> {}

@@ -1,5 +1,5 @@
 /**
- * @file Route handlers for the `/user` endpoint.
+ * @file `/user/auth` route interface definition.
  * @author Felix Kopp <sandtler@sandtler.club>
  *
  * @license
@@ -19,16 +19,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Router } from 'express';
+import { ISuccessResponseBody } from '../../json/response';
+import { IPrivateUserJSON } from '../../json/user';
+import { IGetEndpoint, IPostEndpoint } from '../route';
 
-import { authRouter } from './user/auth-router';
-import { byIdRouter } from './user/by-id-router';
-import { byUserNameRouter } from './user/by-user-name-router';
-import { signupRouter } from './user/signup-router';
+/**
+ * Request body for POST requests to the `/user/auth` endpoint.
+ */
+export interface IUserAuthPostRequestBody {
+    userName?: string;
+    passwd?: string;
+}
 
-export const userRouter = Router();
+/**
+ * Response body for any request to the `/user/auth` endpoint.
+ */
+export interface IUserAuthResponseBody extends ISuccessResponseBody {
+    token: string;
+    user: IPrivateUserJSON;
+}
 
-userRouter.use('/auth', authRouter);
-userRouter.use('/byId', byIdRouter);
-userRouter.use('/byUserName', byUserNameRouter);
-userRouter.use('/signup', signupRouter);
+/**
+ * Interface definition for the `/user/auth` endpoint.
+ */
+export interface IUserAuthRoute extends
+IGetEndpoint<undefined, IUserAuthResponseBody>,
+IPostEndpoint<IUserAuthPostRequestBody, IUserAuthResponseBody> {}
