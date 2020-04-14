@@ -128,7 +128,7 @@ export class UserRoute extends AbstractRoute implements IUserEndpoint {
             throw new BackendError('User does not exist', HTTPStatusCode.NOT_FOUND);
         }
 
-        if (req.videu.auth && req.videu.auth.user.id === user.id) {
+        if (req.videu ! .auth && req.videu ! .auth.user.id === user.id) {
             res.status(HTTPStatusCode.OK).json({
                 err: false,
                 user: user.toPrivateJSON(),

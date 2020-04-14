@@ -24,8 +24,6 @@
 import { Router as ExpressRouter } from 'express';
 import { Request, RequestHandler, Response } from 'express-serve-static-core';
 
-import '../express';
-
 import { ILifecycle } from '../core/lifecycle';
 import { IUser } from '../db/user';
 import { IErrorResponseBody, JSONResponseBody } from '../json/response';
@@ -42,8 +40,13 @@ export type RequestMethodName = 'get' | 'post' | 'put' | 'delete' | 'patch';
 export interface IRequest<RequestBody extends object | undefined = undefined>
 extends Request<any, any, RequestBody> {
 
-    /** Various videu-specific extension data for requests. */
-    videu: {
+    /**
+     * Various videu-specific extension data for requests.
+     * This object is set by the {@linkcode ipHeaderMiddleware} and you can
+     * assume it to be present in all requests (it is only optional for
+     * compatibility w/ the internal Express request type).
+     */
+    videu?: {
 
         /** The client IP address. */
         clientIp: string;

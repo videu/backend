@@ -86,11 +86,11 @@ export class UserAuthRoute extends AbstractRoute implements IUserAuthRoute {
     public async get(req: IRequest, res: IResponse<IUserAuthResponseBody>) {
         res.status(HTTPStatusCode.OK);
 
-        if (req.videu.auth) {
+        if (req.videu ! .auth) {
             res.json({
                 err: false,
-                token: req.videu.auth.token,
-                user: req.videu.auth.user.toPrivateJSON(),
+                token: req.videu ! .auth.token,
+                user: req.videu ! .auth.user.toPrivateJSON(),
             });
         } else {
             res.json({
