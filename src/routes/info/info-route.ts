@@ -29,6 +29,7 @@ import { IInfoEndpoint, IInfoGetResponseBody } from '../../../types/routes/info/
 import { IRequest, IResponse } from '../../../types/routes/route';
 
 import { AbstractRoute } from '../abstract-route';
+import { InfoErrRoute } from './info-err-route';
 
 /**
  * `/info` route implementation.
@@ -37,6 +38,9 @@ export class InfoRoute extends AbstractRoute implements IInfoEndpoint {
 
     constructor(authSubsys: IAuthSubsys, storageSubsys: IStorageSubsys) {
         super('info', authSubsys, storageSubsys);
+
+        const infoErrRoute = new InfoErrRoute(authSubsys, storageSubsys);
+        this.children.set(infoErrRoute.name, infoErrRoute);
     }
 
     /**
@@ -63,10 +67,10 @@ export class InfoRoute extends AbstractRoute implements IInfoEndpoint {
      * ```
      */
     public async get(req: IRequest, res: IResponse<IInfoGetResponseBody>) {
-        res.set('access-control-allow-origin', '*');
+        res.set('Access-Control-Allow-Origin', '*');
         res.status(200).json({
             err: false,
-            clientIp: req.videu.clientIp,
+            clientIp: req.videu ! .clientIp,
             instance: global.videu.instanceId,
             time: Date.now(),
             version: global.videu.version,

@@ -24,6 +24,7 @@
 import {
     chmod,
     PathLike,
+    readdir,
     readFile,
     stat,
     Stats,
@@ -102,6 +103,24 @@ export function asyncReadFile(path: PathLike): Promise<Buffer> {
  */
 export async function asyncReadFileStr(path: PathLike): Promise<string> {
     return new TextDecoder('utf-8').decode(await asyncReadFile(path));
+}
+
+/**
+ * Read a directory using `fs.readdir` and return a list of all contained files.
+ *
+ * @param path The path to the directory.
+ * @returns The files inside the dir.
+ */
+export function asyncReadDir(path: PathLike): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+        readdir(path, (err, files) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(files);
+            }
+        });
+    });
 }
 
 /**

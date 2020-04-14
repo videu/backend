@@ -26,6 +26,7 @@
 import { IAuthSubsys } from '../../../types/core/auth-subsys';
 import { IStorageSubsys } from '../../../types/core/storage-subsys';
 import { IUserRepository } from '../../../types/data/repository/user';
+import { ErrId } from '../../../types/error/error-code';
 import { HTTPStatusCode } from '../../../types/json/response';
 import { IRequest, IResponse } from '../../../types/routes/route';
 import {
@@ -78,7 +79,7 @@ export class UserAuthRoute extends AbstractRoute implements IUserAuthRoute {
      * ```json
      * {
      *     "err": true,
-     *     "msg": "Invalid token",
+     *     "msg": "e_jwt_invalid",
      * }
      * ```
      */
@@ -95,7 +96,7 @@ export class UserAuthRoute extends AbstractRoute implements IUserAuthRoute {
         } else {
             res.json({
                 err: true,
-                msg: 'Invalid token',
+                msg: ErrId.jwt_invalid,
             });
         }
     }
@@ -129,33 +130,33 @@ export class UserAuthRoute extends AbstractRoute implements IUserAuthRoute {
      * ```json
      * {
      *     "err": true,
-     *     "msg": "Invalid user name or password"
+     *     "msg": "e_invalid_username_or_passwd"
      * }
      * ```
      */
     public async post(req: IRequest<IUserAuthPostRequestBody>,
                       res: IResponse<IUserAuthResponseBody>) {
         if (typeof req.body !== 'object') {
-            throw new BackendError('Not credentials sent', HTTPStatusCode.BAD_REQUEST);
+            throw new BackendError(ErrId.http_400, HTTPStatusCode.BAD_REQUEST);
         }
 
         const userName = req.body.userName;
         if (typeof userName !== 'string' || !userNameRegex.test(userName)) {
-            throw new AuthError('Invalid user name or password');
+            throw new AuthError(ErrId.auth_bad_creds);
         }
 
         const passwd = req.body.passwd;
         if (typeof passwd !== 'string') {
-            throw new AuthError('Invalid user name or password');
+            throw new AuthError(ErrId.auth_bad_creds);
         }
 
         const user = await this.userRepo.getByUserName(userName);
         if (user === null) {
-            throw new AuthError('Invalid user name or password');
+            throw new AuthError(ErrId.auth_bad_creds);
         }
 
         if (await passwdVerify(passwd, user.passwd) !== true) {
-            throw new AuthError('Invalid user name or password');
+            throw new AuthError(ErrId.auth_bad_creds);
         }
 
         res.status(HTTPStatusCode.OK).json({

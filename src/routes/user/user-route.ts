@@ -28,12 +28,14 @@ import { ObjectId } from 'mongodb';
 import { IAuthSubsys } from '../../../types/core/auth-subsys';
 import { IStorageSubsys } from '../../../types/core/storage-subsys';
 import { IUserRepository } from '../../../types/data/repository/user';
+import { ErrId } from '../../../types/error/error-code';
 import { HTTPStatusCode } from '../../../types/json/response';
 import { IRequest, IResponse } from '../../../types/routes/route';
 import {
     IUserEndpoint,
     IUserGetRequestBody,
     IUserGetResponseBody,
+    IUserPutRequestBody,
 } from '../../../types/routes/user/user-endpoint';
 
 import { IUser } from '../../../types/db/user';
@@ -96,36 +98,36 @@ export class UserRoute extends AbstractRoute implements IUserEndpoint {
      * ```json
      * {
      *     "err": true,
-     *     "msg": "User does not exist"
+     *     "msg": "e_user_not_found"
      * }
      * ```
      */
-    @middleware(userLogin, { soft: false })
+    @middleware(userLogin, { soft: true })
     public async get(req: IRequest<IUserGetRequestBody>,
                      res: IResponse<IUserGetResponseBody>) {
         const body: IUserGetRequestBody = req.body;
         let user: IUser | null = null;
 
         if (typeof body !== 'object') {
-            throw new BackendError('No data sent', HTTPStatusCode.BAD_REQUEST);
+            throw new BackendError(ErrId.http_400, HTTPStatusCode.BAD_REQUEST);
         }
 
         if (typeof body.id === 'string') {
             if (!objectIdRegex.test(body.id)) {
-                throw new BackendError('Invalid user id', HTTPStatusCode.BAD_REQUEST);
+                throw new BackendError(ErrId.user_bad_id, HTTPStatusCode.BAD_REQUEST);
             }
 
             user = await this.userRepo.getById(new ObjectId(body.id));
         } else if (typeof body.userName === 'string') {
             if (!userNameRegex.test(body.userName)) {
-                throw new BackendError('User does not exist', HTTPStatusCode.NOT_FOUND);
+                throw new BackendError(ErrId.user_bad_user_name, HTTPStatusCode.NOT_FOUND);
             }
 
             user = await this.userRepo.getByUserName(body.userName);
         }
 
         if (user === null) {
-            throw new BackendError('User does not exist', HTTPStatusCode.NOT_FOUND);
+            throw new BackendError(ErrId.user_not_found, HTTPStatusCode.NOT_FOUND);
         }
 
         if (req.videu ! .auth && req.videu ! .auth.user.id === user.id) {
@@ -139,6 +141,49 @@ export class UserRoute extends AbstractRoute implements IUserEndpoint {
                 user: user.toPublicJSON(),
             });
         }
+    }
+
+    /**
+     * PUT `/user`: Change data of the currently logged-in user (auth only).
+     *
+     * Request body:
+     *
+     * ```json
+     * {
+     *     // Omitted fields are left unchanged
+     *     "userName": "<new user name>", // w/out the @
+     *     "passwd": "<new password>",
+     *     "displayName": "<New display name>",
+     *     "settings": {
+     *         "newsletter": false,
+     *         "showPP": false
+     *     }
+     * }
+     * ```
+     *
+     * Response on success: HTTP/200 OK
+     *
+     * ```json
+     * {
+     *     "err": false,
+     *     "user": {
+     *         // Private user data
+     *     }
+     * }
+     * ```
+     *
+     * Response on error: HTTP/405 Conflict (if username was already taken)
+     *
+     * ```json
+     * {
+     *     "err": true,
+     *     "msg": "e_username_taken"
+     * }
+     * ```
+     */
+    @middleware(userLogin, { soft: false })
+    public async put(req: IRequest<IUserPutRequestBody>, res: IResponse<IUserGetResponseBody>) {
+
     }
 
 }
